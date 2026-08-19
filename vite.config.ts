@@ -3,6 +3,21 @@ import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
+import fs from 'fs';
+
+const httpsKeyPath = process.env.DEV_HTTPS_KEY;
+const httpsCertPath = process.env.DEV_HTTPS_CERT;
+
+if (Boolean(httpsKeyPath) !== Boolean(httpsCertPath)) {
+  throw new Error(
+    'DEV_HTTPS_KEY and DEV_HTTPS_CERT must be set together. Set both to serve the dev server over HTTPS, or neither to serve over HTTP.',
+  );
+}
+
+const devHttps =
+  httpsKeyPath && httpsCertPath
+    ? { key: fs.readFileSync(httpsKeyPath), cert: fs.readFileSync(httpsCertPath) }
+    : undefined;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -27,6 +42,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    https: devHttps,
     open: true,
     host: true,
     allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io'],
