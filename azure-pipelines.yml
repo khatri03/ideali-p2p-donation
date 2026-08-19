@@ -1,0 +1,57 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  nodeVersion: '18.x'
+  buildFolder: 'build'
+
+steps:
+# ---------------- INSTALL NODE ----------------
+- task: NodeTool@0
+  displayName: 'Install Node.js'
+  inputs:
+    versionSpec: '$(nodeVersion)'
+
+# ---------------- INSTALL PACKAGES ----------------
+- script: |
+    npm install
+  displayName: 'Install npm packages'
+
+# ---------------- BUILD FRONTEND ----------------
+- script: |
+    npm run build
+  displayName: 'Build React frontend'
+  env:
+    NODE_OPTIONS: --max_old_space_size=8192
+    VITE_API_BASE_URL: $(VITE_API_BASE_URL)
+
+
+# ---------------- COPY BUILD TO ARTIFACT ----------------
+- task: CopyFiles@2
+  displayName: 'Copy build files'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)\$(buildFolder)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\build'
+
+# ---------------- ZIP BUILD FOLDER ----------------
+- task: ArchiveFiles@2
+  displayName: 'Zip build folder'
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)\build'
+    includeRootFolder: false   # ensures contents of build go directly into zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)\IdeasFrontend.zip'
+    replaceExistingArchive: true
+
+# ---------------- PUBLISH ZIP ARTIFACT ----------------
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)\IdeasFrontend.zip'
+    ArtifactName: 'IdeasFrontend'
+    publishLocation: 'Container'

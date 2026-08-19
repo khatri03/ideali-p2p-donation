@@ -1,0 +1,12 @@
+version: 0.0
+os: windows
+
+files:
+  - source: /
+    destination: C:\inetpub\wwwroot\ideali.io\_deployment_temp
+
+hooks:
+  AfterInstall:
+    - location: scripts/deploy-frontend.ps1
+      timeout: 300
+      runas: Administrator

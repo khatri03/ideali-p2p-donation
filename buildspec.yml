@@ -1,0 +1,74 @@
+version: 0.2
+
+env:
+  variables:
+    NODE_VERSION: '20'
+    BUILD_FOLDER: 'build'
+    NODE_OPTIONS: '--max_old_space_size=8192'
+  parameter-store:
+    VITE_API_BASE_URL: '/ideasfrontend/${ENVIRONMENT}/VITE_API_BASE_URL'
+    VITE_GOOGLE_CLIENT_ID: '/ideasfrontend/${ENVIRONMENT}/VITE_GOOGLE_CLIENT_ID'
+    VITE_UNSPLASH_ACCESS_KEY: '/ideasfrontend/${ENVIRONMENT}/VITE_UNSPLASH_ACCESS_KEY'
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "=========================================="
+      - echo "Installing Node.js ${NODE_VERSION}"
+      - echo "Node version:" $(node --version)
+      - echo "NPM version:" $(npm --version)
+      - echo "=========================================="
+
+  pre_build:
+    commands:
+      - echo "========================================="
+      - echo "Starting npm install at $(date '+%Y-%m-%d %H:%M:%S')"
+      - echo "========================================="
+      - echo "Fixing @types/node version issue..."
+      - rm -f package-lock.json
+      - npm install @types/node@^20 --save-dev --no-audit
+      - echo "Installing all dependencies..."
+      - npm install --no-audit
+      - export VITE_COMMIT_ID=$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+  build:
+    commands:
+      - echo "========================================="
+      - echo "Starting React build at $(date '+%Y-%m-%d %H:%M:%S')"
+      - echo "Environment variables loaded from Parameter Store"
+      - echo "========================================="
+      - VITE_COMMIT_ID=$VITE_COMMIT_ID npm run build
+      - echo "Build completed successfully"
+
+  post_build:
+    commands:
+      - echo "=========================================="
+      - echo "Post-build verification at $(date '+%Y-%m-%d %H:%M:%S')"
+      - echo "=========================================="
+      - echo "Verifying build output..."
+      - ls -la ${BUILD_FOLDER}/
+      - echo "Counting files in build..."
+      - find ${BUILD_FOLDER} -type f | wc -l
+      - echo "=========================================="
+      - echo "Preparing deployment artifacts..."
+      - echo "=========================================="
+      - echo "Copying appspec.yml to build folder..."
+      - cp appspec.yml ${BUILD_FOLDER}/
+      - echo "Copying scripts folder to build folder..."
+      - cp -r scripts ${BUILD_FOLDER}/
+      - echo "=========================================="
+      - echo "Final artifact structure:"
+      - echo "=========================================="
+      - ls -la ${BUILD_FOLDER}/
+      - echo "Build artifacts ready for deployment"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build
+
+cache:
+  paths:
+    - 'node_modules/**/*'

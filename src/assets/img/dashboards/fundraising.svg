@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+<foreignObject x="-8" y="-8" width="144" height="144"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(4px);clip-path:url(#bgblur_0_3186_10153_clip_path);height:100%;width:100%"></div></foreignObject><g data-figma-bg-blur-radius="8">
+<rect width="128" height="128" rx="64" fill="white" fill-opacity="0.15"/>
+<path d="M61.3333 69.3333H66.6667C68.0812 69.3333 69.4377 68.7714 70.4379 67.7712C71.4381 66.771 72 65.4145 72 64C72 62.5855 71.4381 61.229 70.4379 60.2288C69.4377 59.2286 68.0812 58.6667 66.6667 58.6667H58.6667C57.0667 58.6667 55.7333 59.2 54.9333 60.2667L40 74.6667" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M50.6666 85.3333L54.9333 81.6C55.7333 80.5333 57.0666 80 58.6666 80H69.3333C72.2666 80 74.9333 78.9333 76.8 76.8L89.0666 65.0667C90.0957 64.0942 90.6963 62.7528 90.7363 61.3375C90.7763 59.9222 90.2524 58.549 89.28 57.52C88.3075 56.491 86.9661 55.8904 85.5508 55.8504C84.1355 55.8104 82.7623 56.3342 81.7333 57.3067L70.5333 67.7067" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M37.3334 72L53.3334 88" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M83.9999 54.6667C85.8666 52.8 87.9999 50.4 87.9999 47.4667C88.1863 45.8371 87.817 44.1924 86.9518 42.799C86.0866 41.4057 84.7762 40.3453 83.233 39.7897C81.6898 39.2342 80.0042 39.216 78.4494 39.7382C76.8946 40.2603 75.5617 41.2923 74.6666 42.6667C73.7147 41.3989 72.3814 40.4697 70.8625 40.0154C69.3436 39.5612 67.719 39.6058 66.2274 40.1428C64.7357 40.6798 63.4555 41.6809 62.5746 42.9991C61.6938 44.3172 61.2587 45.883 61.3333 47.4667C61.3333 50.6667 63.4666 52.8 65.3333 54.9333L74.6666 64L83.9999 54.6667Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="bgblur_0_3186_10153_clip_path" transform="translate(8 8)"><rect width="128" height="128" rx="64"/>
+</clipPath></defs>
+</svg>
