@@ -96,7 +96,7 @@ export function SidebarResponsive(props: {
   let menuColor = useColorModeValue('gray.400', 'white');
   // // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
+  const btnRef = React.useRef<HTMLDivElement>(null);
 
   const { routes } = props;
   // let isWindows = navigator.platform.startsWith("Win");

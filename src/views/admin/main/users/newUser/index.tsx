@@ -48,9 +48,9 @@ export default function NewUser() {
     profile: false,
   });
 
-  const userTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-  const addressTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-  const profileTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+  const userTab = React.useRef<HTMLInputElement>(null);
+  const addressTab = React.useRef<HTMLInputElement>(null);
+  const profileTab = React.useRef<HTMLInputElement>(null);
 
   return (
     <Flex

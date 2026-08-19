@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Avatar, Box, Flex, Icon, IconButton, Image, Input, Text, useColorModeValue } from '@chakra-ui/react';
 // Assets
 import { FaRegCommentDots } from 'react-icons/fa';

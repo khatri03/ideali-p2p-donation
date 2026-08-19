@@ -59,9 +59,9 @@ export default function NewProduct() {
     pricing: false,
   });
 
-  const productTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-  const mediaTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-  const pricingTab = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+  const productTab = React.useRef<HTMLInputElement>(null);
+  const mediaTab = React.useRef<HTMLInputElement>(null);
+  const pricingTab = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   //eslint-disable-next-line
   const [lineColor, setLineColor] = useState(theme.colors.brand[500]);

@@ -99,7 +99,7 @@ export function OrganizerSidebarResponsive(props: { [x: string]: any }) {
   let menuColor = useColorModeValue('gray.400', 'white');
   // // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
+  const btnRef = React.useRef<HTMLDivElement>(null);
 
   //  BRAND
 

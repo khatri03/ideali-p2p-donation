@@ -68,7 +68,7 @@ function SignUp() {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   return (
-    <DefaultAuth illustrationBackground={illustration} image={illustration}>
+    <DefaultAuth illustrationBackground={illustration}>
       <Flex
         w="100%"
         maxW="max-content"

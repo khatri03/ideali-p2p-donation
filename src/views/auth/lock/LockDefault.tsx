@@ -34,7 +34,7 @@ function ForgotPassword() {
 	const textColor = useColorModeValue('navy.700', 'white');
 	const brandStars = useColorModeValue('brand.500', 'brand.400');
 	return (
-		<DefaultAuth illustrationBackground={illustration} image={illustration}>
+		<DefaultAuth illustrationBackground={illustration}>
 			<Flex
 				w='100%'
 				maxW='max-content'

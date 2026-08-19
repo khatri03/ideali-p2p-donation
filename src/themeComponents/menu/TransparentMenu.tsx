@@ -1,4 +1,5 @@
 // Chakra imports
+import type { JSX } from 'react';
 import {
 	Menu,
 	MenuButton,

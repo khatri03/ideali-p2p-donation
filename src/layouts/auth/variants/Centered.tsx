@@ -1,11 +1,11 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 // Custom components
 import Card from 'themeComponents/card/Card';
 import FixedPlugin from 'themeComponents/fixedPlugin/FixedPlugin';
 import Footer from 'themeComponents/footer/FooterAuthCentered';
 import Navbar from 'themeComponents/navbar/NavbarAuth';
-import PropTypes from 'prop-types';
 
 function AuthCentered(props: {
   children: JSX.Element;
@@ -83,12 +83,4 @@ function AuthCentered(props: {
     </Flex>
   );
 }
-// PROPS
-
-AuthCentered.propTypes = {
-  description: PropTypes.string,
-  title: PropTypes.string,
-  image: PropTypes.any,
-};
-
 export default AuthCentered;

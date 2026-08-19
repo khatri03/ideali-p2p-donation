@@ -1,4 +1,5 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Flex, Text, Icon, useColorModeValue } from '@chakra-ui/react';
 
 // Assets

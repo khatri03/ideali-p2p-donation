@@ -1,10 +1,16 @@
-// Polyfill for findDOMNode removed in React 19
 import ReactDOM from 'react-dom';
 
-if (!ReactDOM.findDOMNode) {
-  (ReactDOM as any).findDOMNode = (node: any) => {
-    if (node == null) return null;
-    if (node.nodeType === 1) return node;
-    return node;
-  };
+/**
+ * `ReactDOM.findDOMNode` was removed in React 19, but transitive dependencies
+ * still reach for it. Restore a null-safe pass-through so those calls no-op
+ * instead of throwing.
+ */
+type ReactDomWithFindDOMNode = typeof ReactDOM & {
+  findDOMNode?: (node: unknown) => unknown;
+};
+
+const reactDom = ReactDOM as ReactDomWithFindDOMNode;
+
+if (!reactDom.findDOMNode) {
+  reactDom.findDOMNode = (node) => node ?? null;
 }

@@ -1,6 +1,6 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
 import Footer from 'themeComponents/footer/FooterAuthDefault';
 import FixedPlugin from 'themeComponents/fixedPlugin/FixedPlugin';
 // Custom components
@@ -85,11 +85,4 @@ function AuthIllustration(props: {
     </Flex>
   );
 }
-// PROPS
-
-AuthIllustration.propTypes = {
-  illustrationBackground: PropTypes.string,
-  image: PropTypes.any,
-};
-
 export default AuthIllustration;

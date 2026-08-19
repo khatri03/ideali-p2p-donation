@@ -1,4 +1,5 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import Footer from 'themeComponents/footer/FooterAuthCentered';
 // Custom components

@@ -1,4 +1,5 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Box, Flex, Text, useColorModeValue, Badge, Icon } from '@chakra-ui/react';
 // Custom components
 import Card from 'themeComponents/card/Card';

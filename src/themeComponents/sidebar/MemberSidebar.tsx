@@ -103,7 +103,7 @@ export function MemberSidebarResponsive(props: { [x: string]: any }) {
   );
   // // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
+  const btnRef = React.useRef<HTMLDivElement>(null);
 
   //  BRAND
 

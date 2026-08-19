@@ -1,4 +1,5 @@
 // Chakra imports
+import type { JSX } from 'react';
 import { Flex, Button, Text, useColorModeValue } from '@chakra-ui/react';
 
 export default function ButtonAction(props: {

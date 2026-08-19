@@ -34,7 +34,7 @@ export default function Invoice() {
   const bgHover = { bg: 'whiteAlpha.50' };
   const bgFocus = { bg: 'rgba(255,255,255,0.12)' };
 
-  const componentRef = useRef();
+  const componentRef = useRef<Receipt>(null);
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
