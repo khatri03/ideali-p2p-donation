@@ -10,8 +10,11 @@ yarn.lock
 
 # testing
 /coverage
+
+# local tooling
 /.claude
 /.playwright-mcp
+
 # production
 /build
 build
