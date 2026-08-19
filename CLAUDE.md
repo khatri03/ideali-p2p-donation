@@ -2,6 +2,8 @@
 
 Enterprise SaaS event management platform. **Frontend-only repo.** Backend is a separate .NET Core 9 modular monolith at `D:\V4Ideas\Ideali\ideali.api`.
 
+**This is a production repository.** Everything merged here is shipped to real users. Build at production quality — see Production Quality Bar below — not at MVP or prototype quality.
+
 ---
 
 ## Agent Behaviour (Read First)
@@ -38,6 +40,17 @@ These rules govern how you work in this repo, not just how the code is structure
 - Follow the decision ladder in State Management below.
 - If a pattern isn't covered here, match the closest existing pattern in the codebase rather than inventing something new.
 
+**On quality level:**
+
+- Production repo. Every UI you build is final UI — neat, consistent, complete. MVP-grade output is a defect here.
+- Read Production Quality Bar before building any screen, and apply its ship gate before reporting work complete.
+
+**On DevOps and pipeline files:**
+
+- Never edit `.yml` / `.yaml` files — `azure-pipelines.yml`, `buildspec.yml`, `appspec.yml`, or any CI/CD, deployment, or infrastructure manifest. They are owned by DevOps, not by this repo's feature work.
+- Same for `scripts/` deployment shell scripts and `appspec.yml` hooks.
+- If a change requires a pipeline edit (new env var, new Node version, new build step), **state exactly what needs changing and hand it to DevOps.** Do not make the edit yourself, not even a one-line version bump.
+
 **What NOT to do without being asked:**
 
 - Do not add Zustand, Redux, Jotai, or any global state library.
@@ -46,6 +59,7 @@ These rules govern how you work in this repo, not just how the code is structure
 - Do not use `dangerouslySetInnerHTML`.
 - Do not write snapshot tests.
 - Do not add `// TODO: extend this later` scaffolding — build it now or don't build it.
+- Do not ship a placeholder, stub screen, or half-styled surface as an interim step — finish it or leave it unrouted.
 
 ---
 
@@ -53,7 +67,7 @@ These rules govern how you work in this repo, not just how the code is structure
 
 | Layer        | Tech                                                                                             |
 | ------------ | ------------------------------------------------------------------------------------------------ |
-| Framework    | React 19 + TypeScript (strict)                                                                   |
+| Framework    | React **19.2.8** + React DOM 19.2.8 + TypeScript (strict)                                        |
 | Build        | Vite                                                                                             |
 | UI           | Chakra UI **v3** (API differs from v2 — `disabled` not `isDisabled`, new `ChakraProvider`, etc.) |
 | Routing      | React Router DOM v7 (`Routes`/`Route` — not v5 `Switch`)                                         |
@@ -63,6 +77,37 @@ These rules govern how you work in this repo, not just how the code is structure
 | Charts       | Recharts (requires fixed-height container — wrap in `Box` with explicit `h` prop)                |
 | Dates        | date-fns v4                                                                                      |
 | Icons        | Lucide React                                                                                     |
+| Animation    | framer-motion **v11** — Chakra peer dependency only, never imported directly in `src/`            |
+
+### React 19 rules
+
+`react`, `react-dom`, `@types/react`, and `@types/react-dom` are upgraded together — never one without the others. Types lagging the runtime silently type-checks React 19 code against an older React and hides real errors.
+
+| React 19 change | What to write |
+|---|---|
+| Global `JSX` namespace removed | `import type { JSX } from 'react'` in any file annotating `JSX.Element` |
+| `useRef` requires an initial value | `useRef<HTMLDivElement>(null)` — never bare `useRef()` |
+| `useRef` returns `RefObject<T>` | Type the generic; do not cast with `as React.MutableRefObject<T>` |
+| `propTypes` ignored at runtime | TS prop types are the only prop contract. Do not add `prop-types`. |
+| `ReactDOM.findDOMNode` removed | Covered by the shim in `src/polyfills.ts` for transitive dependencies. Never call it from app code. |
+
+framer-motion must stay at v11 or newer. v4 carries React 17-era types and breaks every Chakra `Collapse`/`SlideFade` usage under React 19 types.
+
+### Node runtime — pinned
+
+Node **20** is the runtime this project builds and deploys on. Declared in three places, which must never drift apart:
+
+| Where | Value |
+|---|---|
+| `.nvmrc` | `20` — `nvm use` before any npm command |
+| `package.json` `engines` | `node >=20.19.0`, `npm >=10.0.0` — the floor Vite 7 requires |
+| `.npmrc` | `engine-strict=true` — a wrong Node fails the install instead of failing the build later |
+
+`@types/node` tracks the runtime (`^20`). Never let it float ahead — types describing APIs that Node 20 does not have is how code that cannot run in production still type-checks.
+
+Node 18 cannot build this project: Vite 7 declares `node: ^20.19.0 || >=22.12.0`.
+
+**Known drift — do not silently "fix" it.** `azure-pipelines.yml` pins Node `18.x`, below the Vite 7 floor, and `buildspec.yml` overrides `@types/node` at build time. Pipeline files are owned outside this repo's coding scope (see below); report the mismatch, do not edit.
 
 ---
 
@@ -359,6 +404,56 @@ export function extractApiError(err: unknown): string {
 ```
 
 Never show raw `error.message` from axios — it leaks implementation details.
+
+---
+
+## Production Quality Bar (Non-Negotiable)
+
+**This repo ships to production. It is not a prototype, not an MVP, not a demo.** Every screen a user can reach is a finished screen. "Good enough for now" is not a state this codebase is allowed to be in.
+
+### What production-ready means here
+
+| Dimension | Bar |
+|---|---|
+| Visual polish | Consistent spacing scale, alignment, and type hierarchy on every surface. No ad-hoc pixel values. |
+| Completeness | Every state designed: loading, empty, error, partial, permission-denied, success. |
+| Interaction | Every action gives feedback within 100ms — disabled+`loading` button, skeleton, or toast. |
+| Copy | Real, specific, user-facing wording. No `lorem ipsum`, no `Coming soon`, no placeholder labels. |
+| Data | Real API wiring, or an explicit, stated decision to use `src/data/mock.ts`. Never silent fake data. |
+| Accessibility | Semantic elements, labelled controls, visible focus ring, WCAG AA contrast, keyboard-operable. |
+
+### Design consistency rules
+
+- **Theme tokens only.** Colours, spacing, radii, shadows, and font sizes come from the theme (`src/theme/`). A raw hex code or arbitrary `px` value in a component is a defect.
+- **One component per concept.** A second button/card/badge variant is added to the shared component in `components/common/`, never re-implemented locally.
+- **Spacing comes from the Chakra scale** (`gap`, `p`, `m` tokens). Never `marginTop: "13px"`.
+- **Alignment is deliberate.** Labels, values, and actions line up across cards and rows in the same view.
+- **Density matches the surface.** Dashboards and tables run compact; forms and detail pages run roomy. Do not mix within one view.
+
+### Every state is designed — no exceptions
+
+```tsx
+if (isError) return <ErrorBanner message="Failed to load donations." onRetry={refetch} />
+if (isLoading) return <DonationsGridSkeleton />
+if (!data?.length) return <EmptyState title="No donations yet" action={<CreateDonationButton />} />
+return <DonationsGrid donations={data} />
+```
+
+An empty state is a designed screen with an icon, a headline, one sentence of guidance, and the primary action — not a bare "No data" string.
+
+### Explicitly not acceptable
+
+- Unstyled or half-styled surfaces "to be themed later".
+- `console.log` / `console.warn` / `debugger` left in shipped code.
+- Placeholder routes rendering `<div>TODO</div>` or an empty fragment.
+- Dead links, buttons wired to nothing, or handlers that only `console.log`.
+- Layout that visibly shifts after data loads — skeletons must mirror final dimensions.
+- Raw error text, stack traces, or backend identifiers surfaced to the user.
+- Any feature merged without its loading, empty, and error states.
+
+### Ship gate
+
+A change is production-ready only when: `npm run build` and `npm run lint` are clean with zero new warnings; the responsive checklist below passes; every async surface has skeleton + empty + error; all copy is final; no debug output remains; and tests cover the change including its failure paths. If any of these is unmet, report the change as **unfinished and state which gate failed** — never as done.
 
 ---
 
