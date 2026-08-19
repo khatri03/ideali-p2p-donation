@@ -14,10 +14,12 @@ if (Boolean(httpsKeyPath) !== Boolean(httpsCertPath)) {
   );
 }
 
-const devHttps =
-  httpsKeyPath && httpsCertPath
-    ? { key: fs.readFileSync(httpsKeyPath), cert: fs.readFileSync(httpsCertPath) }
-    : undefined;
+// Defaults to the machine-local mkcert pair in ./ssl; DEV_HTTPS_* overrides it for
+// certificates kept outside the repository.
+const devHttps = {
+  key: fs.readFileSync(httpsKeyPath ?? './ssl/key.pem'),
+  cert: fs.readFileSync(httpsCertPath ?? './ssl/cert.pem'),
+};
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -42,9 +44,9 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    https: devHttps,
     open: true,
     host: true,
+    https: devHttps,
     allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io'],
     proxy: {
       '/api': {
