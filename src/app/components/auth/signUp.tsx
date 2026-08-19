@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Image } from "@chakra-ui/react";
 import { Button,Flex,FormControl,FormLabel,Input,InputGroup,InputRightElement,Select,Text,useColorModeValue,useToast,Box,VStack,Icon,HStack,
 } from '@chakra-ui/react';
-import { useGoogleLogin } from '@react-oauth/google';
+import { isGoogleAuthEnabled } from '../../../utils/env';
+import { GoogleSignInButton } from '../common/GoogleSignInButton';
 import HttpClient from '../../service/httpClient/HttpClient';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
@@ -258,49 +259,44 @@ if (cityValidation) {
     navigate('/auth/sign-in/custom');
   };
 
-  // Google OAuth — implicit/token flow (popup, no redirect URI needed)
-  const googleSignUp = useGoogleLogin({
-    flow: 'implicit',
-    scope: 'openid email profile',
-    onSuccess: async (tokenResponse) => {
-      setIsGoogleLoading(true);
-      try {
-        const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        }).then(res => res.json());
+  const handleGoogleSuccess = async (tokenResponse: { access_token: string }) => {
+    setIsGoogleLoading(true);
+    try {
+      const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+      }).then(res => res.json());
 
-        // Populate email
-        if (userInfo.email) {
-          handleChange('userInfo', 'email', userInfo.email);
-        }
-        // Populate organizer name (sanitize to letters + spaces only)
-        if (userInfo.name) {
-          const sanitized = userInfo.name.replace(/[^A-Za-z ]/g, '');
-          handleChange('organizerInfo', 'organizerName', sanitized);
-        }
-        setIsGooglePrefilled(true);
-      } catch (err: any) {
-        toast({
-          description: err?.message || 'Failed to retrieve Google profile.',
-          status: 'error',
-          duration: 4000,
-          isClosable: true,
-          position: 'top-right',
-        });
-      } finally {
-        setIsGoogleLoading(false);
+      if (userInfo.email) {
+        handleChange('userInfo', 'email', userInfo.email);
       }
-    },
-    onError: () => {
+      // Organizer name is letters and spaces only.
+      if (userInfo.name) {
+        handleChange('organizerInfo', 'organizerName', userInfo.name.replace(/[^A-Za-z ]/g, ''));
+      }
+      setIsGooglePrefilled(true);
+    } catch (err: any) {
       toast({
-        description: 'Google sign-up was cancelled or failed. Please try again.',
-        status: 'warning',
-        duration: 3000,
+        description: err?.message || 'Failed to retrieve Google profile.',
+        status: 'error',
+        duration: 4000,
         isClosable: true,
         position: 'top-right',
       });
-    },
-  });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setIsGoogleLoading(false);
+    toast({
+      description: 'Google sign-up was cancelled or failed. Please try again.',
+      status: 'warning',
+      duration: 3000,
+      isClosable: true,
+      position: 'top-right',
+    });
+  };
 
   return (
     <Box
@@ -634,46 +630,25 @@ if (cityValidation) {
               </Link>
             </Text>
 
-            {/* Divider
-            <HStack my={1}>
-              <Box flex={1} h="1px" bg={borderColor} />
-              <Text fontSize="xs" color={textColorSecondary} px={2} whiteSpace="nowrap">
-                or continue with
-              </Text>
-              <Box flex={1} h="1px" bg={borderColor} />
-            </HStack> */}
+            {isGoogleAuthEnabled && (
+              <>
+                <HStack my={1}>
+                  <Box flex={1} h="1px" bg={borderColor} />
+                  <Text fontSize="xs" color={textColorSecondary} px={2} whiteSpace="nowrap">
+                    or continue with
+                  </Text>
+                  <Box flex={1} h="1px" bg={borderColor} />
+                </HStack>
 
-            {/* Google Sign Up Button */}
-            {/* <Button
-              onClick={() => googleSignUp()}
-              h="50px"
-              fontSize="sm"
-              fontWeight="600"
-              borderRadius="16px"
-              bg={useColorModeValue('white', '#1B254B')}
-              color={textColor}
-              border="1px solid"
-              borderColor={borderColor}
-              isLoading={isGoogleLoading}
-              loadingText="Loading..."
-              leftIcon={
-                isGoogleLoading ? undefined :
-                <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                  <path fill="none" d="M0 0h48v48H0z"/>
-                </svg>
-              }
-              _hover={{
-                bg: useColorModeValue('gray.50', '#262f49'),
-                borderColor: '#4285F4',
-                boxShadow: '0 0 0 1px #4285F4',
-              }}
-            >
-              Sign up with Google
-            </Button> */}
+                <GoogleSignInButton
+                  label="Sign up with Google"
+                  loadingText="Loading..."
+                  isLoading={isGoogleLoading}
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                />
+              </>
+            )}
           </VStack>
         </VStack>
       </Box>

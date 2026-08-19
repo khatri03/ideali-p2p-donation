@@ -7,21 +7,25 @@ import { store } from './store';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import App from './App';
+import { ErrorBoundary } from './app/components/common/ErrorBoundary';
+import { GOOGLE_CLIENT_ID } from './utils/env';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
+const container = document.getElementById('root');
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+if (!container) {
+  throw new Error('Root container #root is missing from index.html.');
+}
 
-const AppTree = (
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
-);
+const root = ReactDOM.createRoot(container);
 
 root.render(
-  GOOGLE_CLIENT_ID
-    ? <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>{AppTree}</GoogleOAuthProvider>
-    : AppTree
+  <ErrorBoundary>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID ?? ''}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </GoogleOAuthProvider>
+  </ErrorBoundary>,
 );
