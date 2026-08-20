@@ -24,7 +24,7 @@
     "paths": {
       "@assets/*": ["./src/assets/*"]
     },
-    "types": ["vite/client", "node"]
+    "types": ["vite/client", "node", "vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "src"
