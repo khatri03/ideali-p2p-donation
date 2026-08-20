@@ -26,7 +26,15 @@ These rules govern how you work in this repo, not just how the code is structure
 **After every code change:**
 
 - Run `npm run build` — it type-checks (`tsc`) and builds. It must be clean.
+- Run `npm run test`. Every affected suite must pass, and the change must arrive with tests of its own — success paths and failure paths both.
 - There is **no ESLint config and no `lint` script** in this repo. Do not reference `npm run lint` as if it works, and do not add a linter without approval.
+
+**Before any commit — absolute, no exceptions:**
+
+- Tests are written, tests are run, tests are green. A commit without a test run is not permitted, whatever the deadline, however small the change.
+- "Tests to follow", "trivial change", "docs only", "hotfix" are **not** exemptions. Documentation-only commits still run the suite to prove nothing else drifted.
+- If the runner is missing or broken, that is the blocker to fix first. Do not commit around it.
+- Never bypass a hook with `--no-verify` to escape this rule.
 
 **Universal UI cursor rules:**
 
@@ -89,6 +97,7 @@ Versions below are what `package.json` actually declares. Keep this table in syn
 | Dates          | **No date library.** Native `Date` + `Intl` / `toLocaleDateString`                |
 | Animation      | framer-motion **v11** — Chakra peer dependency only, never imported directly      |
 | Analytics      | `react-ga4`, `web-vitals`                                                         |
+| Testing        | Vitest **3** + happy-dom, Testing Library (react v16, user-event v14, jest-dom v6), MSW v2 |
 
 **Not in this project** — do not write code, docs, or reviews that assume them: Chakra v3, React Router v7, TanStack **Query**, React Hook Form, Zod, date-fns, Zustand.
 
@@ -141,9 +150,12 @@ Node 18 cannot build this project: Vite 7 declares `node: ^20.19.0 || >=22.12.0`
 npm run dev        # vite dev server — localhost:3000, /api proxied to api.testing.ideali.io
 npm run build      # tsc && vite build
 npm run preview    # preview dist
+npm run test       # vitest run — required before every commit
 ```
 
-`npm run start` is an alias of `dev`. There is **no `lint` script and no `test` script.**
+`npm run start` is an alias of `dev`. There is **no `lint` script.**
+
+`npm run test` is the commit gate. `npm run test:watch` and `npm run test:coverage` are also available. See Testing.
 
 ### Dev server over HTTPS (required)
 
@@ -432,7 +444,7 @@ An empty state is a designed screen with an icon, a headline, one sentence of gu
 
 ### Ship gate
 
-A change is production-ready only when: `npm run build` is clean with zero new warnings; the responsive checklist below passes; every async surface has skeleton + empty + error; all copy is final; no debug output remains; and no secret was added. **This repo has no test runner** — see Known Debt — so any change that would normally require tests must say so explicitly in its report. If any gate is unmet, report the change as **unfinished and state which gate failed** — never as done.
+A change is production-ready only when: `npm run build` is clean with zero new warnings; **`npm run test` has been run and every affected suite is green, with new tests covering this change including its failure paths**; the responsive checklist below passes; every async surface has skeleton + empty + error; all copy is final; no debug output remains; and no secret was added. If any gate is unmet, report the change as **unfinished and state which gate failed** — never as done. The test gate is not waivable: an unrunnable suite blocks the commit until the runner works.
 
 ---
 
@@ -565,11 +577,25 @@ FullCalendar event objects are not domain entities — map explicitly before pas
 
 ## Testing
 
-`@testing-library/react`, `@testing-library/user-event` and `@testing-library/jest-dom` are installed, but **there is no test runner, no test script and no test files.** Nothing in this repo is covered.
+**Tests are a commit gate, not a phase.** No check-in, no commit, no push without the suite written and run green. There is no exception for size, urgency, or change type.
 
-Any change shipped today ships untested — say so explicitly in the report rather than implying coverage.
+Runner: **Vitest 3** on **happy-dom**, configured in `vitest.config.ts` — deliberately standalone rather than merged with `vite.config.ts`, which reads the local HTTPS certificate pair at load time and must not be a precondition for running tests. Global setup lives in `src/setupTests.ts` (jest-dom matchers, `cleanup` after each test, `matchMedia`/`scrollTo` stubs Chakra needs). Coverage is `@vitest/coverage-v8`. MSW is installed for future network-level fakes; service tests currently mock `HttpClient` directly.
 
-Adding the runner (Vitest + happy-dom + MSW, and Playwright for e2e) is an approved-dependency change, not a drive-by. When it lands, test: pure utils, validators, services with mocked HTTP, and component behaviour via `userEvent`. Do not test implementation details. Do not write snapshot tests.
+`@testing-library/react` is **v16**, `user-event` **v14**, `jest-dom` **v6**, with `@testing-library/dom` v10 installed explicitly as v16 requires it as a peer. The React 17-era v11/v12/v5 versions this repo used to carry cannot render React 19 — never downgrade them. Playwright/e2e is **not** approved.
+
+Test: pure utils, validators, services with mocked HTTP, and component behaviour via `userEvent`. Do not test implementation details. Do not write snapshot tests.
+
+Every change lands with its tests in the same commit:
+
+- Behaviour a caller depends on, never private internals.
+- The specific outcome asserted, not merely truthy.
+- One reason to fail per test; shared setup in a factory, not copy-paste.
+- Failure paths covered as thoroughly as success paths — bad input, expired auth, malformed payload, missing permission.
+- No sleeps, no ordering dependencies, no shared mutable state.
+
+If a suite fails, quote the failing output and report the change as **unfinished**. Never round a red suite up to done.
+
+This repo's gate is zero failures — there is no baseline of known-red frontend tests, and none is to be created. The backend repo carries five tests that were already red before the peer-to-peer work; they are recorded in `tests/Ideas.API.Tests/KNOWN_FAILURES.md` there and its gate is "no new failures against that list". That list may shrink, never grow.
 
 Test naming: `[Scenario]_[Condition]_[ExpectedResult]` — e.g. `Donate_AmountBelowMinimum_ShowsValidationError`.
 
@@ -599,8 +625,8 @@ Real, measured, and not to be described as solved. Do not add to any of these; r
 | `console.log` in shipped code | ~259 occurrences, including token-refresh logs that print token fragments | Add none. Remove any you touch, especially ones logging tokens. |
 | `: any` annotations | ~609 occurrences | Add none on a service or component boundary. |
 | `strictNullChecks: false` | repo-wide | Write null guards by hand; `tsc` will not catch a missing one. |
-| No test runner | zero coverage | Report every change as untested. |
-| No ESLint config | no lint gate at all | `npm run build` is the only automated gate. |
+| Test coverage is thin | Vitest wired up; only `apiError`, `peerToPeerCopy`, `peerToPeerService`, `usePeerToPeerSettings` and `usePeerToPeerSettingsForm` are covered | Every new change carries its own tests. Do not widen the untested surface. |
+| No ESLint config | no lint gate at all | `npm run build` plus `npm run test` are the automated gates. |
 | `package-lock.json` is gitignored | CI resolves fresh versions every build | Non-reproducible builds; flagged for decision. |
 | `npm audit` findings | includes a critical in `jspdf` | Do not add dependencies while unresolved. |
 | `tsconfig.node.json` `moduleResolution` | `TS6046` — `vite.config.ts` never type-checks | Pre-existing; fix is its own change. |
@@ -613,3 +639,5 @@ Real, measured, and not to be described as solved. Do not add to any of these; r
 - Never commit directly to the default branch unless explicitly told to. Branch first.
 - Conventional commit subjects: `feat(scope):`, `fix(scope):`, `chore(scope):`, `refactor(scope):`, `test(scope):`, `docs(scope):`.
 - One logical change per commit. Never bypass hooks (`--no-verify`) unless explicitly asked.
+- **No check-in or commit without running the test cases. No exceptions.** Suite green before `git commit`, every time — including docs-only and one-line commits.
+- A commit that adds or changes behaviour carries its tests in the same commit. "Tests to follow" is not acceptable.
