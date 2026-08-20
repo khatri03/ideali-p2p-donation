@@ -34,6 +34,9 @@ const DonationModule = lazy(
 const CreateDonationPage = lazy(
   () => import('../app/components/organizer/donation/createDonationPage'),
 );
+const PeerToPeerSettingsPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/PeerToPeerSettingsPage'),
+);
 const MembershipListPage = lazy(
   () =>
     import('../app/components/organizer/membership/pages/MembershipListPage'),
@@ -458,6 +461,13 @@ export const organizerRoutes = [
     path: '/create-donation-campaign/:campaignId?',
     icon: <Icon as={MdBloodtype} width="20px" height="20px" color="inherit" />,
     component: <CreateDonationPage />,
+  },
+  {
+    name: 'Peer-to-peer Fundraising',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer',
+    component: <PeerToPeerSettingsPage />,
+    invisible: true,
   },
 
   // {

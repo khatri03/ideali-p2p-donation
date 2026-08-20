@@ -137,7 +137,9 @@ export default function CreateDonationPage() {
         return !!campaignData.images?.length;
       case 8: // Thank You Email
         return false; // Step 8 data not yet implemented
-      case 9: // Review & Confirm
+      case 9: // Peer-to-peer Fundraising
+        return false; // Loaded by the step itself, not part of the campaign payload
+      case 10: // Review & Confirm
         return true; // Always accessible
       default:
         return false;
@@ -153,7 +155,8 @@ export default function CreateDonationPage() {
     { number: 6, label: 'Campaign Color' },
     { number: 7, label: 'Select Banner' },
     { number: 8, label: 'Thank You Email' },
-    { number: 9, label: 'Review & Confirm' },
+    { number: 9, label: 'Peer-to-peer Fundraising' },
+    { number: 10, label: 'Review & Confirm' },
   ];
 
   const handleFormDataChange = React.useCallback((data: typeof previewData) => {
@@ -306,7 +309,7 @@ const handleSaveAndExitComplete = () => {
                   bg={
                     isCompleted
                       ? 'green.50'
-                      : (step.number === 9 && hasData)
+                      : (step.number === 10 && hasData)
                       ? 'orange.50'
                       : isActive
                       ? 'blue.50'
@@ -316,7 +319,7 @@ const handleSaveAndExitComplete = () => {
                   borderColor={
                     isCompleted
                       ? 'green.300'
-                      : (step.number === 9 && hasData)
+                      : (step.number === 10 && hasData)
                       ? 'orange.300'
                       : isActive
                       ? 'blue.300'
@@ -325,14 +328,14 @@ const handleSaveAndExitComplete = () => {
                   _hover={isAccessible ? {
                     bg: isCompleted
                       ? 'green.100'
-                      : (step.number === 9 && hasData)
+                      : (step.number === 10 && hasData)
                       ? 'orange.100'
                       : isActive
                       ? 'blue.50'
                       : 'gray.50',
                     borderColor: isCompleted
                       ? 'green.400'
-                      : (step.number === 9 && hasData)
+                      : (step.number === 10 && hasData)
                       ? 'orange.400'
                       : isActive
                       ? 'blue.300'
@@ -358,7 +361,7 @@ const handleSaveAndExitComplete = () => {
                         bg={
                           isCompleted
                             ? 'green.50'
-                            : (step.number === 9 && hasData)
+                            : (step.number === 10 && hasData)
                             ? 'orange.500'
                             : isActive
                             ? 'blue.500'
@@ -367,7 +370,7 @@ const handleSaveAndExitComplete = () => {
                         color={
                           isCompleted 
                             ? '#27C281' 
-                            : (step.number === 9 && hasData || isActive) 
+                            : (step.number === 10 && hasData || isActive) 
                               ? 'white' 
                               : 'gray.500'
                         }
@@ -375,7 +378,7 @@ const handleSaveAndExitComplete = () => {
                         fontWeight="bold"
                         transition="all 0.2s"
                       >
-                        {step.number === 9 && hasData && !isCompleted ? '◐' : step.number}
+                        {step.number === 10 && hasData && !isCompleted ? '◐' : step.number}
                       </Flex>
                       {isCompleted && (
                         <Flex
@@ -402,7 +405,7 @@ const handleSaveAndExitComplete = () => {
                       color={
                         isCompleted
                           ? 'green.700'
-                          : (step.number === 9 && hasData)
+                          : (step.number === 10 && hasData)
                           ? 'orange.700'
                           : isActive
                           ? 'blue.700'

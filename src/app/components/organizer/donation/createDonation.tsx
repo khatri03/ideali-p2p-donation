@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, useDisclosure, useToast } from '@chakra-ui/react';
 import {
@@ -35,7 +35,8 @@ import {
   Step6CampaignColor,
   Step7BannerUpload,
   Step8ThankYouEmail,
-  Step9ReviewConfirm,
+  Step9PeerToPeer,
+  Step10ReviewConfirm,
   CampaignSuccessModal,
   PresetAmountsState,
 } from './createDonationSteps';
@@ -276,7 +277,7 @@ export default function CreateDonationModule({
   const [emailSubject, setEmailSubject] = useState('Thank you for Donation');
   const [emailBody, setEmailBody] = useState('');
 
-  // Step 9: Review & Confirm
+  // Step 10: Review & Confirm
   const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
@@ -382,7 +383,7 @@ export default function CreateDonationModule({
   //   }
   // }, [availablePaymentMethods]);
 
-  // Fetch campaign data for review (Step 9)
+  // Fetch campaign data for review (Step 10)
   useEffect(() => {
     const fetchCampaignData = async () => {
       setIsCheckingStatus(true);
@@ -398,7 +399,7 @@ export default function CreateDonationModule({
       }
     };
 
-    if (UniqueId && step === 9) {
+    if (UniqueId && step === 10) {
       fetchCampaignData();
     }
   }, [UniqueId, step]);
@@ -916,7 +917,7 @@ export default function CreateDonationModule({
           );
           dispatch(completeStep(1));
           onStepComplete?.(1);
-          setStep((s) => Math.min(9, s + 1));
+          setStep((s) => Math.min(10, s + 1));
 
           toast({
             title: 'Success',
@@ -956,7 +957,7 @@ export default function CreateDonationModule({
           dispatch(completeStep(1));
           setUniqueId(result.data);
           onStepComplete?.(1);
-          setStep((s) => Math.min(9, s + 1));
+          setStep((s) => Math.min(10, s + 1));
 
           toast({
             title: 'Success',
@@ -1022,7 +1023,7 @@ export default function CreateDonationModule({
           position: 'top-right',
         });
         onStepComplete?.(2);
-        setStep((s) => Math.min(9, s + 1));
+        setStep((s) => Math.min(10, s + 1));
       } else {
         toast({
           title: 'Error',
@@ -1061,7 +1062,7 @@ export default function CreateDonationModule({
       !descriptionData.description ||
       descriptionData.description.trim() === ''
     ) {
-      setStep((s) => Math.min(9, s + 1));
+      setStep((s) => Math.min(10, s + 1));
       return;
     }
 
@@ -1093,7 +1094,7 @@ export default function CreateDonationModule({
           position: 'top-right',
         });
         onStepComplete?.(3);
-        setStep((s) => Math.min(9, s + 1));
+        setStep((s) => Math.min(10, s + 1));
       } else {
         toast({
           title: 'Error',
@@ -1171,7 +1172,7 @@ export default function CreateDonationModule({
           position: 'top-right',
         });
         onStepComplete?.(4);
-        setStep((s) => Math.min(9, s + 1));
+        setStep((s) => Math.min(10, s + 1));
       } else {
         toast({
           title: 'Error',
@@ -1230,7 +1231,7 @@ export default function CreateDonationModule({
 
       await donationService.setPresets(UniqueId, payload, step);
       onStepComplete?.(5);
-      setStep((s) => Math.min(9, s + 1));
+      setStep((s) => Math.min(10, s + 1));
     } catch (error) {
       console.error('Error saving preset donations:', error);
       toast({
@@ -1284,7 +1285,7 @@ export default function CreateDonationModule({
           position: 'top-right',
         });
         onStepComplete?.(6);
-        setStep((s) => Math.min(9, s + 1));
+        setStep((s) => Math.min(10, s + 1));
       } else {
         toast({
           title: 'Error',
@@ -1355,7 +1356,7 @@ export default function CreateDonationModule({
           console.error('Error fetching existing banner for re-upload:', error);
           setIsSubmittingStep(false);
           setIsUploadingBanner(false);
-          setStep((s) => Math.min(9, s + 1));
+          setStep((s) => Math.min(10, s + 1));
           return;
         }
       }
@@ -1384,7 +1385,7 @@ export default function CreateDonationModule({
           position: 'top-right',
         });
         onStepComplete?.(7);
-        setStep((s) => Math.min(9, s + 1));
+        setStep((s) => Math.min(10, s + 1));
       } else {
         toast({
           title: 'Error',
@@ -1427,7 +1428,7 @@ export default function CreateDonationModule({
       await donationService.setEmailTemplate(UniqueId, emailTemplateData, step);
 
       onStepComplete?.(8);
-      setStep((s) => Math.min(9, s + 1));
+      setStep((s) => Math.min(10, s + 1));
     } catch (error) {
       console.error('Error saving email template:', error);
       toast({
@@ -1686,10 +1687,12 @@ export default function CreateDonationModule({
   };
 
   // Navigation handlers
-  const skipStep = () => setStep((s) => Math.min(9, s + 1));
+  const skipStep = () => setStep((s) => Math.min(10, s + 1));
   const prevStep = () => setStep((s) => Math.max(1, s - 1));
   const backToList = () =>
     navigate('/organizer/donation/manage-donation-module');
+
+  const markPeerToPeerComplete = useCallback(() => onStepComplete?.(9), [onStepComplete]);
 
   const handleClose = () => {
     setShowConfetti(false);
@@ -1944,10 +1947,23 @@ export default function CreateDonationModule({
         />
       )}
 
-      {/* Step 9 - Review & Confirm */}
+      {/* Step 9 - Peer-to-peer Fundraising */}
       {step === 9 && (
+        <Step9PeerToPeer
+          campaignUniqueId={UniqueId}
+          onSaveAndNext={() => setStep((s) => Math.min(10, s + 1))}
+          onSkip={skipStep}
+          onPrevStep={prevStep}
+          onExit={backToList}
+          onStepComplete={markPeerToPeerComplete}
+          isSubmitting={isSubmittingStep}
+        />
+      )}
+
+      {/* Step 10 - Review & Confirm */}
+      {step === 10 && (
         <>
-          <Step9ReviewConfirm
+          <Step10ReviewConfirm
             campaignData={campaignData}
             isLoading={isCheckingStatus}
             isAlreadyPublished={isAlreadyPublished}

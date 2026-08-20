@@ -126,7 +126,7 @@ export interface Step6CampaignColorProps extends BaseStepProps {
 /**
  * Step 9: Review & Confirm Props
  */
-export interface Step9ReviewConfirmProps extends BaseStepProps {
+export interface Step10ReviewConfirmProps extends BaseStepProps {
   campaignData: CampaignData | null;
   isLoading: boolean;
   isAlreadyPublished: boolean;

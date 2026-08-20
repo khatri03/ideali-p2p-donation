@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import CommonMethod from '../../../../service/helpers/commonMethod';
-import { Step9ReviewConfirmProps } from './shared/types';
+import { Step10ReviewConfirmProps } from './shared/types';
 import StepNavigationButtons from './shared/StepNavigationButtons';
 
 const stripHtmlTags = (html: string): string => {
@@ -11,7 +11,7 @@ const stripHtmlTags = (html: string): string => {
   return tempDiv.textContent || tempDiv.innerText || '';
 };
 
-export default function Step9ReviewConfirm({
+export default function Step10ReviewConfirm({
   campaignData,
   isLoading,
   isAlreadyPublished,
@@ -19,7 +19,7 @@ export default function Step9ReviewConfirm({
   onPrevStep,
   onBackToList,
   isSubmitting,
-}: Step9ReviewConfirmProps) {
+}: Step10ReviewConfirmProps) {
   return (
     <>
       <Text fontSize="32" mb="4">Review & Confirm</Text>

@@ -58,6 +58,7 @@ import { ShareDonationModal } from './organizerDonationComponents/ShareDonationM
 import { hasPermission, hasAnyPermission } from 'app/service/organizer/rolesPermissions/permissionsService';
 import { AutoSyncModal } from "../../organizer/donation/organizerDonationComponents/autoSyncModal";
 import contactSyncService from "../../../service/organizer/Settings/contactSyncService";
+import { PeerToPeerMenuItem } from './peerToPeer/PeerToPeerMenuItem';
 
 interface DonationListProps {
   currentPage: number;
@@ -299,6 +300,10 @@ const handleAutoSync = (campaignId: string) => {
         isClosable: true,
       });
     }
+  };
+
+  const handlePeerToPeer = (campaignId: string) => {
+    navigate(`/organizer/donation/campaign/${campaignId}/peer-to-peer`);
   };
 
   const handleRecurring = (campaignId: string) => {
@@ -1018,6 +1023,10 @@ const handleAutoSync = (campaignId: string) => {
             Recurring Donations
           </MenuItem>
         )}
+        <PeerToPeerMenuItem
+          status={campaign.status}
+          onOpen={() => handlePeerToPeer(campaign.uniqueId)}
+        />
         <MenuItem onClick={() => handleDuplicate(campaign.uniqueId)}>
           Make a Copy
         </MenuItem>
@@ -1133,6 +1142,10 @@ const handleAutoSync = (campaignId: string) => {
               Recurring Donations
             </MenuItem>
           )}
+          <PeerToPeerMenuItem
+            status={campaign.status}
+            onOpen={() => handlePeerToPeer(campaign.uniqueId)}
+          />
           <MenuItem onClick={() => handleDuplicate(campaign.uniqueId)}>
             Make a Copy
           </MenuItem>

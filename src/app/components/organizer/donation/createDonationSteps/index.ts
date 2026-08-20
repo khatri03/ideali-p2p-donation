@@ -7,7 +7,8 @@ export { default as Step5PresetDonations } from './Step5PresetDonations';
 export { default as Step6CampaignColor } from './Step6CampaignColor';
 export { default as Step7BannerUpload } from './Step7BannerUpload';
 export { default as Step8ThankYouEmail } from './Step8ThankYouEmail';
-export { default as Step9ReviewConfirm } from './Step9ReviewConfirm';
+export { default as Step9PeerToPeer } from './Step9PeerToPeer';
+export { default as Step10ReviewConfirm } from './Step10ReviewConfirm';
 
 // Shared Components
 export { default as StepNavigationButtons } from './shared/StepNavigationButtons';
@@ -22,7 +23,7 @@ export type {
   Step4PaymentAccountProps,
   Step5PresetDonationsProps,
   Step6CampaignColorProps,
-  Step9ReviewConfirmProps,
+  Step10ReviewConfirmProps,
   StepNavigationButtonsProps,
   PresetAmountItem,
   PresetAmountsState,
@@ -30,4 +31,5 @@ export type {
 
 export type { Step7BannerUploadProps } from './Step7BannerUpload';
 export type { Step8ThankYouEmailProps } from './Step8ThankYouEmail';
+export type { Step9PeerToPeerProps } from './Step9PeerToPeer';
 export type { CampaignSuccessModalProps } from './shared/CampaignSuccessModal';

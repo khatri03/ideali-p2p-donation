@@ -37,6 +37,7 @@ import ConfirmationModal from '../../common/ConfirmationModal';
 import CustomButton from 'app/components/common/CustomButton';
 import Loader from 'app/components/common/Loader';
 import { hasPermission, hasAnyPermission } from 'app/service/organizer/rolesPermissions/permissionsService';
+import { PeerToPeerMenuItem } from '../donation/peerToPeer/PeerToPeerMenuItem';
 
 const recentCampaigns: React.FC = () => {
   // Campaign permissions
@@ -137,6 +138,10 @@ const recentCampaigns: React.FC = () => {
 
   const handleRecurring = (campaignId: string) => {
     navigate(`/organizer/donation/recurring-donations/${campaignId}`);
+  };
+
+  const handlePeerToPeer = (campaignId: string) => {
+    navigate(`/organizer/donation/campaign/${campaignId}/peer-to-peer`);
   };
 
   const handleDeleteClick = (campaignId: string) => {
@@ -556,6 +561,10 @@ transform="translateY(-2px)"
               Recurring Donations
             </MenuItem>
           )}
+          <PeerToPeerMenuItem
+            status={campaign.status}
+            onOpen={() => handlePeerToPeer(campaign.uniqueId)}
+          />
           {canDelete && (
             <MenuItem
               onClick={() => handleDeleteClick(campaign.uniqueId)}
@@ -659,6 +668,10 @@ transform="translateY(-2px)"
               Recurring Donations
             </MenuItem>
           )}
+          <PeerToPeerMenuItem
+            status={campaign.status}
+            onOpen={() => handlePeerToPeer(campaign.uniqueId)}
+          />
           {canDelete && (
             <MenuItem
               onClick={() => handleDeleteClick(campaign.uniqueId)}
