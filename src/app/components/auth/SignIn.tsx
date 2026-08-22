@@ -4,11 +4,9 @@ import { Image } from "@chakra-ui/react";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   Icon,
   Input,
   InputGroup,
