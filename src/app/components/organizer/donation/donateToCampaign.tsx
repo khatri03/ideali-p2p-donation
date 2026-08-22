@@ -42,6 +42,7 @@ import DonationFailureModal from './organizerDonationComponents/DonationFailureM
 import DonationProgressIndicator from './organizerDonationComponents/DonationProgressIndicator';
 import CampaignDetails from './organizerDonationComponents/CampaignDetails';
 import FundraiseForThisButton from './peerToPeer/join/FundraiseForThisButton';
+import SupportingFundraiserBanner from './peerToPeer/page/SupportingFundraiserBanner';
 import DonationAmountSelector from './organizerDonationComponents/DonationAmountSelector';
 import DonationStep2Content from './organizerDonationComponents/DonationStep2Content';
 import StripeProvider, { getStripeInstance } from '../../common/StripeProvider';
@@ -59,8 +60,33 @@ import PaymentAccountService from '../../../service/organizer/donation/paymentAc
 import paymentAccountService from '../../../service/organizer/donation/paymentAccountService';
 const TURNSTILE_SITE_KEY = '0x4AAAAAACVCN7LaNG3PT6At';
 
-export default function DonateToCampaign() {
-  const { campaignId } = useParams();
+export interface FundraiserDonationContext {
+  /** The supporter page address the donor arrived through. Sent with the gift so the server can credit it. */
+  slug: string;
+  displayName: string;
+  campaignName: string;
+  organizerName: string;
+  /** Where the back link goes, so a donor can return to the page they came from. */
+  pagePath: string;
+}
+
+interface DonateToCampaignProps {
+  /**
+   * Supplied when this screen is reached through a fundraiser page, whose route carries slugs rather
+   * than the campaign identifier. Left out on the campaign's own donate route, which keeps reading the
+   * identifier from the URL exactly as it always has.
+   */
+  campaignUniqueId?: string;
+  fundraiser?: FundraiserDonationContext;
+}
+
+export default function DonateToCampaign({
+  campaignUniqueId,
+  fundraiser,
+}: DonateToCampaignProps = {}) {
+  const params = useParams();
+  const campaignId = campaignUniqueId ?? params.campaignId;
+  const fundraiserSlug = fundraiser?.slug;
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -838,6 +864,7 @@ export default function DonateToCampaign() {
             description: formData.tipDescription || undefined,
             amount: formData.tipAmount || undefined,
           },
+          fundraiserSlug,
         };
 
         await dispatch(
@@ -960,6 +987,7 @@ export default function DonateToCampaign() {
             description: formData.tipDescription || undefined,
             amount: formData.tipAmount || undefined,
           },
+          fundraiserSlug,
         };
 
         await dispatch(
@@ -997,6 +1025,7 @@ export default function DonateToCampaign() {
             description: formData.tipDescription || undefined,
             amount: formData.tipAmount || undefined,
           },
+          fundraiserSlug,
         };
 
         await dispatch(
@@ -1068,6 +1097,7 @@ export default function DonateToCampaign() {
           description: formData.tipDescription || undefined,
           amount: formData.tipAmount || undefined,
         },
+        fundraiserSlug,
       };
 
       // ✅ Add these logs here, right before dispatch
@@ -1145,6 +1175,7 @@ export default function DonateToCampaign() {
           description: formData.tipDescription || undefined,
           amount: formData.tipAmount || undefined,
         },
+        fundraiserSlug,
       };
       await dispatch(
         submitDonation({
@@ -1399,6 +1430,15 @@ export default function DonateToCampaign() {
           </Flex>
         </Container>
       </Box>
+
+      {fundraiser && (
+        <SupportingFundraiserBanner
+          displayName={fundraiser.displayName}
+          campaignName={fundraiser.campaignName}
+          organizerName={fundraiser.organizerName}
+          pagePath={fundraiser.pagePath}
+        />
+      )}
 
       <Box
         position="relative"

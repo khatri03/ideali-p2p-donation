@@ -73,3 +73,6 @@ export const verifyEmailUrl = (campaignUniqueId: string): string =>
 
 export const resendVerificationUrl = (campaignUniqueId: string): string =>
   `/api/donation/campaign/${campaignUniqueId}/peer-to-peer/resend-verification`;
+
+export const fundraiserPageUrl = (campaignSlug: string, fundraiserSlug: string): string =>
+  `/api/campaigns/${encodeURIComponent(campaignSlug)}/${encodeURIComponent(fundraiserSlug)}`;

@@ -16,13 +16,24 @@ import ForgotPassword from './app/components/auth/forgotPassword';
 import CampaignList from '../src/app/components/organizer/donation/publicCampaigns/campaignList';
 import FundraiserJoinPage from './app/components/organizer/donation/peerToPeer/join/FundraiserJoinPage';
 import VerifyEmailPage from './app/components/organizer/donation/peerToPeer/verify/VerifyEmailPage';
+import SuspenseLoader from './app/components/common/SuspenseLoader';
+
 import {
   ChakraProvider,
   // extendTheme
 } from '@chakra-ui/react';
 import initialTheme from './theme/theme'; //  { themeGreen }
-import { useState, useEffect } from 'react';
+import { Suspense, lazy, useState, useEffect } from 'react';
 import ReactGA from 'react-ga4';
+
+// The public fundraiser surfaces are reached by strangers following a shared link, so they are split
+// out of the bundle every signed-in screen already pays for.
+const FundraiserPageScreen = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/page/FundraiserPage'),
+);
+const FundraiserDonatePage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/page/FundraiserDonatePage'),
+);
 
 ReactGA.initialize('G-R0531NLBYE');
 // Chakra imports
@@ -66,6 +77,24 @@ export default function Main() {
         <Route
           path="/donation/campaign/:campaignUniqueId/peer-to-peer/verify-email"
           element={<VerifyEmailPage />}
+        />
+        {/* Mirrors the backend route exactly, minus /api. The donate route is declared first so a
+            fundraiser whose page address ends in "donate" cannot shadow it. */}
+        <Route
+          path="/campaigns/:campaignSlug/:fundraiserSlug/donate"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <FundraiserDonatePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/campaigns/:campaignSlug/:fundraiserSlug"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <FundraiserPageScreen />
+            </Suspense>
+          }
         />
         <Route path="/campaign-list/:organizerUniqueId" element={<CampaignList />} />
         <Route path="/create-donation-campaign" element={<CreateDonationPage />} />
