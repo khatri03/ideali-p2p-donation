@@ -27,6 +27,7 @@ These rules govern how you work in this repo, not just how the code is structure
 
 - Run `npm run build` — it type-checks (`tsc`) and builds. It must be clean.
 - Run `npm run test`. Every affected suite must pass, and the change must arrive with tests of its own — success paths and failure paths both.
+- Run `npm run test:e2e` when the change touches a screen, an endpoint or a database constraint. Verify the result yourself against the running application; do not hand the user a manual checklist in place of a test.
 - There is **no ESLint config and no `lint` script** in this repo. Do not reference `npm run lint` as if it works, and do not add a linter without approval.
 
 **Before any commit — absolute, no exceptions:**
@@ -98,6 +99,7 @@ Versions below are what `package.json` actually declares. Keep this table in syn
 | Animation      | framer-motion **v11** — Chakra peer dependency only, never imported directly      |
 | Analytics      | `react-ga4`, `web-vitals`                                                         |
 | Testing        | Vitest **3** + happy-dom, Testing Library (react v16, user-event v14, jest-dom v6), MSW v2 |
+| End-to-end     | Playwright **1.62** — `e2e/`, chromium, desktop + 375px projects                   |
 
 **Not in this project** — do not write code, docs, or reviews that assume them: Chakra v3, React Router v7, TanStack **Query**, React Hook Form, Zod, date-fns, Zustand.
 
@@ -151,11 +153,15 @@ npm run dev        # vite dev server — localhost:3000, /api proxied to api.tes
 npm run build      # tsc && vite build
 npm run preview    # preview dist
 npm run test       # vitest run — required before every commit
+npm run test:e2e   # tsc -p tsconfig.e2e.json && playwright test — required before every phase is called done
 ```
 
 `npm run start` is an alias of `dev`. There is **no `lint` script.**
 
 `npm run test` is the commit gate. `npm run test:watch` and `npm run test:coverage` are also available. See Testing.
+
+`npm run test:e2e` is the phase gate and needs the dev server and the API both running. See
+End-to-End Verification.
 
 ### Dev server over HTTPS (required)
 
@@ -225,6 +231,15 @@ src/
 ├── App.tsx                     # router + providers
 ├── index.tsx                   # entry
 └── polyfills.ts                # findDOMNode shim for transitive deps
+
+e2e/                            # Playwright — see End-to-End Verification
+├── *.ui.spec.ts                # browser journeys, run at desktop and 375px
+├── *.api.spec.ts               # endpoint contract and authorisation
+├── *.database.spec.ts          # schema constraints
+├── auth.setup.ts               # signs in once, shares the session
+└── support/                    # environment, SQL access, campaign fixtures
+
+docs/                           # plan of record — p2p-build-plan.html
 ```
 
 ### Structure Rules
@@ -581,7 +596,7 @@ FullCalendar event objects are not domain entities — map explicitly before pas
 
 Runner: **Vitest 3** on **happy-dom**, configured in `vitest.config.ts` — deliberately standalone rather than merged with `vite.config.ts`, which reads the local HTTPS certificate pair at load time and must not be a precondition for running tests. Global setup lives in `src/setupTests.ts` (jest-dom matchers, `cleanup` after each test, `matchMedia`/`scrollTo` stubs Chakra needs). Coverage is `@vitest/coverage-v8`. MSW is installed for future network-level fakes; service tests currently mock `HttpClient` directly.
 
-`@testing-library/react` is **v16**, `user-event` **v14**, `jest-dom` **v6**, with `@testing-library/dom` v10 installed explicitly as v16 requires it as a peer. The React 17-era v11/v12/v5 versions this repo used to carry cannot render React 19 — never downgrade them. Playwright/e2e is **not** approved.
+`@testing-library/react` is **v16**, `user-event` **v14**, `jest-dom` **v6**, with `@testing-library/dom` v10 installed explicitly as v16 requires it as a peer. The React 17-era v11/v12/v5 versions this repo used to carry cannot render React 19 — never downgrade them.
 
 Test: pure utils, validators, services with mocked HTTP, and component behaviour via `userEvent`. Do not test implementation details. Do not write snapshot tests.
 
@@ -598,6 +613,84 @@ If a suite fails, quote the failing output and report the change as **unfinished
 This repo's gate is zero failures — there is no baseline of known-red frontend tests, and none is to be created. The backend repo carries five tests that were already red before the peer-to-peer work; they are recorded in `tests/Ideas.API.Tests/KNOWN_FAILURES.md` there and its gate is "no new failures against that list". That list may shrink, never grow.
 
 Test naming: `[Scenario]_[Condition]_[ExpectedResult]` — e.g. `Donate_AmountBelowMinimum_ShowsValidationError`.
+
+---
+
+## End-to-End Verification (Mandatory)
+
+Vitest proves a component behaves in isolation. It cannot prove the screen renders against the real
+API, that the endpoint refuses the wrong caller, or that a database constraint holds. **Playwright is
+the gate for those, and it is not optional.** No phase, feature or fix is reported complete until its
+end-to-end coverage exists and passes.
+
+### Running it
+
+```bash
+npm run test:e2e          # type-checks e2e, then runs every project
+npm run test:e2e:ui       # interactive runner
+npm run test:e2e:report   # last HTML report
+```
+
+Both servers must be up first: `npm run dev` (https://localhost:3000) and the API from
+`D:\V4Ideas\Ideali\ideali.api` (https://localhost:7163).
+
+### Layout
+
+| Path | Holds |
+|---|---|
+| `e2e/*.ui.spec.ts` | Browser journeys, run at desktop **and** 375px |
+| `e2e/*.api.spec.ts` | Endpoint contract, authorisation and error shape |
+| `e2e/*.database.spec.ts` | Constraints that only exist in the schema — unique indexes, filters |
+| `e2e/auth.setup.ts` | Signs in through the real form, saves the session for every other project |
+| `e2e/support/` | Environment reader, SQL access, campaign fixtures |
+
+The `desktop` and `mobile` projects run the **same** `.ui.spec.ts` files at 1280px and 375px. A
+responsive regression fails the suite rather than waiting for someone to resize a browser.
+
+### Credentials
+
+Every value lives in **`.env.e2e.local`**, which is gitignored. `.env.e2e.example` is the committed
+template and carries no values. The database password is never copied into this repo at all — the
+suite reads the API's own gitignored secrets file, so the credential exists in exactly one place.
+
+A test that hardcodes a username, password or connection string is a security defect, not a shortcut.
+So is any error path that lets `execFileSync` put a password into a report or trace file — see
+`withoutCredentials` in `e2e/support/database.ts`.
+
+### Rules
+
+- Assert the rule a user depends on, never the implementation. If a test asserts a control is
+  disabled, first confirm that is the actual designed behaviour — not what you assumed it would be.
+- Test data comes from the database via `e2e/support/campaignFixtures.ts`. Never hardcode a GUID.
+- Anything a test writes to the database, it deletes afterwards. Rows are tagged so cleanup is exact.
+- Authorisation is proven from the outside: no token, a forged token, and another organiser's record
+  must each be refused, and the refusal must not reveal whether the record exists.
+- Every UI spec asserts no horizontal page scroll and 44px minimum touch targets.
+
+### Phase gate
+
+At the end of every phase, verify the work yourself rather than handing over a manual checklist:
+
+1. `npm run build` — clean.
+2. `npm run test` — every unit suite green.
+3. `npm run test:e2e` — every project green, desktop and mobile.
+4. Read the data back out of the database to confirm the API actually persisted what the UI sent.
+5. Strike through the delivered items in `docs/p2p-build-plan.html` — see Development Document below.
+
+Report a phase complete only when all five are done. If one cannot be run, that is the blocker to fix
+first; say so plainly and name the gate that failed.
+
+---
+
+## Development Document
+
+`docs/p2p-build-plan.html` is the plan of record for the peer-to-peer work.
+
+- Every phase is a collapsible accordion, with a control to expand or collapse all of them at once.
+- An item is struck through **only** once it is developed, tested and verified end to end. Not when
+  the code is written — when the gate above has passed against it.
+- Keeping it current is the agent's responsibility, not the reader's. It is updated in the same
+  change that delivers the work, never as a follow-up.
 
 ---
 
@@ -625,7 +718,7 @@ Real, measured, and not to be described as solved. Do not add to any of these; r
 | `console.log` in shipped code | ~259 occurrences, including token-refresh logs that print token fragments | Add none. Remove any you touch, especially ones logging tokens. |
 | `: any` annotations | ~609 occurrences | Add none on a service or component boundary. |
 | `strictNullChecks: false` | repo-wide | Write null guards by hand; `tsc` will not catch a missing one. |
-| Test coverage is thin | Vitest wired up; only `apiError`, `peerToPeerCopy`, `peerToPeerService`, `usePeerToPeerSettings` and `usePeerToPeerSettingsForm` are covered | Every new change carries its own tests. Do not widen the untested surface. |
+| Test coverage is thin | Vitest covers `apiError`, `returnPath`, `session`, `peerToPeerCopy`, `peerToPeerService`, `usePeerToPeerSettings`, `usePeerToPeerSettingsForm`, `PeerToPeerMenuItem`, `Step9PeerToPeer`, `SignIn`, `FundraiseForThisButton`, `FundraiserJoinPage`, `supporterSignUpService` and `SupporterSignUpPage`. Playwright covers the peer-to-peer settings screen and endpoint, the join screen and endpoint, the supporter sign-up screen and endpoint, and the fundraiser and campaign-slug uniqueness indexes. Everything else is uncovered. | Every new change carries its own tests, unit and end-to-end. Do not widen the untested surface. |
 | No ESLint config | no lint gate at all | `npm run build` plus `npm run test` are the automated gates. |
 | `package-lock.json` is gitignored | CI resolves fresh versions every build | Non-reproducible builds; flagged for decision. |
 | `npm audit` findings | includes a critical in `jspdf` | Do not add dependencies while unresolved. |
