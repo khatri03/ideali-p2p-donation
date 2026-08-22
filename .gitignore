@@ -35,3 +35,9 @@ key.pem
 
 # build artifacts
 *.tsbuildinfo
+
+# e2e
+/e2e/.auth
+/playwright-report
+/test-results
+.env.e2e.local
