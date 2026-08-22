@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Modal,
   ModalBody,
@@ -13,10 +14,21 @@ import {
 } from '@chakra-ui/react';
 import { fundraiserJoinPath } from 'app/utils/returnPath';
 import CampaignContextBanner from '../join/CampaignContextBanner';
-import { ACCESS_HEADING, SIGN_IN_TAB, SIGN_UP_TAB } from './accessCopy';
+import {
+  ACCESS_HEADING,
+  BANNER_SIGN_IN_ACTION,
+  BANNER_SIGN_IN_NOTE,
+  BANNER_SIGN_UP_ACTION,
+  BANNER_SIGN_UP_NOTE,
+  SIGN_IN_TAB,
+  SIGN_UP_TAB,
+} from './accessCopy';
 import SupporterSignInPanel from './SupporterSignInPanel';
 import SupporterSignUpPanel from './SupporterSignUpPanel';
 import { useSupporterSignIn } from './useSupporterSignIn';
+
+const SIGN_IN_TAB_INDEX = 0;
+const SIGN_UP_TAB_INDEX = 1;
 
 interface FundraiseAccessModalProps {
   campaignUniqueId: string;
@@ -38,9 +50,11 @@ export const FundraiseAccessModal = ({
   campaignUniqueId,
   isOpen,
   onClose,
-  initialTabIndex = 0,
+  initialTabIndex = SIGN_IN_TAB_INDEX,
 }: FundraiseAccessModalProps) => {
   const signIn = useSupporterSignIn(fundraiserJoinPath(campaignUniqueId));
+  const [openTabIndex, setOpenTabIndex] = useState(initialTabIndex);
+  const isSigningIn = openTabIndex === SIGN_IN_TAB_INDEX;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'full', md: 'lg' }} isCentered>
@@ -52,13 +66,19 @@ export const FundraiseAccessModal = ({
         <ModalBody pb={6}>
           <CampaignContextBanner
             campaignUniqueId={campaignUniqueId}
-            action="Sign in"
-            afterwardsNote="You will land straight on your fundraising page."
+            action={isSigningIn ? BANNER_SIGN_IN_ACTION : BANNER_SIGN_UP_ACTION}
+            afterwardsNote={isSigningIn ? BANNER_SIGN_IN_NOTE : BANNER_SIGN_UP_NOTE}
           />
 
           {/* Only the open tab is mounted. Rendering both would put two email fields in the page at
               once, which reads as two separate forms to anyone using a screen reader. */}
-          <Tabs colorScheme="brand" defaultIndex={initialTabIndex} isFitted isLazy>
+          <Tabs
+            colorScheme="brand"
+            index={openTabIndex}
+            onChange={setOpenTabIndex}
+            isFitted
+            isLazy
+          >
             <TabList mb={5}>
               <Tab minH="44px" sx={{ cursor: 'pointer' }}>
                 {SIGN_IN_TAB}
@@ -70,10 +90,16 @@ export const FundraiseAccessModal = ({
 
             <TabPanels>
               <TabPanel px={0}>
-                <SupporterSignInPanel signIn={signIn} />
+                <SupporterSignInPanel
+                  signIn={signIn}
+                  onSwitchToSignUp={() => setOpenTabIndex(SIGN_UP_TAB_INDEX)}
+                />
               </TabPanel>
               <TabPanel px={0}>
-                <SupporterSignUpPanel campaignUniqueId={campaignUniqueId} />
+                <SupporterSignUpPanel
+                  campaignUniqueId={campaignUniqueId}
+                  onSwitchToSignIn={() => setOpenTabIndex(SIGN_IN_TAB_INDEX)}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

@@ -187,6 +187,56 @@ describe('FundraiseAccessModal', () => {
     ).toBeInTheDocument();
   });
 
+  /**
+   * A visitor who guessed the wrong tab can correct it from the form they are looking at. Switching
+   * moves the open tab rather than navigating, so the campaign they came for is not lost.
+   */
+  it('SignIn_VisitorWithNoAccount_IsOfferedTheSignUpFormWithoutLeavingTheModal', async () => {
+    renderModal();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Sign up here' }));
+
+    expect(await screen.findByRole('button', { name: 'Create my account' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Sign in' })).not.toBeInTheDocument();
+  });
+
+  it('SignUp_VisitorWhoAlreadyHasAnAccount_IsOfferedTheSignInFormWithoutLeavingTheModal', async () => {
+    renderModal();
+    await openCreateAccount();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Sign in here' }));
+
+    expect(await screen.findByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Create my account' })).not.toBeInTheDocument();
+  });
+
+  /** The banner sits above both forms, so it has to describe whichever one is open. */
+  it('Access_CreateAccountTabOpened_DescribesCreatingAnAccountRatherThanSigningIn', async () => {
+    renderModal();
+    await openCreateAccount();
+
+    expect(
+      await screen.findByText(/Create an account to fundraise for/),
+    ).toBeInTheDocument();
+  });
+
+  /**
+   * The link is offered again once the account exists, because confirming the address is what the
+   * person does next and signing in is what they do after that.
+   */
+  it('SignUp_Completed_StillOffersTheWayBackToSigningIn', async () => {
+    signUpAsSupporter.mockResolvedValue('Check your inbox and confirm your email address.');
+
+    renderModal();
+    await openCreateAccount();
+    await fillSignUp();
+    await userEvent.click(screen.getByRole('button', { name: 'Create my account' }));
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Sign in here' }));
+
+    expect(await screen.findByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+  });
+
   it('SignUp_ServerRefusesTheRequest_ReportsItAndKeepsTheFormOnScreen', async () => {
     signUpAsSupporter.mockRejectedValue(new Error('Campaign not found.'));
 

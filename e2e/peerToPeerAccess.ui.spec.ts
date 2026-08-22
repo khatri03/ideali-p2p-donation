@@ -105,6 +105,31 @@ test.describe('Getting into fundraising without a session', () => {
     ).toBeVisible();
   });
 
+  /**
+   * The tab strip is not the only way across. Someone reading the form in front of them gets the
+   * other one offered at its foot, and taking it keeps them on the campaign they came for.
+   */
+  test('SignIn_VisitorWithNoAccount_CrossesToSignUpWithoutLeavingTheCampaign', async ({ page }) => {
+    await page.goto(joinPath);
+
+    await page.getByRole('button', { name: 'Sign up here' }).click();
+
+    await expect(page.getByRole('button', { name: 'Create my account' })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer/join$`));
+  });
+
+  test('SignUp_VisitorWhoAlreadyHasAnAccount_CrossesBackToSignInWithoutLeavingTheCampaign', async ({
+    page,
+  }) => {
+    await page.goto(joinPath);
+    await openCreateAccount(page);
+
+    await page.getByRole('button', { name: 'Sign in here' }).click();
+
+    await expect(page.locator(signInPasswordField)).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer/join$`));
+  });
+
   test('SignUp_PasswordBelowThePolicy_ExplainsItselfAndSendsNothing', async ({ page }) => {
     const attempts = await countRequestsTo(page, '**/peer-to-peer/supporter-sign-up');
 
@@ -192,11 +217,13 @@ test.describe('Getting into fundraising without a session', () => {
     await page.goto(joinPath);
 
     const signInTab = await page.getByRole('tab', { name: 'Sign in' }).boundingBox();
+    const crossLink = await page.getByRole('button', { name: 'Sign up here' }).boundingBox();
     const email = await page.locator(signInEmailField).boundingBox();
     const password = await page.locator(signInPasswordField).boundingBox();
     const submit = await page.getByRole('button', { name: 'Sign in', exact: true }).boundingBox();
 
     expect(signInTab?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(crossLink?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(email?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(password?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(submit?.height ?? 0).toBeGreaterThanOrEqual(44);

@@ -7,23 +7,30 @@ import { extractApiError } from 'app/utils/apiError';
 import SupporterSignUpForm from '../signUp/SupporterSignUpForm';
 import { useSupporterSignUpForm } from '../signUp/useSupporterSignUpForm';
 import { SIGN_UP_INTRO } from '../signUp/signUpCopy';
+import PanelSwitchPrompt from './PanelSwitchPrompt';
 import {
   CHECK_YOUR_INBOX_HEADING,
   RESEND_FAILED,
   RESEND_PROMPT,
   RESEND_SUBMIT,
   RESEND_WORKING,
+  TO_SIGN_IN_ACTION,
+  TO_SIGN_IN_PROMPT,
 } from './accessCopy';
 
 interface SupporterSignUpPanelProps {
   campaignUniqueId: string;
+  onSwitchToSignIn: () => void;
 }
 
 /**
  * The create-account half of the fundraising modal. A completed sign-up does not sign anybody in:
  * the account exists but its address is unproven, and the link sent by email is what settles that.
  */
-export const SupporterSignUpPanel = ({ campaignUniqueId }: SupporterSignUpPanelProps) => {
+export const SupporterSignUpPanel = ({
+  campaignUniqueId,
+  onSwitchToSignIn,
+}: SupporterSignUpPanelProps) => {
   const form = useSupporterSignUpForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -97,6 +104,12 @@ export const SupporterSignUpPanel = ({ campaignUniqueId }: SupporterSignUpPanelP
             </Text>
           )}
         </Stack>
+
+        <PanelSwitchPrompt
+          prompt={TO_SIGN_IN_PROMPT}
+          action={TO_SIGN_IN_ACTION}
+          onSwitch={onSwitchToSignIn}
+        />
       </Stack>
     );
   }
@@ -115,6 +128,12 @@ export const SupporterSignUpPanel = ({ campaignUniqueId }: SupporterSignUpPanelP
       )}
 
       <SupporterSignUpForm form={form} isSubmitting={isSubmitting} onSubmit={handleSubmit} />
+
+      <PanelSwitchPrompt
+        prompt={TO_SIGN_IN_PROMPT}
+        action={TO_SIGN_IN_ACTION}
+        onSwitch={onSwitchToSignIn}
+      />
     </Stack>
   );
 };

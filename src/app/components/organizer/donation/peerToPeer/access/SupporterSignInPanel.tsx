@@ -11,17 +11,21 @@ import {
   Text,
 } from '@chakra-ui/react';
 import TwoFactorAuthModal from 'app/components/auth/TwoFactorAuthModal';
+import PanelSwitchPrompt from './PanelSwitchPrompt';
 import {
   SIGN_IN_EMAIL_LABEL,
   SIGN_IN_INTRO,
   SIGN_IN_PASSWORD_LABEL,
   SIGN_IN_SUBMIT,
   SIGN_IN_WORKING,
+  TO_SIGN_UP_ACTION,
+  TO_SIGN_UP_PROMPT,
 } from './accessCopy';
 import { SupporterSignInState } from './useSupporterSignIn';
 
 interface SupporterSignInPanelProps {
   signIn: SupporterSignInState;
+  onSwitchToSignUp: () => void;
 }
 
 /**
@@ -29,7 +33,7 @@ interface SupporterSignInPanelProps {
  * established by the shared login code, which is what keeps two-factor verification from being
  * something this surface could quietly skip.
  */
-export const SupporterSignInPanel = ({ signIn }: SupporterSignInPanelProps) => {
+export const SupporterSignInPanel = ({ signIn, onSwitchToSignUp }: SupporterSignInPanelProps) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void signIn.submit();
@@ -94,6 +98,12 @@ export const SupporterSignInPanel = ({ signIn }: SupporterSignInPanelProps) => {
           >
             {SIGN_IN_SUBMIT}
           </Button>
+
+          <PanelSwitchPrompt
+            prompt={TO_SIGN_UP_PROMPT}
+            action={TO_SIGN_UP_ACTION}
+            onSwitch={onSwitchToSignUp}
+          />
         </Stack>
       </form>
 
