@@ -67,6 +67,8 @@ export interface CampaignDonateDetails {
   presetSettings: PresetSettings;
   banners: string[];
   paymentAccountId: string;
+  /** Whether supporters may create their own fundraising pages on this campaign. */
+  isPeerToPeerEnabled: boolean;
 }
 
 export interface StripeCredentials {
@@ -866,6 +868,9 @@ class DonationService {
       return {
         ...data,
         fundRaisingGoal: goalObj,
+        // Coerced rather than trusted: an older API build omits the field entirely, and an absent
+        // flag must read as "off" rather than render an entry point that leads nowhere.
+        isPeerToPeerEnabled: data.isPeerToPeerEnabled === true,
       };
     } catch (error) {
       console.error('Error fetching campaign donate details:', error);

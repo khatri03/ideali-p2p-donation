@@ -1,3 +1,5 @@
+import { sanitiseReturnPath } from 'app/utils/returnPath';
+
 /**
  * Role-based redirection utility
  * Maps user roles to appropriate dashboard routes
@@ -80,8 +82,16 @@ export const getSidebarType = (role: string): string => {
   }
 };
 
-export const redirectAfterLogin = (role: string, userId?: string, organizerId?: string): void => {
-   const dashboardRoute = getDashboardRoute(role);
+export const redirectAfterLogin = (
+  role: string,
+  userId?: string,
+  organizerId?: string,
+  returnPath?: string,
+): void => {
+   // A return path is only honoured once it has passed the allow-list. Anything else is discarded and
+   // the person lands on their dashboard, so a tampered address bar cannot redirect a fresh session
+   // off this origin.
+   const dashboardRoute = sanitiseReturnPath(returnPath) ?? getDashboardRoute(role);
    const sidebarType = getSidebarType(role);
   
 // for organizer

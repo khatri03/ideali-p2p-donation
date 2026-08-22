@@ -26,6 +26,8 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import HttpClient from '../../service/httpClient/HttpClient';
 import { jwtDecode } from 'jwt-decode';
 import { redirectAfterLogin } from '../../../utils/roleRedirect';
+import { campaignFromReturnPath, sanitiseReturnPath, supporterSignUpPath } from 'app/utils/returnPath';
+import CampaignContextBanner from 'app/components/organizer/donation/peerToPeer/join/CampaignContextBanner';
 import permissionsService, { storePermissions } from '../../service/organizer/rolesPermissions/permissionsService';
 import logo from "../../../assets/img/logo/idealiLogo.svg";
 import TwoFactorAuthModal from './TwoFactorAuthModal';
@@ -35,6 +37,10 @@ import { GoogleSignInButton } from '../common/GoogleSignInButton';
 function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
+  // Where this sign-in came from, when it came from somewhere. Validated on read, and again before
+  // it is navigated to, because it arrives in the address bar.
+  const returnPath = sanitiseReturnPath(new URLSearchParams(location.search).get('returnPath'));
+  const returnCampaignUniqueId = campaignFromReturnPath(returnPath);
 
   // useEffect(() => {
   //   localStorage.clear();
@@ -299,7 +305,7 @@ function SignIn() {
         .catch(() => storePermissions([]))
         .finally(() => {
           setTimeout(() => {
-            redirectAfterLogin(currentRole, data.userId, data.organizerId);
+            redirectAfterLogin(currentRole, data.userId, data.organizerId, returnPath);
           }, 1500);
         });
     } else {
@@ -486,6 +492,8 @@ function SignIn() {
             </Text>
           </Box>
 
+          <CampaignContextBanner campaignUniqueId={returnCampaignUniqueId} />
+
           {/* Form */}
           <VStack spacing={4} align="stretch">
             {/* Email Field */}
@@ -595,11 +603,23 @@ function SignIn() {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
 
+            {/* Two different accounts sit behind one prompt. Someone who arrived here to fundraise
+                is offered the supporter form; the organiser form asks for an organisation name and
+                provisions the account as an organiser, which is not what they came for. */}
             <Text textAlign="center" fontSize="sm" color="gray.600">
               Don't have an account?{' '}
-              <Link to="/auth/sign-up/default" style={{ color: '#805AD5', fontWeight: '600' }}>
-                Create new account
-              </Link>
+              {returnCampaignUniqueId ? (
+                <Link
+                  to={supporterSignUpPath(returnCampaignUniqueId)}
+                  style={{ color: '#805AD5', fontWeight: '600' }}
+                >
+                  Create a supporter account
+                </Link>
+              ) : (
+                <Link to="/auth/sign-up/default" style={{ color: '#805AD5', fontWeight: '600' }}>
+                  Create new account
+                </Link>
+              )}
             </Text>
 
             {isGoogleAuthEnabled && (

@@ -19,6 +19,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  Stack,
 } from '@chakra-ui/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -40,6 +41,7 @@ import DonationSuccessModal from './organizerDonationComponents/DonationSuccessM
 import DonationFailureModal from './organizerDonationComponents/DonationFailureModal';
 import DonationProgressIndicator from './organizerDonationComponents/DonationProgressIndicator';
 import CampaignDetails from './organizerDonationComponents/CampaignDetails';
+import FundraiseForThisButton from './peerToPeer/join/FundraiseForThisButton';
 import DonationAmountSelector from './organizerDonationComponents/DonationAmountSelector';
 import DonationStep2Content from './organizerDonationComponents/DonationStep2Content';
 import StripeProvider, { getStripeInstance } from '../../common/StripeProvider';
@@ -1518,15 +1520,21 @@ export default function DonateToCampaign() {
           {currentStep === 1 && (
             <Grid templateColumns={{ base: '1fr', md: '1.5fr 1fr' }} gap={6}>
               {/* Left Column - Campaign Details */}
-              <CampaignDetails
-                fundRaisingGoal={currentCampaignForDonation.fundRaisingGoal}
-                description={currentCampaignForDonation.description}
-                themeColor={themeColor}
-                cardBg={cardBg}
-                cardBorder={cardBorder}
-                textColor={textColor}
-                subTextColor={subTextColor}
-              />
+              <Stack gap={4} minW={0}>
+                <CampaignDetails
+                  fundRaisingGoal={currentCampaignForDonation.fundRaisingGoal}
+                  description={currentCampaignForDonation.description}
+                  themeColor={themeColor}
+                  cardBg={cardBg}
+                  cardBorder={cardBorder}
+                  textColor={textColor}
+                  subTextColor={subTextColor}
+                />
+                <FundraiseForThisButton
+                  campaignUniqueId={campaignId!}
+                  isPeerToPeerEnabled={currentCampaignForDonation.isPeerToPeerEnabled}
+                />
+              </Stack>
 
               {/* Right Column - Donation Card */}
               <DonationAmountSelector

@@ -1,0 +1,68 @@
+/**
+ * Where a supporter may be sent back to after signing in or signing up.
+ *
+ * A return path arrives in the address bar, so it is attacker-controlled text. Anything that is not
+ * on this list is discarded rather than sanitised: an allow-list cannot be talked around the way a
+ * block-list can, and an open redirect out of a sign-in screen is a credential-phishing vector, not
+ * a cosmetic bug.
+ */
+const ALLOWED_RETURN_PATHS: RegExp[] = [
+  /^\/donation\/campaign\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/peer-to-peer\/join$/i,
+];
+
+/**
+ * Returns the path only when it is one this application is willing to navigate to, and null
+ * otherwise. Protocol-relative (`//evil.test`) and backslash forms are rejected before the
+ * allow-list is consulted, because a browser resolves both to another origin.
+ */
+export function sanitiseReturnPath(candidate: string | null | undefined): string | null {
+  if (!candidate) {
+    return null;
+  }
+
+  const trimmed = candidate.trim();
+
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.includes('\\')) {
+    return null;
+  }
+
+  return ALLOWED_RETURN_PATHS.some((allowed) => allowed.test(trimmed)) ? trimmed : null;
+}
+
+/** The join screen for one campaign, which is the only return path this feature produces. */
+export const fundraiserJoinPath = (campaignUniqueId: string): string =>
+  `/donation/campaign/${campaignUniqueId}/peer-to-peer/join`;
+
+/** The supporter sign-up screen for one campaign. */
+export const supporterSignUpPath = (campaignUniqueId: string): string =>
+  `/donation/campaign/${campaignUniqueId}/peer-to-peer/supporter-sign-up`;
+
+/**
+ * Adds a return path to an internal destination. The path is encoded, and an unacceptable one is
+ * dropped rather than carried, so a rejected value never reaches the sign-in screen at all.
+ */
+export function withReturnPath(destination: string, returnPath: string): string {
+  const allowed = sanitiseReturnPath(returnPath);
+
+  if (!allowed) {
+    return destination;
+  }
+
+  const separator = destination.includes('?') ? '&' : '?';
+
+  return `${destination}${separator}returnPath=${encodeURIComponent(allowed)}`;
+}
+
+/**
+ * The campaign a return path refers to, or null when it refers to none. Lets a sign-in screen name
+ * the campaign by fetching it, rather than trusting a display name passed through the address bar.
+ */
+export function campaignFromReturnPath(returnPath: string | null): string | null {
+  const allowed = sanitiseReturnPath(returnPath);
+
+  if (!allowed) {
+    return null;
+  }
+
+  return allowed.split('/')[3] ?? null;
+}

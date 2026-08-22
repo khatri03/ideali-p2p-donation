@@ -14,6 +14,8 @@ import InvoiceDetail from './app/components/organizer/donation/InvoiceDetail';
 import ResetPassword from './app/components/auth/resetPassword';
 import ForgotPassword from './app/components/auth/forgotPassword';
 import CampaignList from '../src/app/components/organizer/donation/publicCampaigns/campaignList';
+import FundraiserJoinPage from './app/components/organizer/donation/peerToPeer/join/FundraiserJoinPage';
+import SupporterSignUpPage from './app/components/organizer/donation/peerToPeer/signUp/SupporterSignUpPage';
 import {
   ChakraProvider,
   // extendTheme
@@ -57,6 +59,14 @@ export default function Main() {
           }
         />
         <Route path="/donate/:campaignId" element={<DonateToCampaign />} />
+        <Route
+          path="/donation/campaign/:campaignUniqueId/peer-to-peer/join"
+          element={<FundraiserJoinPage />}
+        />
+        <Route
+          path="/donation/campaign/:campaignUniqueId/peer-to-peer/supporter-sign-up"
+          element={<SupporterSignUpPage />}
+        />
         <Route path="/campaign-list/:organizerUniqueId" element={<CampaignList />} />
         <Route path="/create-donation-campaign" element={<CreateDonationPage />} />
         <Route path="/create-donation-campaign/:campaignId" element={<CreateDonationPage />} />
