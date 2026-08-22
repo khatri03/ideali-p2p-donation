@@ -20,6 +20,7 @@ import logo from "../../../assets/img/logo/idealiLogo.svg";
 export default function SignUp() {
   const navigate = useNavigate();
   const toast = useToast();
+
   const [loading, setLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGooglePrefilled, setIsGooglePrefilled] = useState(false);
@@ -625,7 +626,10 @@ if (cityValidation) {
             {/* Sign In Link */}
             <Text textAlign="center" fontSize="sm" color="gray.600">
               Already have an account?{' '}
-              <Link to="/auth/sign-in/custom" style={{ color: '#805AD5', fontWeight: '600' }}>
+              <Link
+                to="/auth/sign-in/custom"
+                style={{ color: '#805AD5', fontWeight: '600' }}
+              >
                 Sign In
               </Link>
             </Text>
