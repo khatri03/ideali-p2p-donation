@@ -24,11 +24,13 @@ import {
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import HttpClient from '../../service/httpClient/HttpClient';
-import { jwtDecode } from 'jwt-decode';
-import { redirectAfterLogin } from '../../../utils/roleRedirect';
-import { campaignFromReturnPath, sanitiseReturnPath, supporterSignUpPath } from 'app/utils/returnPath';
+import { campaignFromReturnPath, fundraiserJoinPath, sanitiseReturnPath } from 'app/utils/returnPath';
+import {
+  LoginResponse,
+  completeLogin as establishSession,
+  completeTwoFactorLogin,
+} from './completeLogin';
 import CampaignContextBanner from 'app/components/organizer/donation/peerToPeer/join/CampaignContextBanner';
-import permissionsService, { storePermissions } from '../../service/organizer/rolesPermissions/permissionsService';
 import logo from "../../../assets/img/logo/idealiLogo.svg";
 import TwoFactorAuthModal from './TwoFactorAuthModal';
 import signUpService from '../../service/auth/signUpService';
@@ -118,12 +120,6 @@ function SignIn() {
       formData.append('userName', email);
       formData.append('password', password);
 
-      console.log('Making request to:', '/api/identity/account/authenticate');
-      console.log('FormData contents:');
-      for (let [key, value] of formData.entries()) {
-        console.log(key, ':', value);
-      }
-
       const response = await HttpClient.post('/api/identity/account/authenticate', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -207,111 +203,8 @@ function SignIn() {
     }
   };
 
-  const completeLogin = (responseData: any, provider: string = 'ideali') => {
-    const data = responseData.data;
-
-    if (data.accessToken) {
-
-      const decoded = jwtDecode(data.accessToken) as Record<string, any>;
-
-      localStorage.setItem('AuthToken', data.accessToken);
-      localStorage.setItem('loginProvider', provider);
-      localStorage.setItem('organizerId', data.organizerId);
-      if (data.organizerDetail?.organizerUniqueId) {
-        localStorage.setItem('organizerUniqueId', data.organizerDetail.organizerUniqueId);
-      }
-      localStorage.setItem('userEmail', data.userEmail);
-      localStorage.setItem('userId', data.userId);
-      localStorage.setItem('userName', data.userName);
-      localStorage.setItem('userOrg', data.userOrg);
-      localStorage.setItem('RefreshToken', data.refreshToken);
-      const memberUniqueId = data.userDetail?.memberUniqueId || decoded?.memberUniqueId || '';
-      if (memberUniqueId) localStorage.setItem('memberUniqueId', memberUniqueId);
-
-      if (data.userId) {
-        localStorage.setItem('userId', data.userId);
-      }
-      if (data.organizerId) {
-        localStorage.setItem('organizerId', data.organizerId);
-      }
-      const roleKey = Object.keys(decoded).find(key => key.toLowerCase().includes("role"));
-      let userRole = 'user';
-
-      if (roleKey) {
-        userRole = decoded[roleKey] || data.roleValue || 'user';
-      } else {
-        userRole = data.roleValue || 'user';
-      }
-
-      let currentRole = '';
-      // Real admin: must be the account owner (userId === organizerId) AND carry
-      // the system 'Admin' role. A sub-user whose custom role is named 'Admin'
-      // will have userId !== organizerId and is routed to the organizer dashboard.
-      // Use the JWT claims directly — data.userId/organizerId may be undefined for
-      // normal (non-2FA) logins where they live in userDetail/organizerDetail.
-      const isOwner = String(decoded.userId) === String(decoded.organizerId);
-      const rolesArray: string[] = Array.isArray(userRole)
-        ? userRole
-        : [String(userRole)];
-
-      // Also check userDetail.roles from the response body as a fallback
-      const responseRoles: string[] = data.userDetail?.roles ?? [];
-      const allRoles = [...rolesArray, ...responseRoles].map(r => r.toLowerCase());
-
-      const hasAdminRole  = allRoles.includes('admin');
-      const hasDonorRole  = allRoles.some(r => r === 'donor' || r === 'participant');
-      const hasMemberRole = allRoles.some(r => r === 'member');
-
-      // Member/Participant logins are disambiguated by the modules claim
-      // (userAllowedModules: 'Membership' | 'Donation') rather than role,
-      // since both roles can otherwise overlap. Admin/Organizer stay role-based.
-      const allowedModulesRaw = decoded.userAllowedModules ?? decoded.allowedModules;
-      const allowedModulesList: string[] = Array.isArray(allowedModulesRaw)
-        ? allowedModulesRaw
-        : typeof allowedModulesRaw === 'string'
-          ? (allowedModulesRaw.includes(',') ? allowedModulesRaw.split(',').map((m: string) => m.trim()) : [allowedModulesRaw])
-          : [];
-      const normalizedModules = allowedModulesList.map(m => m.toLowerCase());
-      const hasMembershipModule = normalizedModules.includes('membership');
-      const hasDonationModule = normalizedModules.includes('donation');
-
-      if (isOwner && hasAdminRole) {
-        currentRole = 'Admin';
-      } else if (data.isUserDefined) {
-        // Sub-user created by an organizer (custom RBAC role, e.g. "MemRole") — always
-        // lands on the organizer dashboard; their actual feature access is governed by
-        // the fine-grained permissions fetched below, not by this coarse role bucket.
-        currentRole = 'Organizer';
-      } else if (allRoles.includes('organizer')) {
-        currentRole = 'Organizer';
-      } else if (hasMembershipModule) {
-        currentRole = 'Member';
-      } else if (hasDonationModule) {
-        currentRole = 'Donor';
-      } else if (hasDonorRole) {
-        currentRole = 'Donor';
-      } else if (hasMemberRole) {
-        currentRole = 'Member';
-      } else {
-        currentRole = 'Organizer';
-      }
-
-      localStorage.setItem('userRole', userRole);
-      localStorage.setItem('currentRole', currentRole);
-
-      // Fetch and store permissions for RBAC
-      permissionsService.getUserPermissions()
-        .then(permissions => storePermissions(permissions))
-        .catch(() => storePermissions([]))
-        .finally(() => {
-          setTimeout(() => {
-            redirectAfterLogin(currentRole, data.userId, data.organizerId, returnPath);
-          }, 1500);
-        });
-    } else {
-      console.error('[completeLogin] No accessToken in data! Full data:', data);
-    }
-  };
+  const completeLogin = (responseData: LoginResponse, provider: string = 'ideali') =>
+    establishSession(responseData, provider, returnPath);
 
   const handle2FAVerify = async (code: string) => {
     setIsVerifying2FA(true);
@@ -321,19 +214,7 @@ function SignIn() {
       if (response.success) {
         succeeded = true;
         // Keep modal open and in loading state until redirect fires
-        const normalized = {
-          ...response,
-          data: {
-            ...response.data,
-            userId: response.data.userDetail?.userId,
-            organizerId: response.data.organizerDetail?.organizerId,
-            userEmail: response.data.userDetail?.email,
-            userName: response.data.userDetail?.name,
-            userOrg: response.data.organizerDetail?.name,
-            roleValue: response.data.userDetail?.roles?.[0],
-          },
-        };
-        completeLogin(normalized, 'ideali');
+        completeTwoFactorLogin(response, returnPath);
       } else {
         throw new Error(response.message || 'Invalid verification code. Please try again.');
       }
@@ -610,7 +491,7 @@ function SignIn() {
               Don't have an account?{' '}
               {returnCampaignUniqueId ? (
                 <Link
-                  to={supporterSignUpPath(returnCampaignUniqueId)}
+                  to={fundraiserJoinPath(returnCampaignUniqueId)}
                   style={{ color: '#805AD5', fontWeight: '600' }}
                 >
                   Create a supporter account
