@@ -1,9 +1,9 @@
-import { Button } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import { MdVolunteerActivism } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { ensureAuthenticated } from 'utils/auth';
 import { fundraiserJoinPath } from 'app/utils/returnPath';
-import { signInRouteFor } from 'app/utils/session';
+import FundraiseAccessModal from '../access/FundraiseAccessModal';
 import { JOIN_CTA } from './joinCopy';
 
 interface FundraiseForThisButtonProps {
@@ -13,34 +13,50 @@ interface FundraiseForThisButtonProps {
 }
 
 /**
- * Screen 02's entry point into peer-to-peer. A signed-in supporter goes straight to the join screen;
- * a signed-out visitor goes to sign in with the join screen carried as the return path, so they are
- * not dropped on a dashboard having forgotten what they came to do.
+ * Screen 02's entry point into peer-to-peer. A signed-in supporter goes straight to the join screen.
+ * Everyone else is offered both ways in without leaving the campaign, so nobody has to remember
+ * whether they already have an account before they can start.
  */
 export const FundraiseForThisButton = ({
   campaignUniqueId,
   isPeerToPeerEnabled,
 }: FundraiseForThisButtonProps) => {
   const navigate = useNavigate();
+  const access = useDisclosure();
 
   if (!isPeerToPeerEnabled || !campaignUniqueId) {
     return null;
   }
 
-  const joinPath = fundraiserJoinPath(campaignUniqueId);
+  const handleClick = () => {
+    if (ensureAuthenticated()) {
+      navigate(fundraiserJoinPath(campaignUniqueId));
+      return;
+    }
+
+    access.onOpen();
+  };
 
   return (
-    <Button
-      variant="outline"
-      colorScheme="brand"
-      minH="44px"
-      w={{ base: 'full', md: 'auto' }}
-      leftIcon={<MdVolunteerActivism />}
-      onClick={() => navigate(ensureAuthenticated() ? joinPath : signInRouteFor(joinPath))}
-      sx={{ cursor: 'pointer' }}
-    >
-      {JOIN_CTA}
-    </Button>
+    <>
+      <Button
+        variant="outline"
+        colorScheme="brand"
+        minH="44px"
+        w={{ base: 'full', md: 'auto' }}
+        leftIcon={<MdVolunteerActivism />}
+        onClick={handleClick}
+        sx={{ cursor: 'pointer' }}
+      >
+        {JOIN_CTA}
+      </Button>
+
+      <FundraiseAccessModal
+        campaignUniqueId={campaignUniqueId}
+        isOpen={access.isOpen}
+        onClose={access.onClose}
+      />
+    </>
   );
 };
 

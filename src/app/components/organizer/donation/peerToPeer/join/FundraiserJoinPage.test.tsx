@@ -54,12 +54,18 @@ afterEach(() => {
 });
 
 describe('FundraiserJoinPage', () => {
-  it('Join_SignedOutVisitor_IsSentToSignInAndNothingIsFetched', async () => {
+  /**
+   * Reached from a shared link or from a confirmation email, with no session. Both ways in are
+   * offered here, and nothing about the campaign is requested until there is a session to request
+   * it with.
+   */
+  it('Join_SignedOutVisitor_IsOfferedBothWaysInAndNothingIsFetched', async () => {
     ensureAuthenticated.mockReturnValue(false);
 
     renderPage();
 
-    expect(await screen.findByText('Sign in screen')).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Create account' })).toBeInTheDocument();
     expect(getFundraiserJoinContext).not.toHaveBeenCalled();
   });
 

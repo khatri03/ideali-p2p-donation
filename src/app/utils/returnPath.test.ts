@@ -3,7 +3,6 @@ import {
   campaignFromReturnPath,
   fundraiserJoinPath,
   sanitiseReturnPath,
-  supporterSignUpPath,
   withReturnPath,
 } from './returnPath';
 
@@ -82,17 +81,12 @@ describe('campaignFromReturnPath', () => {
   });
 });
 
-describe('supporterSignUpPath', () => {
-  it('SupporterSignUpPath_Campaign_MirrorsTheBackendRouteWithoutTheApiPrefix', () => {
-    expect(supporterSignUpPath(CAMPAIGN_ID)).toBe(
-      `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/supporter-sign-up`,
-    );
-  });
-
-  it('SupporterSignUpPath_IsNotAReturnPathThisApplicationWillNavigateBackTo', () => {
-    // Sign-up is a step on the way, never a destination to be sent to after signing in. Allowing it
-    // there would let a crafted link loop someone through an account-creation form after they had
-    // already authenticated.
-    expect(sanitiseReturnPath(supporterSignUpPath(CAMPAIGN_ID))).toBeNull();
+describe('verify-email', () => {
+  it('VerifyEmail_IsNotAReturnPathThisApplicationWillNavigateBackTo', () => {
+    // Confirming an address is a step on the way, never a destination to be sent to after signing
+    // in. Allowing it there would let a crafted link loop someone back through a spent token.
+    expect(
+      sanitiseReturnPath(`/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/verify-email`),
+    ).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 import { expect, test as setup } from '@playwright/test';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { STORAGE_STATE_PATH, e2eEnv } from './support/e2eEnv';
+import { API_TOKEN_PATH, STORAGE_STATE_PATH, e2eEnv } from './support/e2eEnv';
 
 /**
  * Signing in through the form rather than by seeding tokens keeps the suite honest: if the sign-in
@@ -21,6 +21,9 @@ setup('Organizer signs in and the session is persisted for the suite', async ({ 
 
   const accessToken = await page.evaluate(() => window.localStorage.getItem('AuthToken'));
   expect(accessToken, 'sign-in did not produce an access token').toBeTruthy();
+
+  // Kept for the api specs so the run spends one sign-in attempt rather than one per spec file.
+  writeFileSync(API_TOKEN_PATH, accessToken as string, { encoding: 'utf8' });
 
   await page.context().storageState({ path: STORAGE_STATE_PATH });
 });

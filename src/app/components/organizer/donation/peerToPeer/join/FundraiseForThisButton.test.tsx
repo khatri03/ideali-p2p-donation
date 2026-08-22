@@ -72,18 +72,20 @@ describe('FundraiseForThisButton', () => {
     ).toBeInTheDocument();
   });
 
-  it('EntryPoint_SignedOutVisitor_GoesToSignInCarryingTheJoinScreenBack', async () => {
+  /**
+   * A visitor with no session stays on the campaign. Sending them to another screen was how they
+   * used to lose the thread of what they had come to do.
+   */
+  it('EntryPoint_SignedOutVisitor_OffersBothWaysInWithoutLeavingTheCampaign', async () => {
     ensureAuthenticated.mockReturnValue(false);
 
     renderButton(true);
     await userEvent.click(screen.getByRole('button', { name: /Fundraise for this/i }));
 
-    const expected = encodeURIComponent(
-      `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/join`,
-    );
-
+    expect(await screen.findByRole('tab', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Create account' })).toBeInTheDocument();
     expect(
-      screen.getByText(`/auth/sign-in/custom?returnPath=${expected}`),
-    ).toBeInTheDocument();
+      screen.queryByText(`/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/join`),
+    ).not.toBeInTheDocument();
   });
 });

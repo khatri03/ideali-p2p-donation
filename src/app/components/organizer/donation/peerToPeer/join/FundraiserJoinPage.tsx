@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Alert,
@@ -15,7 +14,8 @@ import { MdArrowBack } from 'react-icons/md';
 import { FundraiserJoinRequest } from 'app/interface/donationInter/fundraiserJoinDto';
 import { ensureAuthenticated } from 'utils/auth';
 import { fundraiserJoinPath } from 'app/utils/returnPath';
-import { signInRouteFor, signOutAndReturnTo, storedDisplayName } from 'app/utils/session';
+import { signOutAndReturnTo, storedDisplayName } from 'app/utils/session';
+import FundraiseAccessModal from '../access/FundraiseAccessModal';
 import { JOIN_HEADING } from './joinCopy';
 import FundraiserJoinForm from './FundraiserJoinForm';
 import FundraiserJoinSkeleton from './FundraiserJoinSkeleton';
@@ -37,12 +37,6 @@ export const FundraiserJoinPage = () => {
     isSignedIn ? campaignUniqueId ?? '' : '',
   );
 
-  useEffect(() => {
-    if (!isSignedIn) {
-      navigate(signInRouteFor(returnPath), { replace: true });
-    }
-  }, [isSignedIn, navigate, returnPath]);
-
   const handleSubmit = async (request: FundraiserJoinRequest) => {
     const failure = await join(request);
 
@@ -58,6 +52,20 @@ export const FundraiserJoinPage = () => {
   };
 
   const suggestedDisplayName = storedDisplayName();
+
+  // A visitor who reached this page without a session - from a shared link, or from the button in a
+  // confirmation email - is offered both ways in here rather than being bounced to another screen.
+  if (!isSignedIn) {
+    return (
+      <Box maxW="820px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 10 }}>
+        <FundraiseAccessModal
+          campaignUniqueId={campaignUniqueId ?? ''}
+          isOpen
+          onClose={() => navigate(-1)}
+        />
+      </Box>
+    );
+  }
 
   return (
     <Box maxW="820px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 10 }}>

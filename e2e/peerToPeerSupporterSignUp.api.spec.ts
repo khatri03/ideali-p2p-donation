@@ -46,6 +46,7 @@ const applySettings = async (overrides: Record<string, unknown> = {}) => {
 const removeSignedUpAccount = (): void =>
   execute(`
     DECLARE @contactId INT = (SELECT TOP 1 ContactId FROM [User] WHERE UserName = '${SIGN_UP_EMAIL}');
+    DELETE FROM EmailVerificationRequest WHERE UserId IN (SELECT Id FROM [User] WHERE UserName = '${SIGN_UP_EMAIL}');
     DELETE FROM UserRole WHERE UserId IN (SELECT Id FROM [User] WHERE UserName = '${SIGN_UP_EMAIL}');
     DELETE FROM UserModule WHERE UserId IN (SELECT Id FROM [User] WHERE UserName = '${SIGN_UP_EMAIL}');
     DELETE FROM [User] WHERE UserName = '${SIGN_UP_EMAIL}';
@@ -126,7 +127,7 @@ test.describe('Supporter sign-up endpoint', () => {
     expect(accountCount()).toBe('1');
 
     const body = await response.json();
-    expect(body.message).toContain('Sign in with this email address');
+    expect(body.message).toContain('Check your inbox');
   });
 
   test('SignUp_UnknownCampaign_IsRefusedWithoutRevealingWhetherItExists', async () => {

@@ -33,10 +33,6 @@ export function sanitiseReturnPath(candidate: string | null | undefined): string
 export const fundraiserJoinPath = (campaignUniqueId: string): string =>
   `/donation/campaign/${campaignUniqueId}/peer-to-peer/join`;
 
-/** The supporter sign-up screen for one campaign. */
-export const supporterSignUpPath = (campaignUniqueId: string): string =>
-  `/donation/campaign/${campaignUniqueId}/peer-to-peer/supporter-sign-up`;
-
 /**
  * Adds a return path to an internal destination. The path is encoded, and an unacceptable one is
  * dropped rather than carried, so a rejected value never reaches the sign-in screen at all.

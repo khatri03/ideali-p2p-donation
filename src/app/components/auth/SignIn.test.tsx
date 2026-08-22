@@ -46,7 +46,7 @@ describe('SignIn account creation prompt', () => {
     expect(screen.queryByRole('link', { name: /Create new account/i })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Create a supporter account/i })).toHaveAttribute(
       'href',
-      `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/supporter-sign-up`,
+      `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/join`,
     );
   });
 

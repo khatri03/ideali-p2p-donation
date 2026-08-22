@@ -24,7 +24,6 @@ const storyField = '#fundraiser-story';
 let api: APIRequestContext;
 let originalSettings: Record<string, unknown>;
 
-const signUpPath = `/donation/campaign/${campaign.uniqueId}/peer-to-peer/supporter-sign-up`;
 const removeJoinedPages = (): void =>
   execute(`
     DELETE fundraiser
@@ -220,7 +219,7 @@ test.describe('Becoming a fundraiser', () => {
     await expect(page.getByRole('link', { name: 'Create new account' })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Create a supporter account' })).toHaveAttribute(
       'href',
-      signUpPath,
+      joinPath,
     );
   });
 
@@ -231,12 +230,6 @@ test.describe('Becoming a fundraiser', () => {
       'href',
       '/auth/sign-up/default',
     );
-  });
-
-  test('SupporterSignUp_ReachedWhileAlreadySignedIn_GoesStraightToTheJoinScreen', async ({ page }) => {
-    await page.goto(signUpPath);
-
-    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer/join$`));
   });
 
   test('JoinScreen_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {

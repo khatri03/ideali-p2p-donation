@@ -59,3 +59,10 @@ export const e2eEnv = {
 };
 
 export const STORAGE_STATE_PATH = 'e2e/.auth/organizer.json';
+
+/**
+ * Where the organiser's access token is kept for the run. The sign-in endpoint allows five attempts
+ * a minute per address - a real protection that this suite must not need relaxing - so the token is
+ * produced once by the setup project and read by every api spec instead of each one signing in.
+ */
+export const API_TOKEN_PATH = 'e2e/.auth/organizer-token.txt';
