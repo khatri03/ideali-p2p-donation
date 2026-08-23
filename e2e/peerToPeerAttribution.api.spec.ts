@@ -2,7 +2,7 @@ import { APIRequestContext, expect, test } from '@playwright/test';
 import { anonymousApi, authenticatedApi, joinUrl, settingsUrl, signIn } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
-import { clearFundraiserPages } from './support/fundraiserPages';
+import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
 
 /**
  * Who a gift is credited to is decided by the server, from the campaign row and the page address, and
@@ -91,7 +91,7 @@ test.afterEach(() => removeProbeGifts());
 
 test.afterAll(async () => {
   removeProbeGifts();
-  removeJoinedPages();
+  restoreFundraiserPages();
   await api.post(settingsUrl(campaign.uniqueId), { data: originalSettings });
   await api.dispose();
   await anonymous.dispose();

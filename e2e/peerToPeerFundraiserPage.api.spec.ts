@@ -9,7 +9,7 @@ import {
 } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
-import { clearFundraiserPages } from './support/fundraiserPages';
+import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
 
 /**
  * The fundraiser page is the only endpoint in this feature a stranger can reach, so what it refuses to
@@ -67,7 +67,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  removeJoinedPages();
+  restoreFundraiserPages();
   await api.post(settingsUrl(campaignUniqueId), { data: originalSettings });
   await api.dispose();
   await anonymous.dispose();

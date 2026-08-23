@@ -8,7 +8,7 @@ import {
 } from './support/apiSession';
 import { foreignCampaignUniqueId, liveCampaign } from './support/campaignFixtures';
 import { querySingleValue } from './support/database';
-import { clearFundraiserPages } from './support/fundraiserPages';
+import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
 
 /**
  * Joining is the only endpoint in this feature that writes a row for the caller, so its refusals
@@ -63,7 +63,7 @@ test.beforeEach(async () => {
 });
 
 test.afterAll(async () => {
-  removeJoinedPages();
+  restoreFundraiserPages();
 
   if (originalSettings) {
     await api.post(settingsUrl(campaignUniqueId), {

@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
 import { authenticatedApi, settingsUrl, signIn } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
-import { clearFundraiserPages } from './support/fundraiserPages';
+import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
 
 /**
  * The whole journey a supporter walks: the campaign page grows a button, the button leads to the join
@@ -52,7 +52,7 @@ test.beforeEach(async () => {
 });
 
 test.afterAll(async () => {
-  removeJoinedPages();
+  restoreFundraiserPages();
 
   if (originalSettings) {
     await api.post(settingsUrl(campaign.uniqueId), {
