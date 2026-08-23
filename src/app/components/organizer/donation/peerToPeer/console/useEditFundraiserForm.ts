@@ -16,6 +16,21 @@ import {
 export const NAME_MAX_LENGTH = 80;
 export const STORY_MAX_LENGTH = 2000;
 export const GOAL_MAXIMUM = 10_000_000;
+export const GOAL_DECIMAL_PLACES = 2;
+
+/**
+ * Money is typed one keystroke at a time, so the field keeps only what a money amount can contain:
+ * digits, a single decimal point, and two places after it. Letters, a second point and an exponent
+ * never reach the value, so the field cannot hold a figure the server would refuse, and a supporter
+ * finds out on the keystroke rather than on the save.
+ */
+export const toGoalInput = (typed: string): string => {
+  const [whole, ...afterTheFirstPoint] = typed.replace(/[^\d.]/g, '').split('.');
+
+  if (!afterTheFirstPoint.length) return whole;
+
+  return `${whole || '0'}.${afterTheFirstPoint.join('').slice(0, GOAL_DECIMAL_PLACES)}`;
+};
 
 export interface EditFundraiserValues {
   displayName: string;
@@ -106,7 +121,9 @@ export function useEditFundraiserForm(page: MyFundraisingPage | null): EditFundr
   }, [page]);
 
   const setField = useCallback((field: keyof EditFundraiserValues, value: string) => {
-    setValues((current) => ({ ...current, [field]: value }));
+    const typed = field === 'personalGoal' ? toGoalInput(value) : value;
+
+    setValues((current) => ({ ...current, [field]: typed }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   }, []);
 

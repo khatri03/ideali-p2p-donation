@@ -112,6 +112,26 @@ describe('EditFundraiserPage', () => {
     expect(updateMyFundraisingPage).not.toHaveBeenCalled();
   });
 
+  it('Goal_Letters_AreNotAcceptedByTheFieldAtAll', async () => {
+    renderEditor();
+
+    const goal = await screen.findByLabelText(/Your goal/i);
+    await userEvent.clear(goal);
+    await userEvent.type(goal, 'lots of money');
+
+    expect(goal).toHaveValue('');
+  });
+
+  it('Goal_TypedWithCurrencyAndGrouping_KeepsOnlyTheAmount', async () => {
+    renderEditor();
+
+    const goal = await screen.findByLabelText(/Your goal/i);
+    await userEvent.clear(goal);
+    await userEvent.type(goal, '$1,250.567');
+
+    expect(goal).toHaveValue('1250.56');
+  });
+
   it('Save_ApiRefusesTheChange_ShowsWhatTheApiSaidRatherThanClaimingSuccess', async () => {
     updateMyFundraisingPage.mockRejectedValue(new Error('Fundraising page not found.'));
 

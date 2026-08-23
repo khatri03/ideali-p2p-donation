@@ -4,6 +4,7 @@ import {
   GOAL_MAXIMUM,
   NAME_MAX_LENGTH,
   STORY_MAX_LENGTH,
+  toGoalInput,
   toUpdateRequest,
   validateEditFundraiser,
 } from './useEditFundraiserForm';
@@ -71,6 +72,45 @@ describe('useEditFundraiserForm rules', () => {
 
     expect(request.displayName).toBe('Sara M');
     expect(request.personalGoal).toBe(750);
+  });
+
+  it('GoalInput_Letters_NeverReachTheField', () => {
+    expect(toGoalInput('lots')).toBe('');
+    expect(toGoalInput('5o0')).toBe('50');
+  });
+
+  it('GoalInput_CurrencyAndGroupingCharacters_AreDroppedRatherThanKept', () => {
+    expect(toGoalInput('$1,250')).toBe('1250');
+    expect(toGoalInput(' 750 ')).toBe('750');
+  });
+
+  it('GoalInput_MinusSign_IsDroppedSoANegativeGoalCannotBeTyped', () => {
+    expect(toGoalInput('-10')).toBe('10');
+  });
+
+  it('GoalInput_Exponent_IsDroppedSoTypingCannotProduceAHugeGoal', () => {
+    expect(toGoalInput('1e9')).toBe('19');
+  });
+
+  it('GoalInput_SecondDecimalPoint_IsIgnored', () => {
+    expect(toGoalInput('12.5.7')).toBe('12.57');
+  });
+
+  it('GoalInput_MoreThanTwoDecimalPlaces_AreTrimmedToMoney', () => {
+    expect(toGoalInput('12.3456')).toBe('12.34');
+  });
+
+  it('GoalInput_LeadingDecimalPoint_BecomesAReadableAmount', () => {
+    expect(toGoalInput('.5')).toBe('0.5');
+  });
+
+  it('GoalInput_ClearedField_StaysEmptyRatherThanBecomingZero', () => {
+    expect(toGoalInput('')).toBe('');
+  });
+
+  it('GoalInput_AnAmountAlreadyBeingTyped_IsLeftAlone', () => {
+    expect(toGoalInput('500')).toBe('500');
+    expect(toGoalInput('500.')).toBe('500.');
   });
 
   it('Request_EmptyGoalAndStory_AreSentAsNullRatherThanEmptyStrings', () => {

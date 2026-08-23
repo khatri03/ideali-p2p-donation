@@ -165,6 +165,21 @@ test.describe('Fundraiser console screens', () => {
     ).toBeVisible();
   });
 
+  test('Edit_LettersTypedIntoTheGoal_NeverAppearInTheField', async ({ page }) => {
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+
+    const goal = page.getByLabel('Your goal');
+
+    await goal.fill('');
+    await goal.pressSequentially('lots');
+
+    await expect(goal).toHaveValue('');
+
+    await goal.pressSequentially('$1,250.567');
+
+    await expect(goal).toHaveValue('1250.56');
+  });
+
   test('Edit_PageThatIsNotTheirs_ShowsADesignedRefusalWithNoBackendDetail', async ({ page }) => {
     await page.goto(`${CONSOLE_PATH}/11111111-1111-1111-1111-111111111111`);
 
