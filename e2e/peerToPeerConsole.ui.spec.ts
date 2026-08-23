@@ -41,10 +41,23 @@ const insertProbePage = (): string => {
   `);
 };
 
+/**
+ * A suggested goal is put on the campaign on purpose: clearing a personal goal has to leave the page
+ * with none, and a campaign carrying no suggestion could not tell that apart from the old behaviour of
+ * quietly handing the charity's figure back.
+ */
+let defaultGoalBeforeTheRun: string;
+
 test.beforeAll(() => {
+  defaultGoalBeforeTheRun = querySingleValue(`
+    SELECT ISNULL(CAST(PeerToPeerDefaultPersonalGoal AS VARCHAR(20)), 'NULL')
+    FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}';
+  `);
+
   execute(`
     UPDATE DonationCampaign
     SET IsPeerToPeerEnabled = 1,
+        PeerToPeerDefaultPersonalGoal = 250,
         PeerToPeerSlug = ISNULL(PeerToPeerSlug, 'e2e-campaign-' + CAST(Id AS VARCHAR(10)))
     WHERE UniqueId = '${campaign.uniqueId}';
   `);
@@ -55,7 +68,15 @@ test.beforeEach(() => {
   pageUniqueId = insertProbePage();
 });
 
-test.afterAll(() => removeProbePage());
+test.afterAll(() => {
+  removeProbePage();
+
+  execute(`
+    UPDATE DonationCampaign
+    SET PeerToPeerDefaultPersonalGoal = ${defaultGoalBeforeTheRun === 'NULL' ? 'NULL' : defaultGoalBeforeTheRun}
+    WHERE UniqueId = '${campaign.uniqueId}';
+  `);
+});
 
 test.describe('Fundraiser console screens', () => {
   test('Console_Opened_ListsThePageWithItsCampaignAndTotal', async ({ page }) => {
@@ -98,6 +119,28 @@ test.describe('Fundraiser console screens', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'E2E Console Renamed' }),
     ).toBeVisible();
+  });
+
+  test('Edit_GoalCleared_IsStillEmptyAfterAReloadAndThePageLosesItsProgressBar', async ({ page }) => {
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+
+    await page.getByLabel('Your goal').fill('');
+    await page.getByRole('button', { name: 'Save changes' }).click();
+
+    await expect(page.getByText('Your page is updated.')).toBeVisible();
+
+    await page.reload();
+
+    await expect(page.getByLabel('Your goal')).toHaveValue('');
+
+    const campaignSlug = querySingleValue(`
+      SELECT PeerToPeerSlug FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}';
+    `);
+
+    await page.goto(`/campaigns/${campaignSlug}/${SLUG}`);
+
+    await expect(page.getByRole('heading', { level: 1, name: DISPLAY_NAME })).toBeVisible();
+    await expect(page.getByRole('progressbar')).toHaveCount(0);
   });
 
   test('Edit_EmptyName_IsRefusedOnTheScreenBeforeAnythingIsSent', async ({ page }) => {

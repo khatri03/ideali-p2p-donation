@@ -150,6 +150,31 @@ test.describe('Fundraiser console endpoints', () => {
     expect(saved).toBe('E2E Console Renamed|1234.00');
   });
 
+  test('Update_GoalCleared_IsStillClearWhenTheConsoleIsReadBack', async () => {
+    await api.put(pageUrl(ownPageUniqueId), {
+      data: { displayName: 'E2E Console Mine', personalGoal: 640, story: null },
+    });
+
+    const response = await api.put(pageUrl(ownPageUniqueId), {
+      data: { displayName: 'E2E Console Mine', personalGoal: null, story: null },
+    });
+
+    expect(response.status()).toBe(200);
+    expect((await response.json()).data.goal).toBeNull();
+
+    const stored = querySingleValue(`
+      SELECT ISNULL(CAST(PersonalGoal AS VARCHAR(20)), 'NONE')
+      FROM CampaignFundraiser WHERE Slug = '${OWN_SLUG}';
+    `);
+
+    expect(stored).toBe('NONE');
+
+    const reread = await (await api.get(CONSOLE_URL)).json();
+    const page = reread.data.find((item: { slug: string }) => item.slug === OWN_SLUG);
+
+    expect(page.goal).toBeNull();
+  });
+
   test('Update_PageAddress_IsNotSomethingAnUpdateCanChange', async () => {
     await api.put(pageUrl(ownPageUniqueId), {
       data: { displayName: 'Another name entirely', personalGoal: 300, story: null, slug: 'stolen' },
