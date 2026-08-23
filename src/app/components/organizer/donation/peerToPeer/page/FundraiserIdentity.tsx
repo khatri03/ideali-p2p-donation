@@ -1,4 +1,5 @@
 import { Avatar, Badge, Box, Heading, Stack, Text } from '@chakra-ui/react';
+import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
 import { fundraiserCountSummary, fundraisingSince, initialsOf } from './pageCopy';
 
 interface FundraiserIdentityProps {
@@ -7,6 +8,8 @@ interface FundraiserIdentityProps {
   organizerName: string;
   fundraisingSinceUtc: string;
   campaignFundraiserCount: number;
+  /** The supporter's own photo. Absent until they upload one, in which case initials stand in. */
+  photoUniqueId?: string | null;
 }
 
 /**
@@ -19,6 +22,7 @@ export const FundraiserIdentity = ({
   organizerName,
   fundraisingSinceUtc,
   campaignFundraiserCount,
+  photoUniqueId,
 }: FundraiserIdentityProps) => (
   <Box
     bg="white"
@@ -30,6 +34,7 @@ export const FundraiserIdentity = ({
     <Stack direction={{ base: 'column', '2sm': 'row' }} gap={4} align={{ '2sm': 'center' }}>
       <Avatar
         name={displayName}
+        src={photoUniqueId ? fundraiserPhotoUrl(photoUniqueId) : undefined}
         getInitials={() => initialsOf(displayName)}
         size="xl"
         bg="brand.500"

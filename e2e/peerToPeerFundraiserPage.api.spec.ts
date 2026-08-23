@@ -9,6 +9,7 @@ import {
 } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { clearFundraiserPages } from './support/fundraiserPages';
 
 /**
  * The fundraiser page is the only endpoint in this feature a stranger can reach, so what it refuses to
@@ -32,13 +33,7 @@ const enabledSettings = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const removeJoinedPages = (): void =>
-  execute(`
-    DELETE fundraiser
-    FROM CampaignFundraiser fundraiser
-    INNER JOIN DonationCampaign campaign ON campaign.Id = fundraiser.DonationCampaignId
-    WHERE campaign.UniqueId = '${campaignUniqueId}';
-  `);
+const removeJoinedPages = (): void => clearFundraiserPages(campaignUniqueId);
 
 const setPageStatus = (status: string): void =>
   execute(`

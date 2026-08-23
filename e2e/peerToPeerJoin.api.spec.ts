@@ -7,7 +7,8 @@ import {
   signIn,
 } from './support/apiSession';
 import { foreignCampaignUniqueId, liveCampaign } from './support/campaignFixtures';
-import { execute, querySingleValue } from './support/database';
+import { querySingleValue } from './support/database';
+import { clearFundraiserPages } from './support/fundraiserPages';
 
 /**
  * Joining is the only endpoint in this feature that writes a row for the caller, so its refusals
@@ -35,13 +36,7 @@ const enabledSettings = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const removeJoinedPages = (): void =>
-  execute(`
-    DELETE fundraiser
-    FROM CampaignFundraiser fundraiser
-    INNER JOIN DonationCampaign campaign ON campaign.Id = fundraiser.DonationCampaignId
-    WHERE campaign.UniqueId = '${campaignUniqueId}';
-  `);
+const removeJoinedPages = (): void => clearFundraiserPages(campaignUniqueId);
 
 const livePageCount = (): string =>
   querySingleValue(`

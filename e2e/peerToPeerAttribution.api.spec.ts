@@ -2,6 +2,7 @@ import { APIRequestContext, expect, test } from '@playwright/test';
 import { anonymousApi, authenticatedApi, joinUrl, settingsUrl, signIn } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { clearFundraiserPages } from './support/fundraiserPages';
 
 /**
  * Who a gift is credited to is decided by the server, from the campaign row and the page address, and
@@ -31,13 +32,7 @@ const enabledSettings = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const removeJoinedPages = (): void =>
-  execute(`
-    DELETE fundraiser
-    FROM CampaignFundraiser fundraiser
-    INNER JOIN DonationCampaign campaign ON campaign.Id = fundraiser.DonationCampaignId
-    WHERE campaign.UniqueId = '${campaign.uniqueId}';
-  `);
+const removeJoinedPages = (): void => clearFundraiserPages(campaign.uniqueId);
 
 /** One gift written straight to the tables, credited the way the donation service would credit it. */
 const insertGiftAttributedTo = (attributedFundraiserId: string | null): void =>

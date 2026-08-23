@@ -28,6 +28,8 @@ export interface FundraiserPage {
   fundraisingSinceUtc: string;
   currencySymbol: string;
   /** The fundraiser's goal, or the campaign default. Null when neither is set. */
+  /** The supporter's own photo. Null until they upload one, in which case initials stand in. */
+  photoUniqueId: string | null;
   goal: number | null;
   raisedAmount: number;
   donorCount: number;

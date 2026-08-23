@@ -7,8 +7,10 @@ import {
   MdSettings,
   MdCardMembership,
   MdFolder,
+  MdCampaign,
 } from 'react-icons/md';
 import { getAllowedModules } from '../utils/allowedModules';
+import { isFundraiser } from '../utils/fundraiserClaim';
 
 const DonorDashboard = lazy(
   () => import('../app/components/member/dashboard/DonorDashboard'),
@@ -31,6 +33,12 @@ const MemberDocumentsPage = lazy(
 const MemberDocumentCategoryPage = lazy(
   () => import('../app/components/member/documents/MemberDocumentCategoryPage'),
 );
+const MyFundraisingScreen = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/console/MyFundraisingPage'),
+);
+const EditFundraiserPageScreen = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/console/EditFundraiserPage'),
+);
 const MemberNotificationsList = lazy(
   () => import('../app/components/member/notifications/NotificationsList'),
 );
@@ -40,6 +48,10 @@ const MemberNotificationsDetails = lazy(
 
 const isMemberRole = localStorage.getItem('currentRole') === 'Member';
 const isDonorRole  = localStorage.getItem('currentRole') === 'Donor';
+
+// Presentation only. Every console endpoint decides ownership on the server, so a token edited to
+// carry this claim buys a menu item and a screen that then refuses to load.
+const isFundraising = isFundraiser();
 
 const allowedModules = getAllowedModules().map((m) => m.toLowerCase());
 const hasMembershipModule = allowedModules.includes('membership');
@@ -108,6 +120,26 @@ const allMemberRoutes = [
     component: <DiscoverPage />,
   },
   {
+    // The claim decides whether the item is named, and an unnamed route is left out of the sidebar.
+    // The route itself is always registered, so somebody whose token predates their first page can
+    // still open the address - the server decides what they may see, not this list.
+    name: isFundraising ? 'My Fundraising' : '',
+    navbarTitle: 'My Fundraising',
+    layout: '/member',
+    path: '/my-fundraising',
+    memberOnly: true,
+    icon: <Icon as={MdCampaign} width="20px" height="20px" color="inherit" />,
+    component: <MyFundraisingScreen />,
+  },
+  {
+    name: '',
+    navbarTitle: 'Edit My Fundraising Page',
+    layout: '/member',
+    path: '/my-fundraising/:fundraiserUniqueId',
+    memberOnly: true,
+    component: <EditFundraiserPageScreen />,
+  },
+  {
     name: 'Settings',
     navbarTitle: 'Profile',
     layout: '/member',
@@ -140,7 +172,7 @@ const allMemberRoutes = [
 // Primary path: filter by the JWT's allowed-modules claim, so a user with both
 // 'Donation' and 'Membership' modules sees both sets of nav items. Falls back
 // to the legacy currentRole-based split for tokens that don't carry the claim.
-export const memberRoutes = allowedModules.length > 0
+export const memberRoutes = (allowedModules.length > 0
   ? allMemberRoutes.filter((r) => {
       if (r.requiresModule === 'Membership') return hasMembershipModule;
       if (r.requiresModule === 'Donation') return hasDonationModule;
@@ -150,6 +182,6 @@ export const memberRoutes = allowedModules.length > 0
   ? allMemberRoutes.filter((r) => r.name === 'Dashboard' || r.memberOnly)
   : isDonorRole
   ? allMemberRoutes.filter((r) => !(r as any).memberExclusive)
-  : allMemberRoutes;
+  : allMemberRoutes);
 
 export default memberRoutes;

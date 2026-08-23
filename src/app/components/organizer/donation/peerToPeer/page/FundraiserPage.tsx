@@ -104,6 +104,7 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
           organizerName={page.organizerName}
           fundraisingSinceUtc={page.fundraisingSinceUtc}
           campaignFundraiserCount={page.campaignFundraiserCount}
+          photoUniqueId={page.photoUniqueId}
         />
 
         {page.story && <FundraiserStoryPanel story={page.story} />}

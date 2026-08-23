@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
 import { authenticatedApi, settingsUrl, signIn } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
-import { execute } from './support/database';
+import { clearFundraiserPages } from './support/fundraiserPages';
 
 /**
  * The whole journey a supporter walks: the campaign page grows a button, the button leads to the join
@@ -24,13 +24,7 @@ const storyField = '#fundraiser-story';
 let api: APIRequestContext;
 let originalSettings: Record<string, unknown>;
 
-const removeJoinedPages = (): void =>
-  execute(`
-    DELETE fundraiser
-    FROM CampaignFundraiser fundraiser
-    INNER JOIN DonationCampaign campaign ON campaign.Id = fundraiser.DonationCampaignId
-    WHERE campaign.UniqueId = '${campaign.uniqueId}';
-  `);
+const removeJoinedPages = (): void => clearFundraiserPages(campaign.uniqueId);
 
 const applySettings = async (overrides: Record<string, unknown> = {}) => {
   const response = await api.post(settingsUrl(campaign.uniqueId), {
