@@ -13,6 +13,7 @@ export const EMPTY_GUIDANCE =
 export const EMPTY_ACTION = 'Find a campaign';
 
 export const VIEW_PUBLIC_PAGE = 'View my page';
+export const OPENS_IN_A_NEW_TAB = '(opens in a new tab)';
 export const EDIT_PAGE = 'Edit my page';
 export const BACK_TO_CONSOLE = 'Back to my fundraising';
 

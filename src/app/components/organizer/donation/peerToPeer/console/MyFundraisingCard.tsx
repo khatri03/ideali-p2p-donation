@@ -7,6 +7,7 @@ import {
   Progress,
   Stack,
   Text,
+  VisuallyHidden,
 } from '@chakra-ui/react';
 import { MyFundraisingPage } from 'app/interface/donationInter/fundraiserConsoleDto';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
@@ -17,6 +18,7 @@ import SharePanel from '../page/SharePanel';
 import {
   CAMPAIGN_CLOSED_NOTE,
   EDIT_PAGE,
+  OPENS_IN_A_NEW_TAB,
   STATUS_LABELS,
   STATUS_NOTES,
   VIEW_PUBLIC_PAGE,
@@ -25,7 +27,6 @@ import {
 interface MyFundraisingCardProps {
   page: MyFundraisingPage;
   shareUrl: string;
-  onView: () => void;
   onEdit: () => void;
 }
 
@@ -41,7 +42,7 @@ const statusColorScheme = (page: MyFundraisingPage) => {
  * One page a supporter owns: where it stands, what it has raised, the link to send, and the two
  * actions worth offering. Presentational only - it takes a page and renders it.
  */
-export const MyFundraisingCard = ({ page, shareUrl, onView, onEdit }: MyFundraisingCardProps) => {
+export const MyFundraisingCard = ({ page, shareUrl, onEdit }: MyFundraisingCardProps) => {
   const percentage = goalPercentage(page.raisedAmount, page.goal);
   const statusNote = page.isCampaignOpen ? STATUS_NOTES[page.currentStatus] : CAMPAIGN_CLOSED_NOTE;
 
@@ -138,16 +139,26 @@ export const MyFundraisingCard = ({ page, shareUrl, onView, onEdit }: MyFundrais
             {EDIT_PAGE}
           </Button>
 
+          {/*
+            A real link rather than a button: the public page opens in its own tab, so whatever the
+            fundraiser was part-way through editing or sharing is still here when they come back.
+          */}
           <Button
-            onClick={onView}
+            as="a"
+            href={shareUrl || undefined}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="outline"
             colorScheme="brand"
+            isDisabled={!shareUrl}
+            aria-disabled={!shareUrl}
             minH="44px"
             borderRadius="12px"
-            cursor="pointer"
+            cursor={shareUrl ? 'pointer' : 'not-allowed'}
             w={{ base: 'full', md: 'auto' }}
           >
             {VIEW_PUBLIC_PAGE}
+            <VisuallyHidden>{OPENS_IN_A_NEW_TAB}</VisuallyHidden>
           </Button>
         </Stack>
 

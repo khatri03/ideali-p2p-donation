@@ -67,10 +67,6 @@ export const MyFundraisingScreen = () => {
               key={page.uniqueId}
               page={page}
               shareUrl={shareUrlFor(page)}
-              onView={() =>
-                page.campaignSlug &&
-                navigate(fundraiserPagePath(page.campaignSlug, page.slug))
-              }
               onEdit={() => navigate(editMyFundraisingPath(page.uniqueId))}
             />
           ))}

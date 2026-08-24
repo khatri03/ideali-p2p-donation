@@ -103,6 +103,25 @@ test.describe('Fundraiser console screens', () => {
     await expect(page.getByText(new RegExp(`/campaigns/[^/]+/${SLUG}$`))).toBeVisible();
   });
 
+  test('Console_ViewMyPage_OpensThePublicPageInANewTabAndLeavesTheConsoleWhereItWas', async ({
+    page,
+    context,
+  }) => {
+    await page.goto(CONSOLE_PATH);
+
+    const [publicPage] = await Promise.all([
+      context.waitForEvent('page'),
+      page.getByRole('link', { name: /View my page/ }).click(),
+    ]);
+
+    await publicPage.waitForLoadState('domcontentloaded');
+
+    expect(publicPage.url()).toMatch(new RegExp(`/campaigns/[^/]+/${SLUG}$`));
+    await expect(page).toHaveURL(new RegExp(`${CONSOLE_PATH}$`));
+
+    await publicPage.close();
+  });
+
   test('Console_EditPressed_OpensThatPagesEditorPrefilled', async ({ page }) => {
     await page.goto(CONSOLE_PATH);
     await page.getByRole('button', { name: 'Edit my page' }).click();

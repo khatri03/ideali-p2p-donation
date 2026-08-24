@@ -121,14 +121,39 @@ describe('MyFundraisingPage', () => {
     expect(await screen.findByText('Edit screen')).toBeInTheDocument();
   });
 
-  it('Console_ViewPressed_OpensThePublicPageAtTheSharedAddress', async () => {
+  it('Console_ViewMyPage_OpensThePublicAddressInANewTabWithoutHandingItThisOne', async () => {
     getMyFundraisingPages.mockResolvedValue([buildMyFundraisingPage()]);
 
     renderConsole();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'View my page' }));
+    const view = await screen.findByRole('link', { name: /View my page/ });
 
-    expect(await screen.findByText('Public page')).toBeInTheDocument();
+    expect(view).toHaveAttribute(
+      'href',
+      `${window.location.origin}/campaigns/winter-appeal/sarah-khan`,
+    );
+    expect(view).toHaveAttribute('target', '_blank');
+    expect(view).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('Console_ViewMyPage_SaysItLeavesTheScreenForAnyoneNotLookingAtIt', async () => {
+    getMyFundraisingPages.mockResolvedValue([buildMyFundraisingPage()]);
+
+    renderConsole();
+
+    expect(await screen.findByRole('link', { name: /View my page \(opens in a new tab\)/ }))
+      .toBeInTheDocument();
+  });
+
+  it('Console_PageWithNoCampaignAddress_OffersNoDeadLinkToOpen', async () => {
+    getMyFundraisingPages.mockResolvedValue([buildMyFundraisingPage({ campaignSlug: null })]);
+
+    renderConsole();
+
+    const view = await screen.findByText('View my page');
+
+    expect(view.closest('a')).toHaveAttribute('aria-disabled', 'true');
+    expect(view.closest('a')).not.toHaveAttribute('href');
   });
 
   it('Console_ShareLink_IsShownInFullSoItCanBeCopiedByHand', async () => {
