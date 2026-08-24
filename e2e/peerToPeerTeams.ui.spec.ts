@@ -83,6 +83,20 @@ const insertTeamWithTwoMembers = (captainUserId: string): void =>
     WHERE fundraiser.DonationCampaignId = @campaignId AND fundraiser.CreatedBy = '${PROBE_TAG}';
   `);
 
+/** The captain's own fundraising page with no team, so the console has a fundraiser but nothing joined. */
+const insertCaptainPageOnly = (captainUserId: string): void =>
+  execute(`
+    DECLARE @campaignId INT = (SELECT Id FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}');
+    DECLARE @organizerId INT = (SELECT OrganizerId FROM DonationCampaign WHERE Id = @campaignId);
+
+    INSERT INTO CampaignFundraiser
+      (UniqueId, RowVersion, OrganizerId, DonationCampaignId, UserId, Slug, DisplayName, Story,
+       PersonalGoal, CurrentStatus, IsDeleted, CreatedBy, CreatedOnUtc)
+    VALUES
+      (NEWID(), 0, @organizerId, @campaignId, ${captainUserId}, '${CAPTAIN_SLUG}', '${CAPTAIN_NAME}',
+       NULL, 500, 'Active', 0, '${PROBE_TAG}', SYSUTCDATETIME());
+  `);
+
 const takeCaptaincyAway = (): void =>
   execute(`
     UPDATE CampaignTeam
@@ -371,5 +385,75 @@ test.describe('Team screens the captain opens', () => {
 
     expect(remove?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(save?.height ?? 0).toBeGreaterThanOrEqual(44);
+  });
+});
+
+/**
+ * The teams surface is addressed by campaign slug, which nobody types. These prove a fundraiser reaches
+ * it from the two places they already are: their own console, and their own public page.
+ */
+test.describe('Reaching a team without typing its address', () => {
+  const consoleCard = (page: import('@playwright/test').Page) =>
+    page.getByRole('region', { name: `${CAPTAIN_NAME} fundraising for ${campaign.name}` });
+
+  test('Console_FundraiserWithNoTeam_ReachesTheTeamsScreenForThatCampaign', async ({ page }) => {
+    insertCaptainPageOnly(signedInUserId);
+
+    await page.goto('/member/my-fundraising');
+    await consoleCard(page).getByRole('button', { name: 'Find a team' }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams$`));
+    await expect(page.getByRole('heading', { level: 1, name: 'Fundraising teams' })).toBeVisible();
+  });
+
+  test('Console_FundraiserInATeam_NamesTheTeamAndOpensItDirectly', async ({ page }) => {
+    insertTeamWithTwoMembers(signedInUserId);
+
+    await page.goto('/member/my-fundraising');
+    await consoleCard(page).getByRole('button', { name: `My team: ${TEAM_NAME}` }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams/${TEAM_SLUG}$`));
+    await expect(page.getByRole('heading', { level: 1, name: TEAM_NAME })).toBeVisible();
+  });
+
+  test('Console_CampaignNotFormingTeams_OffersNoTeamControlAtAll', async ({ page }) => {
+    insertCaptainPageOnly(signedInUserId);
+    setTeamsAllowed(0);
+
+    await page.goto('/member/my-fundraising');
+
+    const card = consoleCard(page);
+
+    await expect(card.getByRole('button', { name: 'Edit my page' })).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
+  });
+
+  test('Console_TeamControl_MeetsTheTouchTargetMinimum', async ({ page }) => {
+    insertCaptainPageOnly(signedInUserId);
+
+    await page.goto('/member/my-fundraising');
+
+    const control = consoleCard(page).getByRole('button', { name: 'Find a team' });
+
+    expect((await control.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+  });
+
+  test('PublicPage_FundraiserInATeam_TakesADonorToTheWiderEffort', async ({ page }) => {
+    insertTeamWithTwoMembers(signedInUserId);
+
+    await page.goto(`/campaigns/${campaignSlug}/${CAPTAIN_SLUG}`);
+    await page.getByRole('link', { name: `Part of ${TEAM_NAME}` }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams/${TEAM_SLUG}$`));
+    await expect(page.getByRole('heading', { level: 1, name: TEAM_NAME })).toBeVisible();
+  });
+
+  test('PublicPage_FundraiserInNoTeam_ShowsNoTeamLine', async ({ page }) => {
+    insertCaptainPageOnly(signedInUserId);
+
+    await page.goto(`/campaigns/${campaignSlug}/${CAPTAIN_SLUG}`);
+    await expect(page.getByRole('heading', { level: 1, name: CAPTAIN_NAME })).toBeVisible();
+
+    await expect(page.getByRole('link', { name: /^Part of / })).toHaveCount(0);
   });
 });

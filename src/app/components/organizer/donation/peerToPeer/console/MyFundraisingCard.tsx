@@ -5,13 +5,21 @@ import { formatMoney, goalPercentage } from '../page/money';
 import { donorSummary, initialsOf, raisedSummary } from '../page/pageCopy';
 import RecentSupportersPanel from '../page/RecentSupportersPanel';
 import SharePanel from '../page/SharePanel';
+import MyTeamAction from './MyTeamAction';
 import ViewPublicPageLink from './ViewPublicPageLink';
-import { CAMPAIGN_CLOSED_NOTE, EDIT_PAGE, STATUS_LABELS, STATUS_NOTES } from './consoleCopy';
+import {
+  CAMPAIGN_CLOSED_NOTE,
+  EDIT_PAGE,
+  fundraisingCardLabel,
+  STATUS_LABELS,
+  STATUS_NOTES,
+} from './consoleCopy';
 
 interface MyFundraisingCardProps {
   page: MyFundraisingPage;
   shareUrl: string;
   onEdit: () => void;
+  onOpenTeams: (path: string) => void;
 }
 
 const statusColorScheme = (page: MyFundraisingPage) => {
@@ -26,12 +34,19 @@ const statusColorScheme = (page: MyFundraisingPage) => {
  * One page a supporter owns: where it stands, what it has raised, the link to send, and the two
  * actions worth offering. Presentational only - it takes a page and renders it.
  */
-export const MyFundraisingCard = ({ page, shareUrl, onEdit }: MyFundraisingCardProps) => {
+export const MyFundraisingCard = ({
+  page,
+  shareUrl,
+  onEdit,
+  onOpenTeams,
+}: MyFundraisingCardProps) => {
   const percentage = goalPercentage(page.raisedAmount, page.goal);
   const statusNote = page.isCampaignOpen ? STATUS_NOTES[page.currentStatus] : CAMPAIGN_CLOSED_NOTE;
 
   return (
     <Box
+      as="section"
+      aria-label={fundraisingCardLabel(page.displayName, page.campaignName)}
       bg="white"
       _dark={{ bg: 'navy.700' }}
       borderRadius="16px"
@@ -124,6 +139,8 @@ export const MyFundraisingCard = ({ page, shareUrl, onEdit }: MyFundraisingCardP
           </Button>
 
           <ViewPublicPageLink shareUrl={shareUrl} />
+
+          <MyTeamAction page={page} onOpen={onOpenTeams} />
         </Stack>
 
         <SharePanel displayName={page.displayName} shareUrl={shareUrl} />

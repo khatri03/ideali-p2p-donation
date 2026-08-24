@@ -1,4 +1,4 @@
-import { FundraiserPageSupporter } from './fundraiserPageDto';
+import { FundraiserPageSupporter, FundraiserTeam } from './fundraiserPageDto';
 
 /** Where a page stands with the charity. Only Active pages take money. */
 export type FundraiserStatus = 'Active' | 'PendingApproval' | 'Paused' | 'Removed';
@@ -26,6 +26,10 @@ export interface MyFundraisingPage {
   donorCount: number;
   /** Addresses the stored photo. Null while the supporter has not uploaded one. */
   photoUniqueId: string | null;
+  /** False both when the charity never switched teams on and once the campaign closes. */
+  areTeamsAllowed: boolean;
+  /** The team this page is already counted towards, so the console offers the way to it. */
+  myTeam: FundraiserTeam | null;
   recentSupporters: FundraiserPageSupporter[];
 }
 

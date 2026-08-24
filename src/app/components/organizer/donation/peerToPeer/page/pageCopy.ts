@@ -93,3 +93,5 @@ export const initialsOf = (displayName: string): string =>
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? '')
     .join('') || '?';
+
+export const teamLine = (teamName: string) => `Part of ${teamName}`;

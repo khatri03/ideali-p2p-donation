@@ -6,6 +6,7 @@ import FundraiserPageNotice from './FundraiserPageNotice';
 import FundraiserPageSkeleton from './FundraiserPageSkeleton';
 import FundraiserProgressPanel from './FundraiserProgressPanel';
 import FundraiserStoryPanel from './FundraiserStoryPanel';
+import FundraiserTeamLink from './FundraiserTeamLink';
 import PublicPageShell from './PublicPageShell';
 import RecentSupportersPanel from './RecentSupportersPanel';
 import SharePanel from './SharePanel';
@@ -105,6 +106,9 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
           fundraisingSinceUtc={page.fundraisingSinceUtc}
           campaignFundraiserCount={page.campaignFundraiserCount}
           photoUniqueId={page.photoUniqueId}
+          team={
+            page.team ? <FundraiserTeamLink campaignSlug={page.campaignSlug} team={page.team} /> : null
+          }
         />
 
         {page.story && <FundraiserStoryPanel story={page.story} />}

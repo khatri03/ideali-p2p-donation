@@ -71,6 +71,7 @@ export const buildFundraiserPage = (
   raisedAmount: 310,
   donorCount: 22,
   campaignFundraiserCount: 86,
+  team: null,
   recentSupporters: [
     { donorName: 'Ahmed K.', amount: 50, givenOnUtc: '2026-03-10T00:00:00Z' },
     { donorName: 'Anonymous', amount: 25, givenOnUtc: '2026-03-09T00:00:00Z' },
@@ -97,6 +98,8 @@ export const buildMyFundraisingPage = (
   raisedAmount: 310,
   donorCount: 22,
   photoUniqueId: null,
+  areTeamsAllowed: true,
+  myTeam: null,
   recentSupporters: [],
   ...overrides,
 });

@@ -35,6 +35,28 @@ beforeEach(() => {
 });
 
 describe('FundraiserPage', () => {
+  it('Page_FundraiserInATeam_OffersTheWayToTheWiderEffort', async () => {
+    getFundraiserPage.mockResolvedValue(
+      buildFundraiserPage({ team: { slug: 'night-runners', name: 'Night Runners' } }),
+    );
+
+    renderPage();
+
+    expect(await screen.findByRole('link', { name: 'Part of Night Runners' })).toHaveAttribute(
+      'href',
+      '/campaigns/winter-appeal/teams/night-runners',
+    );
+  });
+
+  it('Page_FundraiserInNoTeam_ShowsNoTeamLine', async () => {
+    getFundraiserPage.mockResolvedValue(buildFundraiserPage({ team: null }));
+
+    renderPage();
+
+    await screen.findByRole('heading', { level: 1 });
+    expect(screen.queryByText(/^Part of /)).not.toBeInTheDocument();
+  });
+
   it('Page_LivePage_LeadsWithThePersonNotTheCharity', async () => {
     getFundraiserPage.mockResolvedValue(buildFundraiserPage());
 

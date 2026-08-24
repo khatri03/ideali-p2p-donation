@@ -2,6 +2,7 @@ import { APIRequestContext, expect, test } from '@playwright/test';
 import {
   anonymousApi,
   authenticatedApi,
+  fundraiserPageUrl,
   joinUrl,
   settingsUrl,
   signIn,
@@ -180,6 +181,18 @@ const liveTeamCount = (): number =>
         AND IsDeleted = 0;
     `),
   );
+
+const CONSOLE_URL = '/api/member/my-fundraising';
+
+/** The captain's own console entry, which is where the screen decides whether to offer a team at all. */
+const readCaptainConsoleEntry = async () => {
+  const response = await api.get(CONSOLE_URL);
+  expect(response.status()).toBe(200);
+
+  return (await response.json()).data.find(
+    (page: { slug: string }) => page.slug === captainSlug,
+  );
+};
 
 const createTeam = async (name: string) =>
   api.post(teamsUrl(campaignSlug), { data: { name, story: 'Written by the e2e suite.', teamGoal: 5000 } });
@@ -482,6 +495,66 @@ test.describe('Team endpoints', () => {
     const response = await api.post(teamMembersUrl(campaignSlug, teamSlug), { data: {} });
 
     expect(response.status()).not.toBe(200);
+  });
+
+  test('Console_FundraiserInATeam_CarriesTheTeamSoTheScreenCanLinkToIt', async () => {
+    const teamSlug = await createTeamAndReadSlug('E2E Console Linked Team');
+
+    const entry = await readCaptainConsoleEntry();
+
+    expect(entry.areTeamsAllowed).toBe(true);
+    expect(entry.myTeam).toEqual({ slug: teamSlug, name: 'E2E Console Linked Team' });
+  });
+
+  test('Console_FundraiserInNoTeam_CarriesNoTeamButStillSaysOneCanBeStarted', async () => {
+    const entry = await readCaptainConsoleEntry();
+
+    expect(entry.areTeamsAllowed).toBe(true);
+    expect(entry.myTeam).toBeNull();
+  });
+
+  test('Console_TeamsSwitchedOff_SaysSoSoTheConsoleOffersNoWayIn', async () => {
+    await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
+
+    const entry = await readCaptainConsoleEntry();
+
+    expect(entry.areTeamsAllowed).toBe(false);
+  });
+
+  test('Console_TeamDisbanded_StopsNamingItRatherThanLinkingToNothing', async () => {
+    const teamSlug = await createTeamAndReadSlug('E2E Console Doomed Team');
+
+    const left = await api.delete(`${teamMembersUrl(campaignSlug, teamSlug)}/me`);
+    expect(left.status()).toBe(200);
+
+    expect((await readCaptainConsoleEntry()).myTeam).toBeNull();
+  });
+
+  test('PublicPage_FundraiserInATeam_NamesTheTeamToAnybodyWithTheAddress', async () => {
+    const teamSlug = await createTeamAndReadSlug('E2E Publicly Named Team');
+
+    const response = await anonymous.get(fundraiserPageUrl(campaignSlug, captainSlug));
+
+    expect(response.status()).toBe(200);
+    expect((await response.json()).data.team).toEqual({
+      slug: teamSlug,
+      name: 'E2E Publicly Named Team',
+    });
+  });
+
+  test('PublicPage_FundraiserInNoTeam_NamesNoTeam', async () => {
+    const response = await anonymous.get(fundraiserPageUrl(campaignSlug, captainSlug));
+
+    expect((await response.json()).data.team).toBeNull();
+  });
+
+  test('PublicPage_TeamNamedOnIt_StillCarriesNoEmailAddressOrUserIdentifier', async () => {
+    await createTeamAndReadSlug('E2E Publicly Quiet Team');
+
+    const raw = await (await anonymous.get(fundraiserPageUrl(campaignSlug, captainSlug))).text();
+
+    expect(raw.toLowerCase()).not.toContain('userid');
+    expect(raw.toLowerCase()).not.toContain('@yopmail');
   });
 
   test('Create_ForgedToken_IsRefusedWithoutRevealingWhetherTheCampaignExists', async () => {

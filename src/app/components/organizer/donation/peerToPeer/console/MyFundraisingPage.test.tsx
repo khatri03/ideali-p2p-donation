@@ -22,6 +22,11 @@ const renderConsole = () =>
           <Route path="/member/my-fundraising" element={<MyFundraisingScreen />} />
           <Route path="/member/my-fundraising/:id" element={<p>Edit screen</p>} />
           <Route path="/member/discover" element={<p>Discover screen</p>} />
+          <Route path="/campaigns/:campaignSlug/teams" element={<p>Browse teams screen</p>} />
+          <Route
+            path="/campaigns/:campaignSlug/teams/:teamSlug"
+            element={<p>Team page screen</p>}
+          />
           <Route path="/campaigns/:campaignSlug/:fundraiserSlug" element={<p>Public page</p>} />
         </Routes>
       </MemoryRouter>
@@ -33,6 +38,33 @@ beforeEach(() => {
 });
 
 describe('MyFundraisingPage', () => {
+  it('Console_FindATeam_OpensTheTeamsScreenForThatCampaign', async () => {
+    getMyFundraisingPages.mockResolvedValue([
+      buildMyFundraisingPage({ areTeamsAllowed: true, myTeam: null }),
+    ]);
+
+    renderConsole();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Find a team' }));
+
+    expect(screen.getByText('Browse teams screen')).toBeInTheDocument();
+  });
+
+  it('Console_MyTeam_OpensThatTeamsPage', async () => {
+    getMyFundraisingPages.mockResolvedValue([
+      buildMyFundraisingPage({
+        areTeamsAllowed: true,
+        myTeam: { slug: 'night-runners', name: 'Night Runners' },
+      }),
+    ]);
+
+    renderConsole();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'My team: Night Runners' }));
+
+    expect(screen.getByText('Team page screen')).toBeInTheDocument();
+  });
+
   it('Console_OnePage_ShowsItsCampaignTotalAndGoal', async () => {
     getMyFundraisingPages.mockResolvedValue([buildMyFundraisingPage()]);
 

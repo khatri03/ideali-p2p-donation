@@ -62,6 +62,7 @@ export const MyFundraisingScreen = () => {
               page={page}
               shareUrl={fundraiserShareUrl(page)}
               onEdit={() => navigate(editMyFundraisingPath(page.uniqueId))}
+              onOpenTeams={navigate}
             />
           ))}
       </Stack>

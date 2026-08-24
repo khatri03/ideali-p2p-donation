@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Avatar, Badge, Box, Heading, Stack, Text } from '@chakra-ui/react';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
 import { fundraiserCountSummary, fundraisingSince, initialsOf } from './pageCopy';
@@ -10,6 +11,8 @@ interface FundraiserIdentityProps {
   campaignFundraiserCount: number;
   /** The supporter's own photo. Absent until they upload one, in which case initials stand in. */
   photoUniqueId?: string | null;
+  /** The link to the team behind this person, when they are in one. Absent otherwise. */
+  team?: ReactNode;
 }
 
 /**
@@ -23,6 +26,7 @@ export const FundraiserIdentity = ({
   fundraisingSinceUtc,
   campaignFundraiserCount,
   photoUniqueId,
+  team,
 }: FundraiserIdentityProps) => (
   <Box
     bg="white"
@@ -67,6 +71,8 @@ export const FundraiserIdentity = ({
         <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
           {fundraisingSince(fundraisingSinceUtc)}
         </Text>
+
+        {team}
       </Stack>
     </Stack>
   </Box>

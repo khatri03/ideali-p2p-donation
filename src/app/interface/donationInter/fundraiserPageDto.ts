@@ -8,6 +8,15 @@ export type FundraiserPageState =
   | 'Closed'
   | 'CampaignEnded';
 
+/**
+ * The team a fundraising page is counted towards, carried so the team's page can be reached from the
+ * fundraiser's own. Null when they are in no team. Both fields are already public on the team page.
+ */
+export interface FundraiserTeam {
+  slug: string;
+  name: string;
+}
+
 export interface FundraiserPageSupporter {
   /** A first name and a last initial, or "Anonymous". Never a full surname. */
   donorName: string;
@@ -34,6 +43,8 @@ export interface FundraiserPage {
   raisedAmount: number;
   donorCount: number;
   campaignFundraiserCount: number;
+  /** The team this page belongs to, so a donor can reach the wider effort. Null when there is none. */
+  team: FundraiserTeam | null;
   recentSupporters: FundraiserPageSupporter[];
 }
 
