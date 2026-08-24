@@ -34,6 +34,18 @@ const FundraiserPageScreen = lazy(
 const FundraiserDonatePage = lazy(
   () => import('./app/components/organizer/donation/peerToPeer/page/FundraiserDonatePage'),
 );
+const BrowseTeamsPage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/teams/BrowseTeamsPage'),
+);
+const CreateTeamPage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/teams/CreateTeamPage'),
+);
+const TeamPage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/teams/TeamPage'),
+);
+const TeamMembersPage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/teams/TeamMembersPage'),
+);
 
 ReactGA.initialize('G-R0531NLBYE');
 // Chakra imports
@@ -77,6 +89,40 @@ export default function Main() {
         <Route
           path="/donation/campaign/:campaignUniqueId/peer-to-peer/verify-email"
           element={<VerifyEmailPage />}
+        />
+        {/* Mirrors the backend team routes exactly, minus /api. "teams" and "new" are reserved slugs,
+            so neither a fundraiser page nor a team can ever take one of these addresses. */}
+        <Route
+          path="/campaigns/:campaignSlug/teams"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <BrowseTeamsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/campaigns/:campaignSlug/teams/new"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <CreateTeamPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/campaigns/:campaignSlug/teams/:teamSlug/members"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <TeamMembersPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/campaigns/:campaignSlug/teams/:teamSlug"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <TeamPage />
+            </Suspense>
+          }
         />
         {/* Mirrors the backend route exactly, minus /api. The donate route is declared first so a
             fundraiser whose page address ends in "donate" cannot shadow it. */}

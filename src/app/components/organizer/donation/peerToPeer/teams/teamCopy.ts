@@ -1,0 +1,137 @@
+export const BROWSE_HEADING = 'Fundraising teams';
+export const browseSubheading = (campaignName: string) =>
+  `Teams raising money together for ${campaignName}.`;
+
+export const BROWSE_LOAD_FAILED_HEADING = 'These teams cannot be shown right now';
+export const RETRY_LABEL = 'Try again';
+
+export const SEARCH_LABEL = 'Search teams';
+export const SEARCH_PLACEHOLDER = 'Search by team name';
+export const SEARCH_NO_MATCH_HEADING = 'No team matches that search';
+export const SEARCH_NO_MATCH_GUIDANCE =
+  'Try part of the team name, or clear the search to see every team on this campaign.';
+export const SEARCH_CLEAR = 'Clear search';
+
+export const EMPTY_HEADING = 'No teams yet';
+export const EMPTY_GUIDANCE =
+  'Teams let a group of fundraisers add up what they raise together. Be the first to start one.';
+export const START_FIRST_TEAM = 'Start the first team';
+export const START_A_TEAM = 'Start a team';
+
+export const TEAMS_OFF_HEADING = 'This campaign is not using teams';
+export const teamsOffGuidance = (organizerName: string) =>
+  `${organizerName} has not switched fundraising teams on for this campaign, so no new team can be started and nobody new can join. Any team already here stays readable.`;
+
+export const NOT_FUNDRAISER_HEADING = 'Set up your fundraising page first';
+export const NOT_FUNDRAISER_GUIDANCE =
+  'Teams are made up of fundraising pages. Set up your own page on this campaign, and you can start a team or join one.';
+
+export const SET_UP_MY_PAGE = 'Set up my fundraising page';
+
+export const ALREADY_IN_A_TEAM = 'You are already in a team on this campaign.';
+export const ALREADY_IN_A_TEAM_GUIDANCE =
+  'One fundraiser belongs to one team on a campaign. Leave the team you are in before starting another.';
+export const GO_TO_MY_TEAM = 'Go to my team';
+
+export const JOIN_LABEL = 'Join this team';
+export const JOINING_LABEL = 'Joining...';
+export const joinConfirmTitle = (teamName: string) => `Join ${teamName}?`;
+export const JOIN_CONFIRM_BODY =
+  'Your page keeps every donation it has already taken. Joining adds your total to this team from now on, and your donors are unaffected.';
+export const JOIN_CONFIRM_ACTION = 'Yes, join';
+
+export const LEAVE_LABEL = 'Leave this team';
+export const LEAVING_LABEL = 'Leaving...';
+export const leaveConfirmTitle = (teamName: string) => `Leave ${teamName}?`;
+export const LEAVE_CONFIRM_BODY =
+  'Your fundraising page and every donation on it stay exactly as they are. Only the team total changes, and the charity keeps the money already given.';
+export const LEAVE_CONFIRM_ACTION = 'Yes, leave';
+export const LEAVE_LAST_MEMBER_WARNING =
+  'You are the last member, so leaving closes this team. Its address will stop working.';
+export const LEAVE_CAPTAIN_WARNING =
+  'You are the captain, so the longest-standing member takes over when you leave.';
+
+export const CANCEL_LABEL = 'Cancel';
+
+export const CREATE_HEADING = 'Start a team';
+export const createSubheading = (campaignName: string) =>
+  `Your team raises money together for ${campaignName}.`;
+export const CREATE_ACTION = 'Create team';
+export const CREATING_LABEL = 'Creating...';
+export const CREATE_NOTE =
+  'You become the captain, and your own fundraising page joins the team straight away.';
+
+export const EDIT_HEADING = 'Edit this team';
+export const EDIT_ACTION = 'Save changes';
+export const SAVING_LABEL = 'Saving...';
+export const SAVED_MESSAGE = 'The team is updated.';
+
+export const NAME_LABEL = 'Team name';
+export const NAME_HELP = 'This is the name donors see on the team page.';
+export const STORY_LABEL = 'Why this team is fundraising';
+export const STORY_HELP = 'One or two paragraphs is plenty. Donors give more when they know why.';
+export const GOAL_LABEL = 'Team goal';
+export const GOAL_HELP = 'Leave it blank to show what the team has raised without a target.';
+export const storyRemaining = (used: number, limit: number) =>
+  `${Math.max(0, limit - used)} characters left`;
+
+export const NAME_REQUIRED = 'Enter a name for your team.';
+export const nameTooLong = (limit: number) => `The team name must be ${limit} characters or fewer.`;
+export const GOAL_NOT_A_NUMBER = 'Enter a goal as a number, or leave it blank.';
+export const GOAL_TOO_SMALL = 'Enter a goal greater than zero, or leave it blank.';
+export const goalTooLarge = (limit: number) => `Enter a goal of ${limit.toLocaleString()} or less.`;
+export const storyTooLong = (limit: number) =>
+  `The team story must be ${limit} characters or fewer.`;
+
+export const TEAM_NOT_FOUND_HEADING = 'This team is not here';
+export const TEAM_NOT_FOUND_GUIDANCE =
+  'The address may have been mistyped, or every member may have left and closed the team. Check the link you were sent.';
+
+export const TEAM_STORY_HEADING = 'Why this team is fundraising';
+export const MEMBERS_HEADING = 'Team members';
+export const membersCount = (count: number) =>
+  count === 1 ? '1 fundraiser' : `${count} fundraisers`;
+export const teamDonorSummary = (count: number) =>
+  count === 1 ? '1 donor across the team' : `${count} donors across the team`;
+export const CAPTAIN_BADGE = 'Captain';
+export const raisedByMember = (amount: string) => `${amount} raised`;
+export const VIEW_MEMBER_PAGE = 'View page';
+export const VIEW_TEAM = 'View team';
+export const viewTeamLabel = (teamName: string) => `View ${teamName}`;
+
+export const DONATE_CTA = 'Donate to this team';
+export const DONATE_REASSURANCE = (organizerName: string) => `Goes straight to ${organizerName}`;
+export const CHOOSE_MEMBER_TITLE = 'Choose who to support';
+export const CHOOSE_MEMBER_BODY =
+  'Every donation goes to one fundraiser and counts once towards the team. Pick the person you want to support.';
+export const donateToMember = (displayName: string) => `Donate to ${displayName}`;
+
+export const CAMPAIGN_CLOSED_NOTE =
+  'This campaign has finished, so the team is no longer taking donations.';
+
+export const shareHeading = (teamName: string) => `Share ${teamName}`;
+
+export const MANAGE_TEAM = 'Manage team';
+export const MANAGE_HEADING = 'Manage this team';
+export const manageSubheading = (teamName: string) =>
+  `You are the captain of ${teamName}. Only you can see this screen.`;
+export const BACK_TO_TEAM = 'Back to the team page';
+
+export const CAPTAIN_ONLY_HEADING = 'Only the team captain can open this';
+export const CAPTAIN_ONLY_GUIDANCE =
+  'Managing members is the captain job. You can still see the team page and keep fundraising.';
+
+export const REMOVE_MEMBER = 'Remove';
+export const removeConfirmTitle = (displayName: string) => `Remove ${displayName} from the team?`;
+export const removeConfirmBody = (displayName: string) =>
+  `${displayName} keeps their fundraising page and every donation on it. Only the team total changes, and the charity keeps the money already given.`;
+export const REMOVE_CONFIRM_ACTION = 'Yes, remove';
+
+export const HAND_OVER_CAPTAINCY = 'Make captain';
+export const handOverConfirmTitle = (displayName: string) => `Make ${displayName} the captain?`;
+export const handOverConfirmBody = (displayName: string) =>
+  `${displayName} takes over managing the team, and you stay on as a member. You cannot undo this yourself.`;
+export const HAND_OVER_CONFIRM_ACTION = 'Yes, hand over';
+
+export const ONLY_MEMBER_NOTE =
+  'You are the only member. Invite another fundraiser to join before you can hand over the captaincy.';

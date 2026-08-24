@@ -76,3 +76,18 @@ export const resendVerificationUrl = (campaignUniqueId: string): string =>
 
 export const fundraiserPageUrl = (campaignSlug: string, fundraiserSlug: string): string =>
   `/api/campaigns/${encodeURIComponent(campaignSlug)}/${encodeURIComponent(fundraiserSlug)}`;
+
+export const teamsUrl = (campaignSlug: string): string =>
+  `/api/campaigns/${encodeURIComponent(campaignSlug)}/teams`;
+
+export const teamUrl = (campaignSlug: string, teamSlug: string): string =>
+  `${teamsUrl(campaignSlug)}/${encodeURIComponent(teamSlug)}`;
+
+export const teamMembersUrl = (campaignSlug: string, teamSlug: string): string =>
+  `${teamUrl(campaignSlug, teamSlug)}/members`;
+
+export const teamCaptainUrl = (
+  campaignSlug: string,
+  teamSlug: string,
+  memberUniqueId: string,
+): string => `${teamUrl(campaignSlug, teamSlug)}/captain/${encodeURIComponent(memberUniqueId)}`;

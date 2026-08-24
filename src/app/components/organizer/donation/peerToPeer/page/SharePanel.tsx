@@ -5,13 +5,15 @@ import { SHARE_HEADING } from './pageCopy';
 interface SharePanelProps {
   displayName: string;
   shareUrl: string;
+  /** Overrides the heading for surfaces that share something other than one person's page. */
+  heading?: string;
 }
 
 /**
  * Sharing is how a peer-to-peer page reaches anybody, so the address is always readable even when the
  * clipboard is unavailable - a locked-down browser must not leave the fundraiser with nothing to send.
  */
-export const SharePanel = ({ displayName, shareUrl }: SharePanelProps) => (
+export const SharePanel = ({ displayName, shareUrl, heading }: SharePanelProps) => (
   <Box
     bg="white"
     _dark={{ bg: 'navy.700' }}
@@ -26,7 +28,7 @@ export const SharePanel = ({ displayName, shareUrl }: SharePanelProps) => (
       color="navy.700"
       _dark={{ color: 'white' }}
     >
-      {SHARE_HEADING(displayName)}
+      {heading ?? SHARE_HEADING(displayName)}
     </Heading>
 
     <Stack gap={3} align={{ md: 'flex-start' }}>
