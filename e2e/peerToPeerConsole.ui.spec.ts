@@ -16,6 +16,12 @@ const DISPLAY_NAME = 'E2E Console Screen';
 
 const CONSOLE_PATH = '/member/my-fundraising';
 
+/** A real one-pixel PNG, so the upload proves the whole path rather than the content-type check alone. */
+const ONE_PIXEL_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64',
+);
+
 let pageUniqueId: string;
 
 const removeProbePage = (): void =>
@@ -197,6 +203,39 @@ test.describe('Fundraiser console screens', () => {
 
     await expect(page.getByText('You are not fundraising yet')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Find a campaign' })).toBeVisible();
+  });
+
+  test('Edit_PhotoChosenInTheBrowser_IsStoredAgainstThatPageAndCanBeTakenBackOff', async ({
+    page,
+  }) => {
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+    await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
+
+    await page.setInputFiles('input[type="file"]', {
+      name: 'portrait.png',
+      mimeType: 'image/png',
+      buffer: ONE_PIXEL_PNG,
+    });
+
+    await expect(page.getByRole('button', { name: 'Remove photo' })).toBeVisible();
+
+    const stored = querySingleValue(`
+      SELECT ISNULL(CAST(PhotoFileStorageId AS VARCHAR(20)), 'NONE')
+      FROM CampaignFundraiser WHERE UniqueId = '${pageUniqueId}';
+    `);
+
+    expect(stored).not.toBe('NONE');
+
+    await page.getByRole('button', { name: 'Remove photo' }).click();
+
+    await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
+
+    const afterRemoval = querySingleValue(`
+      SELECT ISNULL(CAST(PhotoFileStorageId AS VARCHAR(20)), 'NONE')
+      FROM CampaignFundraiser WHERE UniqueId = '${pageUniqueId}';
+    `);
+
+    expect(afterRemoval).toBe('NONE');
   });
 
   test('Console_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {

@@ -99,18 +99,20 @@ describe('fundraiserConsoleService', () => {
     ).rejects.toThrow('Enter a goal greater than zero, or leave it blank.');
   });
 
-  it('Photo_ChosenImage_IsSentAsMultipartWithNoContentTypeOfOurOwn', async () => {
+  it('Photo_ChosenImage_IsSentAsAMultipartFormAgainstThatPage', async () => {
     post.mockResolvedValue({ data: { success: true, data: 'photo-unique-id' } });
 
     const photo = new File(['binary'], 'portrait.jpg', { type: 'image/jpeg' });
     const result = await setMyFundraisingPhoto(PAGE_ID, photo);
 
-    const [url, body, ...rest] = post.mock.calls[0];
+    const [url, body, config] = post.mock.calls[0];
 
     expect(url).toBe(`/api/member/my-fundraising/${PAGE_ID}/photo`);
     expect(body).toBeInstanceOf(FormData);
     expect((body as FormData).get('photo')).toBe(photo);
-    expect(rest).toHaveLength(0);
+    expect((config as { headers: Record<string, string> }).headers['Content-Type']).toBe(
+      'multipart/form-data',
+    );
     expect(result).toBe('photo-unique-id');
   });
 

@@ -59,8 +59,10 @@ export const updateMyFundraisingPage = async (
 };
 
 /**
- * Sends the photo as multipart, which is what the endpoint binds. The content type is left to the
- * browser so it can set the multipart boundary; overriding it produces a body the server cannot parse.
+ * Sends the photo as multipart, which is what the endpoint binds. The multipart content type has to
+ * be asked for on the request: the shared client defaults to JSON, and axios turns a form body into
+ * JSON whenever the content type says JSON, which strips the file and leaves the server with nothing
+ * to bind. The browser replaces this value with one carrying the boundary before the body is sent.
  */
 export const setMyFundraisingPhoto = async (
   fundraiserUniqueId: string,
@@ -72,6 +74,7 @@ export const setMyFundraisingPhoto = async (
   const { data } = await HttpClient.post<FundraiserPhotoResponse>(
     photoUrl(fundraiserUniqueId),
     body,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
   );
 
   if (!data?.success || !data.data) {
