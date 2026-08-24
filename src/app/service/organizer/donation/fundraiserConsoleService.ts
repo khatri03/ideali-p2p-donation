@@ -92,6 +92,13 @@ export const removeMyFundraisingPhoto = async (fundraiserUniqueId: string): Prom
   }
 };
 
-/** Where a stored photo is served from. The same address the rest of the product uses for images. */
-export const fundraiserPhotoUrl = (photoUniqueId: string) =>
-  `/api/images/${encodeURIComponent(photoUniqueId)}.png`;
+/**
+ * Where a stored photo is served from. Built against the API's own address rather than left relative:
+ * an <img> is not sent through HttpClient, so a relative path would be resolved against whatever host
+ * is serving the app and would miss the API entirely wherever the two are not the same origin.
+ */
+export const fundraiserPhotoUrl = (photoUniqueId: string) => {
+  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
+
+  return `${apiBase}/api/images/${encodeURIComponent(photoUniqueId)}.png`;
+};

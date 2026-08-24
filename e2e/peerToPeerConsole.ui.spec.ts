@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { e2eEnv } from './support/e2eEnv';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { buildPng, pngSize } from './support/testImages';
 
 /**
  * The console and the edit screen, at 1280, 768 and 375. The page under test is inserted against the
@@ -16,11 +19,12 @@ const DISPLAY_NAME = 'E2E Console Screen';
 
 const CONSOLE_PATH = '/member/my-fundraising';
 
-/** A real one-pixel PNG, so the upload proves the whole path rather than the content-type check alone. */
-const ONE_PIXEL_PNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-  'base64',
-);
+/** Wider than it is tall, so the framing has room to move and the saved square is provably a crop. */
+const CHOSEN_PHOTO = {
+  name: 'portrait.png',
+  mimeType: 'image/png',
+  buffer: buildPng(600, 300),
+};
 
 let pageUniqueId: string;
 
@@ -205,37 +209,89 @@ test.describe('Fundraiser console screens', () => {
     await expect(page.getByRole('button', { name: 'Find a campaign' })).toBeVisible();
   });
 
-  test('Edit_PhotoChosenInTheBrowser_IsStoredAgainstThatPageAndCanBeTakenBackOff', async ({
-    page,
-  }) => {
-    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
-    await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
-
-    await page.setInputFiles('input[type="file"]', {
-      name: 'portrait.png',
-      mimeType: 'image/png',
-      buffer: ONE_PIXEL_PNG,
-    });
-
-    await expect(page.getByRole('button', { name: 'Remove photo' })).toBeVisible();
-
-    const stored = querySingleValue(`
+  const storedPhotoId = (): string =>
+    querySingleValue(`
       SELECT ISNULL(CAST(PhotoFileStorageId AS VARCHAR(20)), 'NONE')
       FROM CampaignFundraiser WHERE UniqueId = '${pageUniqueId}';
     `);
 
-    expect(stored).not.toBe('NONE');
+  const chooseAPhoto = async (page: Page): Promise<void> => {
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+    await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
+    await page.setInputFiles('input[type="file"]', CHOSEN_PHOTO);
+  };
+
+  test('Edit_PhotoChosenInTheBrowser_IsFramedBeforeAnythingIsUploaded', async ({ page }) => {
+    await chooseAPhoto(page);
+
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByText('portrait.png', { exact: false })).toBeVisible();
+    await expect(page.getByRole('slider', { name: 'Zoom' })).toBeVisible();
+    expect(storedPhotoId()).toBe('NONE');
+  });
+
+  test('Edit_FramingAbandoned_LeavesThePageWithoutAPhoto', async ({ page }) => {
+    await chooseAPhoto(page);
+
+    await page.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.getByRole('dialog')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
+    expect(storedPhotoId()).toBe('NONE');
+  });
+
+  test('Edit_PhotoFramedAndConfirmed_IsStoredAsASquareCropAndCanBeTakenBackOff', async ({
+    page,
+  }) => {
+    await chooseAPhoto(page);
+
+    await page.getByRole('button', { name: 'Zoom in' }).click();
+
+    const stage = page.getByRole('group', { name: /Photo position/ });
+    const frame = await stage.boundingBox();
+
+    expect(frame, 'the framing circle should be on screen').not.toBeNull();
+
+    // Dragged rather than nudged so the pointer path itself is under test, which is how a fundraiser
+    // will actually move the picture.
+    await page.mouse.move(frame!.x + frame!.width / 2, frame!.y + frame!.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(frame!.x + frame!.width / 2 - 40, frame!.y + frame!.height / 2, { steps: 8 });
+    await page.mouse.up();
+
+    await page.getByRole('button', { name: 'Use this photo' }).click();
+
+    await expect(page.getByRole('button', { name: 'Remove photo' })).toBeVisible();
+
+    const storedId = storedPhotoId();
+
+    expect(storedId).not.toBe('NONE');
+
+    const savedPath = querySingleValue(`
+      SELECT FilePath FROM FileStorage WHERE Id = ${storedId};
+    `);
+
+    // Read from the file the API wrote rather than through the image endpoint: what is being proven
+    // here is that the browser sent a framed square, and the stored bytes say that without depending
+    // on how the image is served back.
+    const saved = pngSize(readFileSync(savedPath));
+
+    expect(saved.width).toBe(saved.height);
+    expect(saved.width).toBe(512);
+
+    // An <img> that fails to load leaves the avatar showing initials and says nothing, so the picture
+    // is asked whether it actually decoded rather than merely being on the page.
+    const shownPhoto = page.locator('img[src*="/api/images/"]').first();
+
+    await expect(shownPhoto).toBeVisible();
+    await expect
+      .poll(() => shownPhoto.evaluate((image: HTMLImageElement) => image.naturalWidth))
+      .toBeGreaterThan(0);
 
     await page.getByRole('button', { name: 'Remove photo' }).click();
 
     await expect(page.getByRole('button', { name: 'Upload a photo' })).toBeVisible();
-
-    const afterRemoval = querySingleValue(`
-      SELECT ISNULL(CAST(PhotoFileStorageId AS VARCHAR(20)), 'NONE')
-      FROM CampaignFundraiser WHERE UniqueId = '${pageUniqueId}';
-    `);
-
-    expect(afterRemoval).toBe('NONE');
+    expect(storedPhotoId()).toBe('NONE');
   });
 
   test('Console_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {

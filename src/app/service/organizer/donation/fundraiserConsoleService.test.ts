@@ -142,7 +142,27 @@ describe('fundraiserConsoleService', () => {
     await expect(removeMyFundraisingPhoto(PAGE_ID)).rejects.toThrow('Fundraising page not found.');
   });
 
-  it('PhotoAddress_StoredPhoto_IsServedFromTheSharedImageAddress', () => {
+  it('PhotoAddress_StoredPhoto_IsServedFromTheApiRatherThanWhoeverServesTheApp', () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'https://api.example.test');
+
+    expect(fundraiserPhotoUrl('abc-123')).toBe('https://api.example.test/api/images/abc-123.png');
+  });
+
+  it('PhotoAddress_ApiAddressWithATrailingSlash_DoesNotDoubleTheSeparator', () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'https://api.example.test/');
+
+    expect(fundraiserPhotoUrl('abc-123')).toBe('https://api.example.test/api/images/abc-123.png');
+  });
+
+  it('PhotoAddress_NoApiAddressConfigured_FallsBackToTheSameOrigin', () => {
+    vi.stubEnv('VITE_API_BASE_URL', '');
+
     expect(fundraiserPhotoUrl('abc-123')).toBe('/api/images/abc-123.png');
+  });
+
+  it('PhotoAddress_IdentifierWithReservedCharacters_IsEscaped', () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'https://api.example.test');
+
+    expect(fundraiserPhotoUrl('a b/c')).toBe('https://api.example.test/api/images/a%20b%2Fc.png');
   });
 });

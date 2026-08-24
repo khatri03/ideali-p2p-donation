@@ -29,6 +29,7 @@ export default defineConfig({
     setupFiles: ['./src/setupTests.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     restoreMocks: true,
+    unstubEnvs: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

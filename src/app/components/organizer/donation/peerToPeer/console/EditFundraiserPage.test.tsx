@@ -143,20 +143,50 @@ describe('EditFundraiserPage', () => {
     expect(screen.queryByText('Your page is updated.')).not.toBeInTheDocument();
   });
 
-  it('Photo_ChosenImage_IsUploadedAndThePageIsReadBack', async () => {
-    setMyFundraisingPhoto.mockResolvedValue('photo-unique-id');
-    getMyFundraisingPage.mockResolvedValue(buildMyFundraisingPage({ photoUniqueId: null }));
-
+  const choosePhoto = async (name = 'portrait.jpg', type = 'image/jpeg') => {
     const { container } = renderEditor();
 
     await screen.findByRole('button', { name: 'Upload a photo' });
 
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
 
-    await userEvent.upload(input, new File(['binary'], 'portrait.jpg', { type: 'image/jpeg' }));
+    await userEvent.upload(input, new File(['binary'], name, { type }));
+  };
+
+  it('Photo_ChosenImage_IsFramedBeforeAnythingIsUploaded', async () => {
+    getMyFundraisingPage.mockResolvedValue(buildMyFundraisingPage({ photoUniqueId: null }));
+
+    await choosePhoto('portrait.jpg');
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText(/portrait\.jpg/)).toBeInTheDocument();
+    expect(setMyFundraisingPhoto).not.toHaveBeenCalled();
+  });
+
+  it('Photo_FramingConfirmed_IsUploadedAndThePageIsReadBack', async () => {
+    setMyFundraisingPhoto.mockResolvedValue('photo-unique-id');
+    getMyFundraisingPage.mockResolvedValue(buildMyFundraisingPage({ photoUniqueId: null }));
+
+    await choosePhoto();
+
+    fireEvent.load(await screen.findByAltText('The photo you chose'));
+    await userEvent.click(screen.getByRole('button', { name: /Use this photo/i }));
 
     await waitFor(() => expect(setMyFundraisingPhoto).toHaveBeenCalled());
+    expect(setMyFundraisingPhoto.mock.calls[0][1]).toBeInstanceOf(File);
     expect(getMyFundraisingPage).toHaveBeenCalledTimes(2);
+  });
+
+  it('Photo_FramingCancelled_ClosesTheDialogAndUploadsNothing', async () => {
+    getMyFundraisingPage.mockResolvedValue(buildMyFundraisingPage({ photoUniqueId: null }));
+
+    await choosePhoto();
+
+    fireEvent.load(await screen.findByAltText('The photo you chose'));
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(setMyFundraisingPhoto).not.toHaveBeenCalled();
   });
 
   it('Photo_FileOfTheWrongType_IsRefusedInTheBrowserWithoutAnUpload', async () => {

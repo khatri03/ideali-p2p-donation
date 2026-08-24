@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import { Avatar, Button, FormControl, FormLabel, Stack, Text } from '@chakra-ui/react';
+import ImageCropDialog from 'app/components/common/imageEditor/ImageCropDialog';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
 import { initialsOf } from '../page/pageCopy';
 import {
   PHOTO_CHOOSE,
+  PHOTO_EDIT_TITLE,
   PHOTO_HELP,
   PHOTO_LABEL,
   PHOTO_REJECTED,
@@ -35,22 +37,28 @@ export const FundraiserPhotoField = ({
 }: FundraiserPhotoFieldProps) => {
   const fileInput = useRef<HTMLInputElement>(null);
   const [rejection, setRejection] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<File | null>(null);
 
   const handleFileChosen = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const chosen = event.target.files?.[0];
+    const picked = event.target.files?.[0];
     event.target.value = '';
 
-    if (!chosen) {
+    if (!picked) {
       return;
     }
 
-    if (!ACCEPTED_TYPES.includes(chosen.type) || chosen.size === 0 || chosen.size > MAX_BYTES) {
+    if (!ACCEPTED_TYPES.includes(picked.type) || picked.size === 0 || picked.size > MAX_BYTES) {
       setRejection(PHOTO_REJECTED);
       return;
     }
 
     setRejection(null);
-    onSelect(chosen);
+    setChosen(picked);
+  };
+
+  const handleCropped = (photo: File) => {
+    setChosen(null);
+    onSelect(photo);
   };
 
   return (
@@ -110,6 +118,14 @@ export const FundraiserPhotoField = ({
           )}
         </Stack>
       </Stack>
+
+      <ImageCropDialog
+        file={chosen}
+        title={PHOTO_EDIT_TITLE}
+        isBusy={isBusy}
+        onCancel={() => setChosen(null)}
+        onConfirm={handleCropped}
+      />
 
       <input
         ref={fileInput}

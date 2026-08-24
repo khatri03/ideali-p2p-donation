@@ -53,6 +53,7 @@ export const PHOTO_HELP = 'A JPG, PNG or WEBP of 5 MB or less.';
 export const PHOTO_CHOOSE = 'Upload a photo';
 export const PHOTO_REPLACE = 'Change photo';
 export const PHOTO_REMOVE = 'Remove photo';
+export const PHOTO_EDIT_TITLE = 'Position your photo';
 export const PHOTO_REJECTED = 'Choose a JPG, PNG or WEBP image of 5 MB or less.';
 
 export const SAVE_LABEL = 'Save changes';
