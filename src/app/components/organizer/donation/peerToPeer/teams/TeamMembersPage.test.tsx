@@ -1,5 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -148,6 +148,33 @@ describe('TeamMembersPage', () => {
       'the-early-risers',
       'd7e2b8c1-4a95-4c37-b0f6-2e91d4a7c605',
     );
+    expect(await screen.findByText('1 fundraiser')).toBeInTheDocument();
+  });
+
+  it('Remove_StillInFlight_KeepsTheConfirmationUpWithBothButtonsUnavailable', async () => {
+    getCampaignTeamPage.mockResolvedValue(captainView());
+
+    let finishRemoval: (page: unknown) => void = () => undefined;
+    removeCampaignTeamMember.mockReturnValue(
+      new Promise((resolve) => {
+        finishRemoval = resolve;
+      }),
+    );
+
+    renderManage();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Remove: Ahmed Khalid' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Yes, remove' }));
+
+    const dialog = await screen.findByRole('alertdialog');
+
+    expect(within(dialog).getByText('Remove Ahmed Khalid from the team?')).toBeInTheDocument();
+    within(dialog)
+      .getAllByRole('button')
+      .forEach((button) => expect(button).toBeDisabled());
+
+    finishRemoval(captainView({ members: [buildTeamMember()] }));
+
     expect(await screen.findByText('1 fundraiser')).toBeInTheDocument();
   });
 

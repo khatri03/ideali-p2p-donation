@@ -82,10 +82,11 @@ export function useTeamManagement({
     if (!pending || !team) return;
 
     const action = pending;
-    setPending(null);
 
+    // The confirmation stays up until the answer arrives: it is what reports the action is running.
     if (action.kind === 'leave') {
       await leave(team);
+      setPending(null);
       return;
     }
 
@@ -95,6 +96,7 @@ export function useTeamManagement({
       : () => handOverCampaignTeamCaptaincy(team.campaignSlug, team.slug, action.member.uniqueId);
 
     const updated = await run(call, isRemoval ? REMOVE_FAILED : HAND_OVER_FAILED);
+    setPending(null);
 
     if (!updated) return;
 

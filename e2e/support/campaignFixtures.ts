@@ -7,9 +7,9 @@ export interface CampaignFixture {
   status: string;
 }
 
-const campaignsFor = (predicate: string): CampaignFixture[] =>
+const campaignsFor = (predicate: string, mostRecent = 1): CampaignFixture[] =>
   queryColumns(`
-    SELECT TOP 1
+    SELECT TOP ${mostRecent}
       CAST(campaign.UniqueId AS VARCHAR(40)) + ${SQL_COLUMN_SEPARATOR} +
       campaign.Name + ${SQL_COLUMN_SEPARATOR} +
       campaign.CurrentStatus
@@ -39,6 +39,26 @@ export const draftCampaign = (): CampaignFixture =>
 /** A live campaign - peer-to-peer settings must open and save against it. */
 export const liveCampaign = (): CampaignFixture =>
   one(campaignsFor("campaign.CurrentStatus <> 'Draft'"), 'non-draft campaign');
+
+/**
+ * A second non-draft campaign, so a fundraiser being in a team on one campaign can be shown to leave
+ * their fundraising on another campaign alone.
+ */
+export const secondLiveCampaign = (): CampaignFixture => {
+  const candidates = campaignsFor("campaign.CurrentStatus <> 'Draft'", 2);
+
+  if (candidates.length < 2) {
+    throw new Error(
+      `Fewer than two non-draft campaigns exist for ${e2eEnv.organizerUsername}. Seed a second one.`,
+    );
+  }
+
+  return candidates[1];
+};
+
+/** A campaign that has finished - its team page must say so rather than take money. */
+export const endedCampaign = (): CampaignFixture =>
+  one(campaignsFor("campaign.CurrentStatus = 'Ended'"), 'ended campaign');
 
 /** Someone else's campaign - the API must refuse it without confirming it exists. */
 export const foreignCampaignUniqueId = (): string => {
