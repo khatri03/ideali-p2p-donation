@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, AlertIcon, Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
+import CopyLinkButton from '../page/CopyLinkButton';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import EditFundraiserFields from './EditFundraiserFields';
 import FundraiserPhotoField from './FundraiserPhotoField';
 import MyFundraisingSkeleton from './MyFundraisingSkeleton';
+import ViewPublicPageLink from './ViewPublicPageLink';
 import { myFundraisingPath } from './MyFundraisingPage';
 import {
   BACK_TO_CONSOLE,
@@ -12,12 +14,14 @@ import {
   EDIT_SUBHEADING,
   NOT_FOUND_GUIDANCE,
   NOT_FOUND_HEADING,
+  NO_PUBLIC_ADDRESS_NOTE,
   RETRY_LABEL,
   SAVED_MESSAGE,
   SAVE_LABEL,
   SAVING_LABEL,
   UNSAVED_WARNING,
 } from './consoleCopy';
+import { fundraiserShareUrl } from './shareUrl';
 import { toUpdateRequest, useEditFundraiserForm } from './useEditFundraiserForm';
 import { useEditFundraiserPage } from './useEditFundraiserPage';
 
@@ -44,6 +48,8 @@ export const EditFundraiserPageScreen = () => {
   } = useEditFundraiserPage(fundraiserUniqueId);
 
   const { values, errors, hasUnsavedChanges, setField, validate, reset } = useEditFundraiserForm(page);
+
+  const shareUrl = page ? fundraiserShareUrl(page) : '';
 
   // Closing the tab is the one navigation React Router cannot intercept, so the browser is asked to.
   useEffect(() => {
@@ -109,6 +115,23 @@ export const EditFundraiserPageScreen = () => {
               <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
                 {EDIT_SUBHEADING(page.campaignName)}
               </Text>
+            </Stack>
+
+            {/*
+              Editing and sharing are the same errand: somebody polishing their page wants to see how
+              it reads to a donor and send the link on, without walking back to the console for either.
+            */}
+            <Stack gap={2}>
+              <Stack direction={{ base: 'column', md: 'row' }} gap={3}>
+                <ViewPublicPageLink shareUrl={shareUrl} />
+                <CopyLinkButton shareUrl={shareUrl} />
+              </Stack>
+
+              {!shareUrl && (
+                <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+                  {NO_PUBLIC_ADDRESS_NOTE}
+                </Text>
+              )}
             </Stack>
 
             <Box

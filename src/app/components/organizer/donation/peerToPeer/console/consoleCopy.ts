@@ -39,6 +39,8 @@ export const STATUS_NOTES: Partial<Record<FundraiserStatus, string>> = {
 
 export const EDIT_HEADING = 'Edit my fundraising page';
 export const EDIT_SUBHEADING = (campaignName: string) => `Your page for ${campaignName}.`;
+export const NO_PUBLIC_ADDRESS_NOTE =
+  'This campaign has no public address yet, so there is nothing to open or share until the charity publishes it.';
 
 export const NAME_LABEL = 'Name on your page';
 export const NAME_HELP = 'This is the name donors see. Your account name does not change.';

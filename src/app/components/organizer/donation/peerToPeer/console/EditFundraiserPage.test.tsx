@@ -37,6 +37,16 @@ const renderEditor = () =>
     </ChakraProvider>,
   );
 
+const stubClipboard = (writeText: ReturnType<typeof vi.fn>) => {
+  Object.defineProperty(navigator, 'clipboard', {
+    value: { writeText },
+    configurable: true,
+    writable: true,
+  });
+
+  return writeText;
+};
+
 beforeEach(() => {
   getMyFundraisingPage.mockReset();
   updateMyFundraisingPage.mockReset();
@@ -246,5 +256,56 @@ describe('EditFundraiserPage', () => {
     expect(await screen.findByText('Console screen')).toBeInTheDocument();
 
     confirmed.mockRestore();
+  });
+  it('Editor_Opened_OffersThePublicPageInANewTabWithoutHandingItThisOne', async () => {
+    renderEditor();
+
+    const view = await screen.findByRole('link', { name: /View my page/ });
+
+    expect(view).toHaveAttribute(
+      'href',
+      `${window.location.origin}/campaigns/winter-appeal/sarah-khan`,
+    );
+    expect(view).toHaveAttribute('target', '_blank');
+    expect(view).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('Editor_CopyLinkPressed_PutsThePublicAddressOnTheClipboard', async () => {
+    const writeText = stubClipboard(vi.fn().mockResolvedValue(undefined));
+
+    renderEditor();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Copy link' }));
+
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        `${window.location.origin}/campaigns/winter-appeal/sarah-khan`,
+      ),
+    );
+    expect(await screen.findByRole('button', { name: 'Link copied' })).toBeInTheDocument();
+  });
+
+  it('Editor_ClipboardRefusedByTheBrowser_SaysSoRatherThanClaimingItCopied', async () => {
+    stubClipboard(vi.fn().mockRejectedValue(new Error('denied')));
+
+    renderEditor();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Copy link' }));
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Link copied' })).not.toBeInTheDocument();
+  });
+
+  it('Editor_CampaignWithNoPublicAddress_OffersNeitherActionAndExplainsWhy', async () => {
+    getMyFundraisingPage.mockResolvedValue(buildMyFundraisingPage({ campaignSlug: null }));
+
+    renderEditor();
+
+    const view = await screen.findByText('View my page');
+
+    expect(view.closest('a')).toHaveAttribute('aria-disabled', 'true');
+    expect(view.closest('a')).not.toHaveAttribute('href');
+    expect(screen.getByRole('button', { name: 'Copy link' })).toBeDisabled();
+    expect(screen.getByText(/no public address yet/i)).toBeInTheDocument();
   });
 });

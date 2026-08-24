@@ -130,6 +130,37 @@ test.describe('Fundraiser console screens', () => {
     await expect(page.getByLabel('Name on your page')).toHaveValue(DISPLAY_NAME);
   });
 
+  test('Edit_ViewMyPage_OpensThePublicPageInANewTabAndLeavesTheEditorWhereItWas', async ({
+    page,
+    context,
+  }) => {
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+
+    const [publicPage] = await Promise.all([
+      context.waitForEvent('page'),
+      page.getByRole('link', { name: /View my page/ }).click(),
+    ]);
+
+    await publicPage.waitForLoadState('domcontentloaded');
+
+    expect(publicPage.url()).toMatch(new RegExp(`/campaigns/[^/]+/${SLUG}$`));
+    await expect(page).toHaveURL(new RegExp(`${pageUniqueId}$`));
+
+    await publicPage.close();
+  });
+
+  test('Edit_CopyLinkPressed_PutsThePublicAddressOnTheClipboard', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
+
+    await page.getByRole('button', { name: 'Copy link' }).click();
+
+    await expect(page.getByRole('button', { name: 'Link copied' })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(
+      new RegExp(`/campaigns/[^/]+/${SLUG}$`),
+    );
+  });
+
   test('Edit_SavedChange_ReachesThePublicPage', async ({ page }) => {
     await page.goto(`${CONSOLE_PATH}/${pageUniqueId}`);
 

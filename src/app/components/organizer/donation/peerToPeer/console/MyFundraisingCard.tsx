@@ -1,28 +1,12 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Heading,
-  Progress,
-  Stack,
-  Text,
-  VisuallyHidden,
-} from '@chakra-ui/react';
+import { Avatar, Badge, Box, Button, Heading, Progress, Stack, Text } from '@chakra-ui/react';
 import { MyFundraisingPage } from 'app/interface/donationInter/fundraiserConsoleDto';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
 import { formatMoney, goalPercentage } from '../page/money';
 import { donorSummary, initialsOf, raisedSummary } from '../page/pageCopy';
 import RecentSupportersPanel from '../page/RecentSupportersPanel';
 import SharePanel from '../page/SharePanel';
-import {
-  CAMPAIGN_CLOSED_NOTE,
-  EDIT_PAGE,
-  OPENS_IN_A_NEW_TAB,
-  STATUS_LABELS,
-  STATUS_NOTES,
-  VIEW_PUBLIC_PAGE,
-} from './consoleCopy';
+import ViewPublicPageLink from './ViewPublicPageLink';
+import { CAMPAIGN_CLOSED_NOTE, EDIT_PAGE, STATUS_LABELS, STATUS_NOTES } from './consoleCopy';
 
 interface MyFundraisingCardProps {
   page: MyFundraisingPage;
@@ -139,27 +123,7 @@ export const MyFundraisingCard = ({ page, shareUrl, onEdit }: MyFundraisingCardP
             {EDIT_PAGE}
           </Button>
 
-          {/*
-            A real link rather than a button: the public page opens in its own tab, so whatever the
-            fundraiser was part-way through editing or sharing is still here when they come back.
-          */}
-          <Button
-            as="a"
-            href={shareUrl || undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="outline"
-            colorScheme="brand"
-            isDisabled={!shareUrl}
-            aria-disabled={!shareUrl}
-            minH="44px"
-            borderRadius="12px"
-            cursor={shareUrl ? 'pointer' : 'not-allowed'}
-            w={{ base: 'full', md: 'auto' }}
-          >
-            {VIEW_PUBLIC_PAGE}
-            <VisuallyHidden>{OPENS_IN_A_NEW_TAB}</VisuallyHidden>
-          </Button>
+          <ViewPublicPageLink shareUrl={shareUrl} />
         </Stack>
 
         <SharePanel displayName={page.displayName} shareUrl={shareUrl} />

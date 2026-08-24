@@ -1,23 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { Box, Heading, Stack, Text } from '@chakra-ui/react';
-import { MyFundraisingPage as MyPage } from 'app/interface/donationInter/fundraiserConsoleDto';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
-import { fundraiserPagePath } from '../page/FundraiserPage';
 import MyFundraisingCard from './MyFundraisingCard';
 import MyFundraisingEmptyState from './MyFundraisingEmptyState';
 import MyFundraisingSkeleton from './MyFundraisingSkeleton';
 import { CONSOLE_HEADING, CONSOLE_SUBHEADING, LOAD_FAILED_MESSAGE, RETRY_LABEL } from './consoleCopy';
+import { fundraiserShareUrl } from './shareUrl';
 import { useMyFundraising } from './useMyFundraising';
 
 export const myFundraisingPath = '/member/my-fundraising';
 
 export const editMyFundraisingPath = (fundraiserUniqueId: string) =>
   `${myFundraisingPath}/${fundraiserUniqueId}`;
-
-const shareUrlFor = (page: MyPage) =>
-  page.campaignSlug
-    ? `${window.location.origin}${fundraiserPagePath(page.campaignSlug, page.slug)}`
-    : '';
 
 /**
  * Screen 08. Composition only: the fetch lives in a hook, every panel below is presentational, and
@@ -66,7 +60,7 @@ export const MyFundraisingScreen = () => {
             <MyFundraisingCard
               key={page.uniqueId}
               page={page}
-              shareUrl={shareUrlFor(page)}
+              shareUrl={fundraiserShareUrl(page)}
               onEdit={() => navigate(editMyFundraisingPath(page.uniqueId))}
             />
           ))}
