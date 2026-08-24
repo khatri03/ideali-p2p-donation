@@ -55,6 +55,7 @@ const enablePeerToPeer = (): void => {
 };
 
 const pagePath = () => `/campaigns/${campaignSlug}/${FUNDRAISER_SLUG}`;
+const donatePath = () => `${pagePath()}/donate`;
 
 test.beforeAll(() => {
   enablePeerToPeer();
@@ -143,6 +144,52 @@ test.describe('Public fundraiser page', () => {
 
     await expect(page).toHaveURL(new RegExp(`${FUNDRAISER_SLUG}/donate$`));
     await expect(page.getByText(`You are supporting ${DISPLAY_NAME}`)).toBeVisible();
+  });
+
+  test('Donate_AddressOpenedDirectly_ShowsTheCampaignBehindThePageRatherThanTheAddress', async ({
+    page,
+  }) => {
+    insertProbePage('Active');
+
+    await page.goto(donatePath());
+
+    await expect(page.getByText(`You are supporting ${DISPLAY_NAME}`)).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Back to their page' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue to Payment/ })).toBeVisible();
+  });
+
+  test('Donate_PageWaitingForApproval_IsRefusedAtTheAddressRatherThanAtTheCardStep', async ({
+    page,
+  }) => {
+    insertProbePage('PendingApproval');
+
+    await page.goto(donatePath());
+
+    await expect(page.getByText('This page is waiting to be approved')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue to Payment/ })).toHaveCount(0);
+  });
+
+  test('Donate_UnknownAddress_ShowsADesignedScreenWithNoBackendDetail', async ({ page }) => {
+    await page.goto(`/campaigns/${campaignSlug}/nobody-by-that-name/donate`);
+
+    await expect(page.getByText('This fundraising page is not here')).toBeVisible();
+
+    const source = await page.content();
+    expect(source).not.toContain('Ideas.');
+    expect(source).not.toContain('   at ');
+  });
+
+  test('Donate_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {
+    insertProbePage('Active');
+
+    await page.goto(donatePath());
+    await expect(page.getByText(`You are supporting ${DISPLAY_NAME}`)).toBeVisible();
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+
+    expect(overflow).toBeLessThanOrEqual(1);
   });
 
   test('Page_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {
