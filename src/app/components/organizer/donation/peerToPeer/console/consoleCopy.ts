@@ -31,14 +31,15 @@ export const STATUS_LABELS: Record<FundraiserStatus, string> = {
   Active: 'Live',
   PendingApproval: 'Waiting for approval',
   Paused: 'Paused by the charity',
-  Removed: 'Removed',
+  Rejected: 'Turned down by the charity',
 };
 
 export const STATUS_NOTES: Partial<Record<FundraiserStatus, string>> = {
   PendingApproval:
     'The charity reviews new pages before they go live. Your link works once they approve it.',
   Paused: 'The charity has paused this page. Contact them if you think that is a mistake.',
-  Removed: 'This page has been removed by the charity.',
+  Rejected:
+    'The charity has turned this page down, so it is not taking donations. Contact them if you think that is a mistake.',
 };
 
 export const EDIT_HEADING = 'Edit my fundraising page';

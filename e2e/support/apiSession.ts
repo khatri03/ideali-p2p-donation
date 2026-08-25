@@ -91,3 +91,29 @@ export const teamCaptainUrl = (
   teamSlug: string,
   memberUniqueId: string,
 ): string => `${teamUrl(campaignSlug, teamSlug)}/captain/${encodeURIComponent(memberUniqueId)}`;
+
+const moderationUrl = (campaignUniqueId: string): string =>
+  `/api/donation/campaign/${campaignUniqueId}/peer-to-peer`;
+
+export const moderatedFundraisersUrl = (campaignUniqueId: string): string =>
+  `${moderationUrl(campaignUniqueId)}/fundraisers`;
+
+export const moderatedFundraiserUrl = (
+  campaignUniqueId: string,
+  fundraiserUniqueId: string,
+): string =>
+  `${moderatedFundraisersUrl(campaignUniqueId)}/${encodeURIComponent(fundraiserUniqueId)}`;
+
+export const moderateFundraiserUrl = (
+  campaignUniqueId: string,
+  fundraiserUniqueId: string,
+): string => `${moderatedFundraiserUrl(campaignUniqueId, fundraiserUniqueId)}/moderate`;
+
+export const moderatedTeamsUrl = (campaignUniqueId: string): string =>
+  `${moderationUrl(campaignUniqueId)}/teams`;
+
+export const moderatedTeamUrl = (campaignUniqueId: string, teamUniqueId: string): string =>
+  `${moderatedTeamsUrl(campaignUniqueId)}/${encodeURIComponent(teamUniqueId)}`;
+
+export const moderateTeamUrl = (campaignUniqueId: string, teamUniqueId: string): string =>
+  `${moderatedTeamUrl(campaignUniqueId, teamUniqueId)}/moderate`;

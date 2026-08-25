@@ -1,7 +1,7 @@
 import { FundraiserPageSupporter, FundraiserTeam } from './fundraiserPageDto';
 
 /** Where a page stands with the charity. Only Active pages take money. */
-export type FundraiserStatus = 'Active' | 'PendingApproval' | 'Paused' | 'Removed';
+export type FundraiserStatus = 'Active' | 'PendingApproval' | 'Paused' | 'Rejected';
 
 /**
  * One of the signed-in supporter's own pages. Served only to the person who owns it, so it carries the

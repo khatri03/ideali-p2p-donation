@@ -37,6 +37,20 @@ const CreateDonationPage = lazy(
 const PeerToPeerSettingsPage = lazy(
   () => import('../app/components/organizer/donation/peerToPeer/PeerToPeerSettingsPage'),
 );
+
+const ModeratedFundraisersPage = lazy(
+  () =>
+    import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedFundraisersPage'),
+);
+const ModeratedFundraiserPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedFundraiserPage'),
+);
+const ModeratedTeamsPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedTeamsPage'),
+);
+const ModeratedTeamPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedTeamPage'),
+);
 const MembershipListPage = lazy(
   () =>
     import('../app/components/organizer/membership/pages/MembershipListPage'),
@@ -467,6 +481,34 @@ export const organizerRoutes = [
     layout: '/organizer',
     path: '/donation/campaign/:campaignUniqueId/peer-to-peer',
     component: <PeerToPeerSettingsPage />,
+    invisible: true,
+  },
+  {
+    name: 'Supporter Fundraising Pages',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/fundraisers',
+    component: <ModeratedFundraisersPage />,
+    invisible: true,
+  },
+  {
+    name: 'Supporter Fundraising Page',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/fundraisers/:fundraiserUniqueId',
+    component: <ModeratedFundraiserPage />,
+    invisible: true,
+  },
+  {
+    name: 'Supporter Fundraising Teams',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/teams',
+    component: <ModeratedTeamsPage />,
+    invisible: true,
+  },
+  {
+    name: 'Supporter Fundraising Team',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/teams/:teamUniqueId',
+    component: <ModeratedTeamPage />,
     invisible: true,
   },
 

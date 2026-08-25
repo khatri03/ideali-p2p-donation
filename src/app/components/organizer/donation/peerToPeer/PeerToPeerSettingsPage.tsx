@@ -1,19 +1,15 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Alert,
   AlertIcon,
   Box,
   Button,
-  Flex,
-  Heading,
-  Skeleton,
   Stack,
   Text,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { MdArrowBack } from 'react-icons/md';
 import ConfirmationModal from 'app/components/common/ConfirmationModal';
 import { PeerToPeerSettings } from 'app/interface/donationInter/peerToPeerDto';
 import {
@@ -22,13 +18,13 @@ import {
   SWITCH_OFF_TITLE,
   switchOffMessage,
 } from './peerToPeerCopy';
+import ModerationShell from './moderation/ModerationShell';
 import PeerToPeerSettingsForm from './PeerToPeerSettingsForm';
 import PeerToPeerSettingsSkeleton from './PeerToPeerSettingsSkeleton';
 import { usePeerToPeerSettings } from './usePeerToPeerSettings';
 
 export const PeerToPeerSettingsPage = () => {
   const { campaignUniqueId } = useParams<{ campaignUniqueId: string }>();
-  const navigate = useNavigate();
   const toast = useToast();
   const confirmation = useDisclosure();
   const [pendingValues, setPendingValues] = useState<PeerToPeerSettings | null>(null);
@@ -75,44 +71,12 @@ export const PeerToPeerSettingsPage = () => {
   };
 
   return (
-    <Box maxW="1000px" mx="auto" px={{ base: 4, md: 6 }} pt={{ base: '100px', md: '80px' }} pb={10}>
+    <ModerationShell
+      campaignUniqueId={campaignUniqueId ?? ''}
+      campaignName={settings?.campaignName}
+      heading="Peer-to-peer fundraising"
+    >
       <Stack gap={4}>
-        <Flex align={{ base: 'stretch', md: 'center' }} gap={3} wrap="wrap">
-          <Button
-            variant="ghost"
-            size="sm"
-            leftIcon={<MdArrowBack />}
-            minH="44px"
-            alignSelf={{ base: 'flex-start', md: 'center' }}
-            onClick={() => navigate(-1)}
-            sx={{ cursor: 'pointer' }}
-          >
-            Back
-          </Button>
-          <Stack gap={1} minW={0}>
-            <Heading as="h1" fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
-              Peer-to-peer fundraising
-            </Heading>
-            {isLoading ? (
-              <Skeleton height="18px" width={{ base: '60%', md: '240px' }} borderRadius="md" />
-            ) : (
-              settings?.campaignName && (
-                <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600">
-                  Campaign:{' '}
-                  <Text
-                    as="span"
-                    fontWeight="600"
-                    color="secondaryGray.900"
-                    _dark={{ color: 'white' }}
-                  >
-                    {settings.campaignName}
-                  </Text>
-                </Text>
-              )
-            )}
-          </Stack>
-        </Flex>
-
         {loadError && (
           <Alert status="error" borderRadius="12px">
             <AlertIcon />
@@ -157,7 +121,7 @@ export const PeerToPeerSettingsPage = () => {
         type="warning"
         isLoading={isSaving}
       />
-    </Box>
+    </ModerationShell>
   );
 };
 
