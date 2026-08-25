@@ -11,7 +11,7 @@ interface PanelSwitchPromptProps {
  * rather than navigating, so a half-typed address is the only thing they lose.
  */
 export const PanelSwitchPrompt = ({ prompt, action, onSwitch }: PanelSwitchPromptProps) => (
-  <Text textAlign="center" fontSize="sm" color="secondaryGray.600">
+  <Text textAlign="center" fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
     {prompt}{' '}
     <Button
       variant="link"

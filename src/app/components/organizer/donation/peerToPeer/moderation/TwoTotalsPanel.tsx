@@ -32,7 +32,7 @@ const Figure = ({ label, value, note }: FigureProps) => (
     _dark={{ bg: 'navy.700', borderColor: 'whiteAlpha.300' }}
     minW={0}
   >
-    <Text fontSize={{ base: 'xs', md: 'sm' }} color="secondaryGray.600" fontWeight="600">
+    <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.600" _dark={{ color: 'gray.300' }} fontWeight="600">
       {label}
     </Text>
     <Text
@@ -44,7 +44,7 @@ const Figure = ({ label, value, note }: FigureProps) => (
       {value}
     </Text>
     {note && (
-      <Text fontSize="xs" color="secondaryGray.600">
+      <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
         {note}
       </Text>
     )}

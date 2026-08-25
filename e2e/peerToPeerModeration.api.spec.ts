@@ -16,6 +16,7 @@ import {
 } from './support/apiSession';
 import { liveCampaign, secondLiveCampaign } from './support/campaignFixtures';
 import { execute, query, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The oversight endpoints against the real database. What only this level can prove: that the two
@@ -48,6 +49,8 @@ const removeProbeData = (): void =>
     DELETE FROM InvoiceItem WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM DonationCampaignInvoice WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM Invoice WHERE Id IN (SELECT Id FROM @invoiceIds);
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM PeerToPeerModerationEntry
     WHERE SubjectName LIKE 'E2E Moderation%';

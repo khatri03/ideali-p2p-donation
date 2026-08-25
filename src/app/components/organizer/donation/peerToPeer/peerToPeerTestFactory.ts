@@ -6,6 +6,12 @@ import {
 import { FundraiserPage } from 'app/interface/donationInter/fundraiserPageDto';
 import { MyFundraisingPage } from 'app/interface/donationInter/fundraiserConsoleDto';
 import {
+  LeaderboardFundraiser,
+  LeaderboardGift,
+  LeaderboardTeam,
+  PeerToPeerLeaderboard,
+} from 'app/interface/donationInter/peerToPeerLeaderboardDto';
+import {
   CampaignTeamBrowse,
   CampaignTeamMember,
   CampaignTeamPage,
@@ -17,6 +23,7 @@ export const buildSettings = (
   overrides: Partial<PeerToPeerSettingsDetail> = {},
 ): PeerToPeerSettingsDetail => ({
   campaignName: 'Winter Appeal',
+  peerToPeerSlug: 'winter-appeal',
   canEnable: true,
   blockedReason: null,
   liveFundraiserCount: 0,
@@ -67,6 +74,7 @@ export const buildFundraiserPage = (
   fundraisingSinceUtc: '2026-03-04T00:00:00Z',
   photoUniqueId: null,
   currencySymbol: 'USD',
+  isLeaderboardPublished: true,
   goal: 500,
   raisedAmount: 310,
   donorCount: 22,
@@ -128,6 +136,7 @@ export const buildTeamBrowse = (
   currencySymbol: 'USD',
   areTeamsAllowed: true,
   isFundraiser: true,
+  isLeaderboardPublished: true,
   myTeamSlug: null,
   teams: [buildTeamSummary()],
   ...overrides,
@@ -161,6 +170,7 @@ export const buildTeamPage = (overrides: Partial<CampaignTeamPage> = {}): Campai
   currencySymbol: 'USD',
   isCampaignOpen: true,
   areTeamsAllowed: true,
+  isLeaderboardPublished: true,
   viewerRole: 'Visitor',
   members: [
     buildTeamMember(),
@@ -173,5 +183,74 @@ export const buildTeamPage = (overrides: Partial<CampaignTeamPage> = {}): Campai
       joinedOnUtc: '2026-03-06T00:00:00Z',
     }),
   ],
+  ...overrides,
+});
+
+export const buildLeaderboardFundraiser = (
+  overrides: Partial<LeaderboardFundraiser> = {},
+): LeaderboardFundraiser => ({
+  rank: 1,
+  displayName: 'Sarah Khan',
+  slug: 'sarah-khan',
+  raisedAmount: 400,
+  goal: 500,
+  donorCount: 6,
+  photoUniqueId: null,
+  teamName: 'The Early Risers',
+  ...overrides,
+});
+
+export const buildLeaderboardTeam = (
+  overrides: Partial<LeaderboardTeam> = {},
+): LeaderboardTeam => ({
+  rank: 1,
+  name: 'The Early Risers',
+  slug: 'the-early-risers',
+  raisedAmount: 900,
+  teamGoal: 1000,
+  memberCount: 3,
+  ...overrides,
+});
+
+export const buildLeaderboardGift = (
+  overrides: Partial<LeaderboardGift> = {},
+): LeaderboardGift => ({
+  rank: 1,
+  donorName: 'Ahmed K.',
+  amount: 250,
+  givenOnUtc: '2026-03-04T00:00:00Z',
+  fundraiserDisplayName: 'Sarah Khan',
+  ...overrides,
+});
+
+export const buildLeaderboard = (
+  overrides: Partial<PeerToPeerLeaderboard> = {},
+): PeerToPeerLeaderboard => ({
+  campaignName: 'Winter Appeal',
+  campaignSlug: 'winter-appeal',
+  organizerName: 'Hope Foundation',
+  campaignUniqueId: '3f2b19c4-0f6e-4a55-9a1d-52f0b7c9e881',
+  currencySymbol: 'USD',
+  isOrganizerOnly: false,
+  areTeamsAllowed: true,
+  isCampaignClosed: false,
+  campaignRaisedAmount: 1500,
+  fundraiserRaisedAmount: 1300,
+  fundraiserCount: 2,
+  teamCount: 1,
+  fundraisers: [
+    buildLeaderboardFundraiser(),
+    buildLeaderboardFundraiser({
+      rank: 2,
+      displayName: 'Omar Riaz',
+      slug: 'omar-riaz',
+      raisedAmount: 900,
+      goal: null,
+      donorCount: 4,
+      teamName: null,
+    }),
+  ],
+  teams: [buildLeaderboardTeam()],
+  topGifts: [buildLeaderboardGift()],
   ...overrides,
 });

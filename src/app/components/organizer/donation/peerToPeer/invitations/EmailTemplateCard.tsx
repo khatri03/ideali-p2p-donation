@@ -82,7 +82,7 @@ export const EmailTemplateCard = ({
             <Heading as="h2" fontSize={{ base: 'md', md: 'lg' }}>
               {template.displayName}
             </Heading>
-            <Text fontSize="sm" color="secondaryGray.600">
+            <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
               {template.whenItSends}
             </Text>
           </Stack>

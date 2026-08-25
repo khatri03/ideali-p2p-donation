@@ -121,7 +121,7 @@ export const TeamMembersScreen = () => {
         />
 
         {team.members.length === 1 && (
-          <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
             {ONLY_MEMBER_NOTE}
           </Text>
         )}

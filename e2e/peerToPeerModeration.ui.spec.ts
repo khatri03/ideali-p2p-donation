@@ -1,6 +1,7 @@
 import { Page, expect, test } from '@playwright/test';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, query, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The four oversight screens in a real browser, at every supported width. What no unit test can prove
@@ -31,6 +32,8 @@ const removeProbeData = (): void =>
     DELETE FROM InvoiceItem WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM DonationCampaignInvoice WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM Invoice WHERE Id IN (SELECT Id FROM @invoiceIds);
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM PeerToPeerModerationEntry WHERE SubjectName LIKE 'E2E Oversight%';
 

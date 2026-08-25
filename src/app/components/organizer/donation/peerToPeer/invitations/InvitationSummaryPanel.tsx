@@ -26,7 +26,7 @@ const Count = ({ label, value }: CountProps) => (
     px={4}
     py={3}
   >
-    <Text fontSize="xs" color="secondaryGray.600" textTransform="uppercase">
+    <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} textTransform="uppercase">
       {label}
     </Text>
     <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="700">

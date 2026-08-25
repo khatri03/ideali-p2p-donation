@@ -2,6 +2,7 @@ import { Page, expect, test } from '@playwright/test';
 import { endedCampaign, liveCampaign, secondLiveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { e2eEnv } from './support/e2eEnv';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The team screens a person would otherwise check by hand at the end of phase 5. What the sibling
@@ -55,6 +56,8 @@ const removeProbeData = (): void =>
     DECLARE @fundraisers TABLE (Id INT);
     INSERT INTO @fundraisers (Id)
     SELECT Id FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM CampaignTeamMember
     WHERE CampaignTeamId IN (SELECT Id FROM @teams)

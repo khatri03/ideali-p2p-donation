@@ -98,7 +98,7 @@ export const EditFundraiserFields = ({
       ) : (
         <FormHelperText>{STORY_HELP}</FormHelperText>
       )}
-      <Text mt={1} fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
+      <Text mt={1} fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
         {storyRemaining(values.story.length, STORY_MAX_LENGTH)}
       </Text>
     </FormControl>

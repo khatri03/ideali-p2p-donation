@@ -5,6 +5,7 @@ import { CampaignTeamSummary } from 'app/interface/donationInter/campaignTeamDto
 import { joinCampaignTeam } from 'app/service/organizer/donation/campaignTeamService';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import PublicPageShell from '../page/PublicPageShell';
+import LeaderboardLink from '../leaderboard/LeaderboardLink';
 import BrowseTeamsHeader from './BrowseTeamsHeader';
 import BrowseTeamsNotices from './BrowseTeamsNotices';
 import ConfirmActionDialog from './ConfirmActionDialog';
@@ -82,6 +83,11 @@ export const BrowseTeamsScreen = () => {
           onSearchChange={setSearch}
           onStartTeam={() => navigate(createTeamPath(browse.campaignSlug))}
           onGoToMyTeam={() => navigate(teamPagePath(browse.campaignSlug, browse.myTeamSlug))}
+        />
+
+        <LeaderboardLink
+          campaignSlug={browse.campaignSlug}
+          isReachable={browse.isLeaderboardPublished}
         />
 
         {actionError && <TeamActionError message={actionError} onDismiss={clearActionError} />}

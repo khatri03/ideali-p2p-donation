@@ -14,6 +14,19 @@ import { execute, query } from './database';
  * deliberately Restrict, so a donation never loses the page it was given through - and is hidden
  * instead.
  */
+/**
+ * The lifecycle job records every supporter email it sends, and that record points at the page it was
+ * sent about with a Restrict foreign key - deliberately, so a sent email can never lose the page it
+ * describes. A probe page the job has since written about therefore cannot be deleted until its trail
+ * is cleared, which every cleanup in this suite does first. Scoped to probe pages by their tag, so a
+ * real supporter's trail is never touched.
+ */
+export const PROBE_LIFECYCLE_TRAIL_SQL = `
+  DELETE dispatch FROM PeerToPeerEmailDispatch dispatch
+  INNER JOIN CampaignFundraiser fundraiser ON fundraiser.Id = dispatch.CampaignFundraiserId
+  WHERE fundraiser.CreatedBy LIKE 'e2e%';
+`;
+
 let hiddenBeforeTheRun: string[] | null = null;
 
 const campaignPagesFilter = (campaignUniqueId: string) => `
@@ -39,6 +52,8 @@ const discardPagesTheRunCreated = (campaignUniqueId: string, keep: string[]): vo
   const kept = keep.length ? keep.join(',') : '0';
 
   execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+
     UPDATE fundraiser SET IsDeleted = 1
     FROM CampaignFundraiser fundraiser
     WHERE ${campaignPagesFilter(campaignUniqueId)}

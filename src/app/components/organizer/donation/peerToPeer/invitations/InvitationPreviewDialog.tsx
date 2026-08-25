@@ -32,11 +32,11 @@ export const InvitationPreviewDialog = ({ preview, onClose }: InvitationPreviewD
       <ModalCloseButton aria-label="Close preview" minH="44px" minW="44px" sx={{ cursor: 'pointer' }} />
       <ModalBody>
         <Stack gap={3}>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {PREVIEW_NOTE}
           </Text>
           <Box>
-            <Text fontSize="xs" color="secondaryGray.600" textTransform="uppercase">
+            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} textTransform="uppercase">
               Subject
             </Text>
             <Text fontSize="sm" fontWeight="700">

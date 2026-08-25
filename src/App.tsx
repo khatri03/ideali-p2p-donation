@@ -36,6 +36,9 @@ const FundraiserPageScreen = lazy(
 const FundraiserDonatePage = lazy(
   () => import('./app/components/organizer/donation/peerToPeer/page/FundraiserDonatePage'),
 );
+const LeaderboardPage = lazy(
+  () => import('./app/components/organizer/donation/peerToPeer/leaderboard/LeaderboardPage'),
+);
 const BrowseTeamsPage = lazy(
   () => import('./app/components/organizer/donation/peerToPeer/teams/BrowseTeamsPage'),
 );
@@ -100,6 +103,16 @@ export default function Main() {
         <Route
           path="/donation/campaign/:campaignUniqueId/peer-to-peer/invitation"
           element={<InvitationLandingPage />}
+        />
+        {/* "leaderboard" is a reserved slug, so no fundraiser page can ever take this address. It is
+            declared before the fundraiser route so the literal segment is matched first. */}
+        <Route
+          path="/campaigns/:campaignSlug/leaderboard"
+          element={
+            <Suspense fallback={<SuspenseLoader />}>
+              <LeaderboardPage />
+            </Suspense>
+          }
         />
         {/* Mirrors the backend team routes exactly, minus /api. "teams" and "new" are reserved slugs,
             so neither a fundraiser page nor a team can ever take one of these addresses. */}

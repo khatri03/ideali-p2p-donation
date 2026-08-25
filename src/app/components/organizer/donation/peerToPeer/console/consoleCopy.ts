@@ -12,6 +12,10 @@ export const EMPTY_GUIDANCE =
   'Open a campaign you care about and choose "Fundraise for this" to set up your own page.';
 export const EMPTY_ACTION = 'Find a campaign';
 
+export const ALL_FINISHED_HEADING = 'Your campaigns have all finished';
+export const ALL_FINISHED_GUIDANCE =
+  'Your pages above stay as a record of what you raised. To fundraise again, pick a campaign that is still taking supporter pages.';
+
 export const VIEW_PUBLIC_PAGE = 'View my page';
 export const OPENS_IN_A_NEW_TAB = '(opens in a new tab)';
 export const EDIT_PAGE = 'Edit my page';

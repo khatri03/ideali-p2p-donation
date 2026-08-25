@@ -115,13 +115,13 @@ export const MyFundraisingCard = ({
                 borderRadius="full"
                 aria-label={`${percentage}% of goal raised`}
               />
-              <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+              <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
                 {`${percentage}%`}
               </Text>
             </>
           )}
 
-          <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
             {donorSummary(page.donorCount)}
           </Text>
         </Stack>

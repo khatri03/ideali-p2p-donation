@@ -27,7 +27,7 @@ export const ModerationPagination = ({
       wrap="wrap"
       direction={{ base: 'column', '2sm': 'row' }}
     >
-      <Text fontSize="sm" color="secondaryGray.600">
+      <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
         {showingRange(pageNo, pageSize, totalRecordsCount)}
       </Text>
       <Flex gap={2}>

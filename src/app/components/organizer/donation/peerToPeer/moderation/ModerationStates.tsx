@@ -68,7 +68,7 @@ export const ModerationEmptyState = ({ heading, body, action }: ModerationEmptyS
     <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="700">
       {heading}
     </Text>
-    <Text fontSize="sm" color="secondaryGray.600" maxW="420px">
+    <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }} maxW="420px">
       {body}
     </Text>
     {action}

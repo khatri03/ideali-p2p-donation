@@ -2,6 +2,7 @@ import { APIRequestContext, expect, test } from '@playwright/test';
 import { anonymousApi, fundraiserPageUrl } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * Blocker 2, one line at a time, against the real database rather than an in-memory fake: tips are
@@ -33,6 +34,8 @@ const removeProbeData = (): void =>
     DELETE FROM InvoiceItem WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM DonationCampaignInvoice WHERE InvoiceId IN (SELECT Id FROM @invoiceIds);
     DELETE FROM Invoice WHERE Id IN (SELECT Id FROM @invoiceIds);
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM CampaignFundraiser
     WHERE DonationCampaignId = @campaignId AND CreatedBy = '${PROBE_TAG}';

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { execute, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * Two rules stop a team being duplicated, and both live in the database rather than in application
@@ -60,6 +61,8 @@ const insertFundraiser = (slug: string, userId: string): string => {
 
 const removeProbes = (): void =>
   execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+
     DELETE FROM CampaignTeamMember WHERE CreatedBy = '${PROBE_TAG}';
     DELETE FROM CampaignTeam WHERE CreatedBy = '${PROBE_TAG}';
     DELETE FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';

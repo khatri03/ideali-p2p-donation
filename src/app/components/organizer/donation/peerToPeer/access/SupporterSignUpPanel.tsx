@@ -81,7 +81,7 @@ export const SupporterSignUpPanel = ({
         </Alert>
 
         <Stack gap={2}>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {RESEND_PROMPT}
           </Text>
           <Button
@@ -99,7 +99,7 @@ export const SupporterSignUpPanel = ({
             {RESEND_SUBMIT}
           </Button>
           {resendMessage && (
-            <Text fontSize="sm" color="secondaryGray.600" role="status">
+            <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }} role="status">
               {resendMessage}
             </Text>
           )}
@@ -116,7 +116,7 @@ export const SupporterSignUpPanel = ({
 
   return (
     <Stack gap={5}>
-      <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600">
+      <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
         {SIGN_UP_INTRO}
       </Text>
 

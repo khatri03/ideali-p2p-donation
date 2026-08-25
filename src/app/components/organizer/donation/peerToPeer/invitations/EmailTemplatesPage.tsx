@@ -39,7 +39,7 @@ export const EmailTemplatesPage = () => {
       heading={EMAILS_HEADING}
     >
       <Stack gap={{ base: 4, md: 5 }}>
-        <Text fontSize="sm" color="secondaryGray.600">
+        <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
           {EMAILS_NOTE}
         </Text>
 
@@ -51,7 +51,7 @@ export const EmailTemplatesPage = () => {
 
         {!templates.error && !templates.isLoading && templates.result && (
           <Stack gap={{ base: 4, md: 5 }}>
-            <Text fontSize="sm" color="secondaryGray.600">
+            <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
               {PLACEHOLDERS_NOTE}
             </Text>
             {templates.result.templates.map((template) => (

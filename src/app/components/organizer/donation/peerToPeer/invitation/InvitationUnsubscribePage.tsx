@@ -67,7 +67,7 @@ export const InvitationUnsubscribePage = () => {
 
         {isWorking && (
           <>
-            <Text fontSize="sm" color="secondaryGray.600">
+            <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
               {UNSUBSCRIBE_WORKING}
             </Text>
             <Skeleton height="64px" borderRadius="12px" />

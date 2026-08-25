@@ -33,6 +33,8 @@ export interface CampaignTeamBrowse {
   areTeamsAllowed: boolean;
   /** True only when the caller holds an approved fundraising page on this campaign. */
   isFundraiser: boolean;
+  /** True only when the charity publishes the standings to everyone, so no public surface offers a dead link. */
+  isLeaderboardPublished: boolean;
   /** The team the caller is already in, so the screen offers the way to it rather than a second join. */
   myTeamSlug: string | null;
   teams: CampaignTeamSummary[];
@@ -65,6 +67,8 @@ export interface CampaignTeamPage {
   currencySymbol: string;
   isCampaignOpen: boolean;
   areTeamsAllowed: boolean;
+  /** True only when the charity publishes the standings to everyone, so no public surface offers a dead link. */
+  isLeaderboardPublished: boolean;
   viewerRole: CampaignTeamViewerRole;
   members: CampaignTeamMember[];
 }

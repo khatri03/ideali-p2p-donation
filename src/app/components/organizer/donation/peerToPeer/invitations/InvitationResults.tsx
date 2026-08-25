@@ -71,11 +71,11 @@ export const InvitationResults = ({ invitations }: InvitationResultsProps) => (
               <StatusBadge invitation={invitation} />
             </Flex>
             <SuppressionNote invitation={invitation} />
-            <Text fontSize="xs" color="secondaryGray.600">
+            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
               {SENT_COLUMN}: {formatDate(invitation.createdOnUtc)} · {EXPIRES_COLUMN}:{' '}
               {formatDate(invitation.expiresOnUtc)}
             </Text>
-            <Text fontSize="xs" color="secondaryGray.600">
+            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
               {INVITED_BY_COLUMN}: {invitation.invitedByName}
             </Text>
           </Stack>

@@ -45,7 +45,7 @@ const formatDate = (isoUtc: string) => {
 
 const Fact = ({ label, value }: { label: string; value: string }) => (
   <Stack gap={0} minW={0}>
-    <Text fontSize="xs" color="secondaryGray.600" fontWeight="600">
+    <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} fontWeight="600">
       {label}
     </Text>
     <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="700">
@@ -166,7 +166,7 @@ export const ModeratedTeamPage = () => {
                   </Button>
                 ) : (
                   !detail.isHidden && (
-                    <Text fontSize="xs" color="secondaryGray.600" maxW="320px">
+                    <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} maxW="320px">
                       {NO_PUBLIC_ADDRESS}
                     </Text>
                   )
@@ -188,7 +188,7 @@ export const ModeratedTeamPage = () => {
                 <Fact label={CAPTAIN_COLUMN} value={detail.captainName} />
               </SimpleGrid>
 
-              <Text fontSize="xs" color="secondaryGray.600">
+              <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
                 {STARTED_COLUMN}: {formatDate(detail.startedOnUtc)}
               </Text>
 
@@ -219,7 +219,7 @@ export const ModeratedTeamPage = () => {
                 {MEMBERS_HEADING}
               </Text>
               {detail.members.length === 0 ? (
-                <Text fontSize="sm" color="secondaryGray.600">
+                <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
                   {MEMBERS_EMPTY}
                 </Text>
               ) : (

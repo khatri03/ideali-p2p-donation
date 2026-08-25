@@ -68,6 +68,7 @@ export const ModerationShell = ({
 
   return (
     <Box
+      as="main"
       maxW="1200px"
       mx="auto"
       px={{ base: 4, md: 6 }}
@@ -93,7 +94,7 @@ export const ModerationShell = ({
               {heading}
             </Heading>
             {campaignName && (
-              <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600">
+              <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
                 Campaign:{' '}
                 <Text
                   as="span"

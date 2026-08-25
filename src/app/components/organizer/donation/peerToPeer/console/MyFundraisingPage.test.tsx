@@ -197,4 +197,27 @@ describe('MyFundraisingPage', () => {
       await screen.findByText(`${window.location.origin}/campaigns/winter-appeal/sarah-khan`),
     ).toBeInTheDocument();
   });
+
+  it('Console_EveryCampaignFinished_ShowsTheDesignedScreenForSomebodyWhoUsedToFundraise', async () => {
+    getMyFundraisingPages.mockResolvedValue([buildMyFundraisingPage({ isCampaignOpen: false })]);
+
+    renderConsole();
+
+    expect(await screen.findByText('Your campaigns have all finished')).toBeInTheDocument();
+    expect(
+      screen.getByText(/pick a campaign that is still taking supporter pages/),
+    ).toBeInTheDocument();
+  });
+
+  it('Console_OneCampaignStillRunning_DoesNotSayEverythingHasFinished', async () => {
+    getMyFundraisingPages.mockResolvedValue([
+      buildMyFundraisingPage({ isCampaignOpen: false }),
+      buildMyFundraisingPage({ uniqueId: 'second-page', isCampaignOpen: true }),
+    ]);
+
+    renderConsole();
+
+    await screen.findAllByLabelText('Sarah Khan fundraising for Winter Appeal');
+    expect(screen.queryByText('Your campaigns have all finished')).not.toBeInTheDocument();
+  });
 });

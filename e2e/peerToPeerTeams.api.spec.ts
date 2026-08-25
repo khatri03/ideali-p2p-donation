@@ -14,6 +14,7 @@ import {
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, query, querySingleValue } from './support/database';
 import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The team endpoints against the real database. Two things are proved here that no unit test can:
@@ -58,6 +59,8 @@ const removeProbeData = (): void =>
     WHERE CampaignTeamId IN (SELECT Id FROM CampaignTeam WHERE DonationCampaignId = @campaignId);
 
     DELETE FROM CampaignTeam WHERE DonationCampaignId = @campaignId;
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM CampaignFundraiser
     WHERE DonationCampaignId = @campaignId AND CreatedBy = '${PROBE_TAG}';

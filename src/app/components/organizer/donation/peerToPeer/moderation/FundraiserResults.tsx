@@ -93,16 +93,16 @@ export const FundraiserResults = ({
             </Text>
             <FundraiserStatusBadge status={fundraiser.currentStatus} />
           </Flex>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {RAISED_COLUMN}: {formatMoney(fundraiser.raisedAmount, currencySymbol)} ·{' '}
             {DONORS_COLUMN}: {fundraiser.donorCount}
           </Text>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {GOAL_COLUMN}:{' '}
             {fundraiser.goal ? formatMoney(fundraiser.goal, currencySymbol) : NO_GOAL} ·{' '}
             {TEAM_COLUMN}: {fundraiser.teamName ?? NO_TEAM}
           </Text>
-          <Text fontSize="xs" color="secondaryGray.600">
+          <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
             {STARTED_COLUMN}: {formatDate(fundraiser.startedOnUtc)}
           </Text>
           <ReviewLink campaignUniqueId={campaignUniqueId} fundraiser={fundraiser} isFullWidth />

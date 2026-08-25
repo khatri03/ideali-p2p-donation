@@ -21,6 +21,7 @@ const SETTINGS_URL = `/api/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/setting
 
 const detail: PeerToPeerSettingsDetail = {
   campaignName: 'Winter Appeal',
+  peerToPeerSlug: 'winter-appeal',
   canEnable: true,
   blockedReason: null,
   liveFundraiserCount: 2,

@@ -157,7 +157,7 @@ export const InvitationLandingPage = () => {
         {!isReading && !failure && accepted && (
           <Stack gap={4}>
             {accepted.isAwaitingApproval && (
-              <Text fontSize="sm" color="secondaryGray.600">
+              <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
                 {ACCEPTED_AWAITING_BODY}
               </Text>
             )}

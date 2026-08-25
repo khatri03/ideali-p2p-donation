@@ -66,7 +66,7 @@ export const FundraiserProgressPanel = ({
               colorScheme="purple"
               aria-label={`${percentage}% of the goal raised`}
             />
-            <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
+            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
               {`${percentage}% there`}
             </Text>
           </Stack>
@@ -84,7 +84,7 @@ export const FundraiserProgressPanel = ({
           {DONATE_CTA(displayName)}
         </Button>
 
-        <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }} textAlign="center">
+        <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }} textAlign="center">
           {DONATE_REASSURANCE(organizerName)}
         </Text>
       </Stack>

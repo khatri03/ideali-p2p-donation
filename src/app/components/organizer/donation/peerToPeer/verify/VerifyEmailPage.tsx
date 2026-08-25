@@ -115,7 +115,7 @@ export const VerifyEmailPage = () => {
         )}
 
         {isVerifying && (
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {VERIFY_WORKING}
           </Text>
         )}

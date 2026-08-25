@@ -11,6 +11,7 @@ import {
 } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * Confirming a supporter's address, proven from the outside.
@@ -38,6 +39,8 @@ let originalSettings: Record<string, unknown>;
 const removeSupporter = (): void =>
   execute(`
     DECLARE @contactId INT = (SELECT TOP 1 ContactId FROM [User] WHERE UserName = '${SUPPORTER_EMAIL}');
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+
     DELETE FROM CampaignFundraiser WHERE UserId IN (SELECT Id FROM [User] WHERE UserName = '${SUPPORTER_EMAIL}');
     -- The supporter signs in during this spec, and a session leaves a refresh token behind.
     DELETE FROM RefreshToken WHERE UserId IN (SELECT Id FROM [User] WHERE UserName = '${SUPPORTER_EMAIL}');

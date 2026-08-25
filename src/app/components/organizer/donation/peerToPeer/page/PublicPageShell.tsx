@@ -16,7 +16,7 @@ export const PublicPageShell = ({ children, maxWidth = '1200px' }: PublicPageShe
     px={{ base: 4, md: 6 }}
     py={{ base: 6, md: 10 }}
   >
-    <Box maxW={maxWidth} mx="auto">
+    <Box as="main" maxW={maxWidth} mx="auto">
       {children}
     </Box>
   </Box>

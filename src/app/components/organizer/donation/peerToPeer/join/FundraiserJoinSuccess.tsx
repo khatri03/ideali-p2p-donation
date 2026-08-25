@@ -66,7 +66,7 @@ export const FundraiserJoinSuccess = ({
           </Heading>
         </Stack>
 
-        <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600">
+        <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
           {successMessage(result.currentStatus, result.alreadyJoined)}
         </Text>
 

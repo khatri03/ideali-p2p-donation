@@ -33,7 +33,7 @@ export const ModerationHistoryPanel = ({ history }: ModerationHistoryPanelProps)
     </Text>
 
     {history.length === 0 ? (
-      <Text fontSize="sm" color="secondaryGray.600">
+      <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
         {HISTORY_EMPTY}
       </Text>
     ) : (
@@ -49,7 +49,7 @@ export const ModerationHistoryPanel = ({ history }: ModerationHistoryPanelProps)
             <Text fontSize="sm" fontWeight="600">
               {historyLine(entry.action, entry.actedByName, entry.subjectName)}
             </Text>
-            <Text fontSize="xs" color="secondaryGray.600">
+            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
               {formatWhen(entry.actedOnUtc)}
             </Text>
             {entry.reason && (

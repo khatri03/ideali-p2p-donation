@@ -83,7 +83,7 @@ export const TeamCard = ({ team, currencySymbol, onJoin, onOpen }: TeamCardProps
                 colorScheme="purple"
                 aria-label={`${percentage}% of the team goal raised`}
               />
-              <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
+              <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
                 {`${percentage}% of ${formatMoney(team.teamGoal, currencySymbol)}`}
               </Text>
             </Stack>

@@ -128,7 +128,7 @@ export const EditFundraiserPageScreen = () => {
               </Stack>
 
               {!shareUrl && (
-                <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }}>
+                <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
                   {NO_PUBLIC_ADDRESS_NOTE}
                 </Text>
               )}

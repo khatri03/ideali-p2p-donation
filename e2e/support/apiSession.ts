@@ -77,6 +77,9 @@ export const resendVerificationUrl = (campaignUniqueId: string): string =>
 export const fundraiserPageUrl = (campaignSlug: string, fundraiserSlug: string): string =>
   `/api/campaigns/${encodeURIComponent(campaignSlug)}/${encodeURIComponent(fundraiserSlug)}`;
 
+export const leaderboardUrl = (campaignSlug: string): string =>
+  `/api/campaigns/${encodeURIComponent(campaignSlug)}/leaderboard`;
+
 export const teamsUrl = (campaignSlug: string): string =>
   `/api/campaigns/${encodeURIComponent(campaignSlug)}/teams`;
 

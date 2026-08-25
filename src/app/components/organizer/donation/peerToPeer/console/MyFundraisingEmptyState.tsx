@@ -4,13 +4,21 @@ import { EMPTY_ACTION, EMPTY_GUIDANCE, EMPTY_HEADING } from './consoleCopy';
 
 interface MyFundraisingEmptyStateProps {
   onFindCampaign: () => void;
+  /** Overridden by the supporter whose campaigns have all finished, who is not a beginner. */
+  heading?: string;
+  guidance?: string;
 }
 
 /**
- * A designed screen rather than a bare sentence: somebody arrives here when their only page has been
- * removed, and the one useful thing to offer them is the way back to a campaign.
+ * A designed screen rather than a bare sentence, used for the two ways a supporter can reach this page
+ * with nothing left to do: they have never fundraised, and their last campaign has finished. Both are
+ * offered the one useful thing - the way to a campaign that is still taking supporter pages.
  */
-export const MyFundraisingEmptyState = ({ onFindCampaign }: MyFundraisingEmptyStateProps) => (
+export const MyFundraisingEmptyState = ({
+  onFindCampaign,
+  heading = EMPTY_HEADING,
+  guidance = EMPTY_GUIDANCE,
+}: MyFundraisingEmptyStateProps) => (
   <Box
     bg="white"
     _dark={{ bg: 'navy.700' }}
@@ -19,10 +27,10 @@ export const MyFundraisingEmptyState = ({ onFindCampaign }: MyFundraisingEmptySt
     p={{ base: 6, md: 10 }}
     textAlign="center"
   >
-    <Icon as={MdVolunteerActivism} boxSize="40px" color="brand.500" mb={4} />
+    <Icon as={MdVolunteerActivism} boxSize="40px" color="brand.500" mb={4} aria-hidden="true" />
 
     <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} color="navy.700" _dark={{ color: 'white' }}>
-      {EMPTY_HEADING}
+      {heading}
     </Heading>
 
     <Text
@@ -34,7 +42,7 @@ export const MyFundraisingEmptyState = ({ onFindCampaign }: MyFundraisingEmptySt
       maxW="480px"
       mx="auto"
     >
-      {EMPTY_GUIDANCE}
+      {guidance}
     </Text>
 
     <Button

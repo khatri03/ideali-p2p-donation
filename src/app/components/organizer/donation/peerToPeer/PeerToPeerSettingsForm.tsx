@@ -47,7 +47,7 @@ export const PeerToPeerSettingsForm = ({
       <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} mb={1}>
         Supporter fundraising
       </Heading>
-      <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600" maxW="70ch">
+      <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }} maxW="70ch">
         Let your supporters raise money for this campaign on their own pages, with their own goal and
         their own story. Every donation still reaches this campaign and your payment account.
       </Text>

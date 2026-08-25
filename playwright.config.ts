@@ -37,6 +37,17 @@ export default defineConfig({
       testMatch: /.*\.database\.spec\.ts/,
     },
     {
+      // The phase-8 ship-gate sweep sets its own widths, so it runs once rather than under each viewport.
+      name: 'shipgate',
+      testMatch: /.*\.gate\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 900 },
+        storageState: STORAGE_STATE_PATH,
+      },
+    },
+    {
       name: 'desktop',
       testMatch: /.*\.ui\.spec\.ts/,
       dependencies: ['setup'],

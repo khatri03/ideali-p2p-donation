@@ -61,7 +61,7 @@ interface FactProps {
 
 const Fact = ({ label, value }: FactProps) => (
   <Stack gap={0} minW={0}>
-    <Text fontSize="xs" color="secondaryGray.600" fontWeight="600">
+    <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} fontWeight="600">
       {label}
     </Text>
     <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="700">
@@ -182,7 +182,7 @@ export const ModeratedFundraiserPage = () => {
                     {OPEN_PUBLIC_PAGE}
                   </Button>
                 ) : (
-                  <Text fontSize="xs" color="secondaryGray.600" maxW="320px">
+                  <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} maxW="320px">
                     {NO_PUBLIC_ADDRESS}
                   </Text>
                 )}
@@ -201,7 +201,7 @@ export const ModeratedFundraiserPage = () => {
                 <Fact label={TEAM_COLUMN} value={detail.teamName ?? NO_TEAM} />
               </SimpleGrid>
 
-              <Text fontSize="xs" color="secondaryGray.600">
+              <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
                 {STARTED_COLUMN}: {formatDate(detail.startedOnUtc)}
               </Text>
 
@@ -232,7 +232,7 @@ export const ModeratedFundraiserPage = () => {
                 {DONORS_HEADING}
               </Text>
               {detail.recentSupporters.length === 0 ? (
-                <Text fontSize="sm" color="secondaryGray.600">
+                <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
                   {DONORS_EMPTY}
                 </Text>
               ) : (

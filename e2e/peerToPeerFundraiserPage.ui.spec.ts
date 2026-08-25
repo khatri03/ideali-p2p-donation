@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The page a donor opens after somebody shares a link, at desktop, tablet and 375px.
@@ -21,6 +22,8 @@ let campaignSlug: string;
 
 const removeProbePage = (): void =>
   execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+
     DELETE fundraiser
     FROM CampaignFundraiser fundraiser
     INNER JOIN DonationCampaign campaign ON campaign.Id = fundraiser.DonationCampaignId

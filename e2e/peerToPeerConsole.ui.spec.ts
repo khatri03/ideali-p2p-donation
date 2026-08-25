@@ -5,6 +5,7 @@ import { e2eEnv } from './support/e2eEnv';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { buildPng, pngSize } from './support/testImages';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The console and the edit screen, at 1280, 768 and 375. The page under test is inserted against the
@@ -29,7 +30,10 @@ const CHOSEN_PHOTO = {
 let pageUniqueId: string;
 
 const removeProbePage = (): void =>
-  execute(`DELETE FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';`);
+  execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+    DELETE FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';
+  `);
 
 const insertProbePage = (): string => {
   execute(`

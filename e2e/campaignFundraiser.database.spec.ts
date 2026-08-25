@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { execute, query, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * Two rules stop a supporter page being duplicated, and both live in the database rather than in
@@ -25,7 +26,10 @@ const insertFundraiser = (slug: string, userId: string, isDeleted: 0 | 1 = 0): v
   `);
 
 const removeProbes = (): void =>
-  execute(`DELETE FROM CampaignFundraiser WHERE CreatedBy = 'e2e';`);
+  execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+    DELETE FROM CampaignFundraiser WHERE CreatedBy = 'e2e';
+  `);
 
 test.beforeAll(() => {
   const row = querySingleValue(`

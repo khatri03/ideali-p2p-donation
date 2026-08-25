@@ -3,6 +3,7 @@ import { anonymousApi, authenticatedApi, signIn } from './support/apiSession';
 import { e2eEnv } from './support/e2eEnv';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The console endpoints are the first in this feature that both read and write private data, so what
@@ -34,7 +35,10 @@ let otherPageUniqueId: string;
 const pageUrl = (uniqueId: string) => `${CONSOLE_URL}/${uniqueId}`;
 
 const removeProbePages = (): void =>
-  execute(`DELETE FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';`);
+  execute(`
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
+    DELETE FROM CampaignFundraiser WHERE CreatedBy = '${PROBE_TAG}';
+  `);
 
 /**
  * The signed-in account's own user row. Read by user name rather than hardcoded, because a user

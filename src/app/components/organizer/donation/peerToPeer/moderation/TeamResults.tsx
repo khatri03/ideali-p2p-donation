@@ -84,14 +84,14 @@ export const TeamResults = ({ campaignUniqueId, currencySymbol, teams }: TeamRes
             </Text>
             <TeamVisibilityBadge isHidden={team.isHidden} />
           </Flex>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {CAPTAIN_COLUMN}: {team.captainName} · {MEMBERS_COLUMN}: {team.memberCount}
           </Text>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {RAISED_COLUMN}: {formatMoney(team.raisedAmount, currencySymbol)} · {GOAL_COLUMN}:{' '}
             {team.teamGoal ? formatMoney(team.teamGoal, currencySymbol) : NO_GOAL}
           </Text>
-          <Text fontSize="xs" color="secondaryGray.600">
+          <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }}>
             {STARTED_COLUMN}: {formatDate(team.startedOnUtc)}
           </Text>
           <ReviewLink campaignUniqueId={campaignUniqueId} team={team} isFullWidth />

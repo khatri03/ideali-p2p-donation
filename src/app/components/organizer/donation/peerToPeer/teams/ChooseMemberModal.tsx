@@ -75,7 +75,7 @@ export const ChooseMemberModal = ({
                     <Text fontWeight="600" noOfLines={1}>
                       {member.displayName}
                     </Text>
-                    <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
+                    <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
                       {raisedByMember(formatMoney(member.raisedAmount, currencySymbol))}
                     </Text>
                   </Stack>

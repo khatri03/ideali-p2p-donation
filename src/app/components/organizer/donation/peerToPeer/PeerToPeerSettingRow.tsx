@@ -41,7 +41,7 @@ export const PeerToPeerSettingRow = ({
       >
         {label}
       </Text>
-      <Text fontSize="sm" color="secondaryGray.600" mt={1}>
+      <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }} mt={1}>
         {description}
       </Text>
     </Box>

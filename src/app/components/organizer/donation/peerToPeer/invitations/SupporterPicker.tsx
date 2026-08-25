@@ -92,7 +92,7 @@ export const SupporterPicker = ({ campaignUniqueId, onPick }: SupporterPickerPro
       )}
 
       {!isLoading && !error && candidates.length === 0 && (
-        <Text fontSize="sm" color="secondaryGray.600">
+        <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
           Nobody has given to this campaign yet, so there is nobody to pick from.
         </Text>
       )}
@@ -119,7 +119,7 @@ export const SupporterPicker = ({ campaignUniqueId, onPick }: SupporterPickerPro
                   <Text fontSize="sm" fontWeight="600" noOfLines={1}>
                     {candidate.displayName}
                   </Text>
-                  <Text fontSize="xs" color="secondaryGray.600" noOfLines={1}>
+                  <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.300' }} noOfLines={1}>
                     {candidate.emailAddress}
                   </Text>
                 </Stack>

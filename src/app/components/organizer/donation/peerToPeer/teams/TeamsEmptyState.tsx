@@ -53,7 +53,7 @@ export const TeamsEmptyState = ({ onStartTeam, note }: TeamsEmptyStateProps) => 
       </Button>
     ) : (
       note && (
-        <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.400' }} maxW="480px" mx="auto">
+        <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }} maxW="480px" mx="auto">
           {note}
         </Text>
       )

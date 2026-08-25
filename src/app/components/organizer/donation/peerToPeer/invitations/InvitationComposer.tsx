@@ -58,7 +58,7 @@ export const InvitationComposer = ({ campaignUniqueId, onSent }: InvitationCompo
           <Heading as="h2" fontSize={{ base: 'md', md: 'lg' }}>
             {COMPOSE_HEADING}
           </Heading>
-          <Text fontSize="sm" color="secondaryGray.600">
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
             {COMPOSE_NOTE}
           </Text>
         </Stack>

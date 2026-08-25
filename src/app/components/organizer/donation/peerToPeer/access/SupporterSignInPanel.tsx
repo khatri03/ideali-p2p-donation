@@ -43,7 +43,7 @@ export const SupporterSignInPanel = ({ signIn, onSwitchToSignUp }: SupporterSign
     <>
       <form onSubmit={handleSubmit} noValidate>
         <Stack gap={5}>
-          <Text fontSize={{ base: 'sm', md: 'md' }} color="secondaryGray.600">
+          <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
             {SIGN_IN_INTRO}
           </Text>
 

@@ -4,7 +4,14 @@ import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import MyFundraisingCard from './MyFundraisingCard';
 import MyFundraisingEmptyState from './MyFundraisingEmptyState';
 import MyFundraisingSkeleton from './MyFundraisingSkeleton';
-import { CONSOLE_HEADING, CONSOLE_SUBHEADING, LOAD_FAILED_MESSAGE, RETRY_LABEL } from './consoleCopy';
+import {
+  ALL_FINISHED_GUIDANCE,
+  ALL_FINISHED_HEADING,
+  CONSOLE_HEADING,
+  CONSOLE_SUBHEADING,
+  LOAD_FAILED_MESSAGE,
+  RETRY_LABEL,
+} from './consoleCopy';
 import { fundraiserShareUrl } from './shareUrl';
 import { useMyFundraising } from './useMyFundraising';
 
@@ -22,8 +29,15 @@ export const MyFundraisingScreen = () => {
   const navigate = useNavigate();
   const { pages, isLoading, loadError, reload } = useMyFundraising();
 
+  /**
+   * A supporter's rows outlive the campaigns behind them, so somebody whose last campaign ended still
+   * arrives here with pages to read. That is a designed screen of its own rather than a console that
+   * silently offers nothing to do.
+   */
+  const hasFinishedEverything = pages.length > 0 && pages.every((page) => !page.isCampaignOpen);
+
   return (
-    <Box w="100%">
+    <Box as="main" w="100%">
       <Stack gap={{ base: 4, md: 6 }} maxW="1000px" mx="auto">
         <Stack gap={1}>
           <Heading
@@ -65,6 +79,14 @@ export const MyFundraisingScreen = () => {
               onOpenTeams={navigate}
             />
           ))}
+
+        {!isLoading && !loadError && hasFinishedEverything && (
+          <MyFundraisingEmptyState
+            heading={ALL_FINISHED_HEADING}
+            guidance={ALL_FINISHED_GUIDANCE}
+            onFindCampaign={() => navigate('/member/discover')}
+          />
+        )}
       </Stack>
     </Box>
   );

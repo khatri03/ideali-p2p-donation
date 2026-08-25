@@ -83,7 +83,7 @@ export const RecentSupportersPanel = ({
               >
                 {supporter.donorName}
               </Text>
-              <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.400' }}>
+              <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
                 {formatGivenOn(supporter.givenOnUtc)}
               </Text>
             </Stack>

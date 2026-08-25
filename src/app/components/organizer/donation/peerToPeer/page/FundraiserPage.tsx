@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { SimpleGrid, Stack } from '@chakra-ui/react';
 import { FundraiserPage as FundraiserPageData } from 'app/interface/donationInter/fundraiserPageDto';
+import LeaderboardLink from '../leaderboard/LeaderboardLink';
 import FundraiserIdentity from './FundraiserIdentity';
 import FundraiserPageNotice from './FundraiserPageNotice';
 import FundraiserPageSkeleton from './FundraiserPageSkeleton';
@@ -131,6 +132,11 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
         />
 
         <SharePanel displayName={page.displayName} shareUrl={shareUrl} />
+
+        <LeaderboardLink
+          campaignSlug={page.campaignSlug}
+          isReachable={page.isLeaderboardPublished}
+        />
       </Stack>
     </SimpleGrid>
   );

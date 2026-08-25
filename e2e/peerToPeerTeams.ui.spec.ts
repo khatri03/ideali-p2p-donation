@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { e2eEnv } from './support/e2eEnv';
+import { PROBE_LIFECYCLE_TRAIL_SQL } from './support/fundraiserPages';
 
 /**
  * The team screens at desktop, tablet and 375px. The public surfaces are exercised signed out, because
@@ -32,6 +33,8 @@ const managePath = () => `${teamPath()}/members`;
 const removeProbeData = (): void =>
   execute(`
     DECLARE @campaignId INT = (SELECT Id FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}');
+
+    ${PROBE_LIFECYCLE_TRAIL_SQL}
 
     DELETE FROM CampaignTeamMember WHERE CreatedBy = '${PROBE_TAG}';
     DELETE FROM CampaignTeam WHERE DonationCampaignId = @campaignId AND CreatedBy = '${PROBE_TAG}';
