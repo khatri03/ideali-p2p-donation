@@ -14,3 +14,9 @@ export const moderatedTeamsPath = (campaignUniqueId: string) => `${base(campaign
 
 export const moderatedTeamPath = (campaignUniqueId: string, teamUniqueId: string) =>
   `${moderatedTeamsPath(campaignUniqueId)}/${teamUniqueId}`;
+
+export const invitationsPath = (campaignUniqueId: string) =>
+  `${base(campaignUniqueId)}/invitations`;
+
+export const emailTemplatesPath = (campaignUniqueId: string) =>
+  `${base(campaignUniqueId)}/email-templates`;

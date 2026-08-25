@@ -28,6 +28,10 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./src/setupTests.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // Above the 5s default. Several suites drive real typing through user-event, and once enough of
+    // them run at once on one machine a keystroke queue - not a defect - is what pushes them past the
+    // default. Raising the ceiling keeps the gate honest instead of intermittently red.
+    testTimeout: 20000,
     restoreMocks: true,
     unstubEnvs: true,
     coverage: {

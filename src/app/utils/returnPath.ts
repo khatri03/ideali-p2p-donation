@@ -8,6 +8,10 @@
  */
 const ALLOWED_RETURN_PATHS: RegExp[] = [
   /^\/donation\/campaign\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/peer-to-peer\/join$/i,
+  // The invitation link is the one return path that carries a query string, because the token is
+  // what identifies the invitation. The token character set is pinned so the query cannot be used to
+  // smuggle a second parameter past the allow-list.
+  /^\/donation\/campaign\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/peer-to-peer\/invitation\?token=[A-Za-z0-9_%-]{1,256}$/i,
 ];
 
 /**
@@ -32,6 +36,10 @@ export function sanitiseReturnPath(candidate: string | null | undefined): string
 /** The join screen for one campaign, which is the only return path this feature produces. */
 export const fundraiserJoinPath = (campaignUniqueId: string): string =>
   `/donation/campaign/${campaignUniqueId}/peer-to-peer/join`;
+
+/** Where an invitation link lands, with the code that identifies it. */
+export const fundraiserInvitationPath = (campaignUniqueId: string, token: string): string =>
+  `/donation/campaign/${campaignUniqueId}/peer-to-peer/invitation?token=${encodeURIComponent(token)}`;
 
 /**
  * Adds a return path to an internal destination. The path is encoded, and an unacceptable one is

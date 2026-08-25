@@ -51,6 +51,12 @@ const ModeratedTeamsPage = lazy(
 const ModeratedTeamPage = lazy(
   () => import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedTeamPage'),
 );
+const InvitationsPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/invitations/InvitationsPage'),
+);
+const EmailTemplatesPage = lazy(
+  () => import('../app/components/organizer/donation/peerToPeer/invitations/EmailTemplatesPage'),
+);
 const MembershipListPage = lazy(
   () =>
     import('../app/components/organizer/membership/pages/MembershipListPage'),
@@ -509,6 +515,20 @@ export const organizerRoutes = [
     layout: '/organizer',
     path: '/donation/campaign/:campaignUniqueId/peer-to-peer/teams/:teamUniqueId',
     component: <ModeratedTeamPage />,
+    invisible: true,
+  },
+  {
+    name: 'Fundraising Invitations',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/invitations',
+    component: <InvitationsPage />,
+    invisible: true,
+  },
+  {
+    name: 'Supporter Lifecycle Emails',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/email-templates',
+    component: <EmailTemplatesPage />,
     invisible: true,
   },
 

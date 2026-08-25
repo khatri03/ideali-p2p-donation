@@ -16,6 +16,8 @@ import ForgotPassword from './app/components/auth/forgotPassword';
 import CampaignList from '../src/app/components/organizer/donation/publicCampaigns/campaignList';
 import FundraiserJoinPage from './app/components/organizer/donation/peerToPeer/join/FundraiserJoinPage';
 import VerifyEmailPage from './app/components/organizer/donation/peerToPeer/verify/VerifyEmailPage';
+import InvitationLandingPage from './app/components/organizer/donation/peerToPeer/invitation/InvitationLandingPage';
+import InvitationUnsubscribePage from './app/components/organizer/donation/peerToPeer/invitation/InvitationUnsubscribePage';
 import SuspenseLoader from './app/components/common/SuspenseLoader';
 
 import {
@@ -89,6 +91,15 @@ export default function Main() {
         <Route
           path="/donation/campaign/:campaignUniqueId/peer-to-peer/verify-email"
           element={<VerifyEmailPage />}
+        />
+        {/* Declared before the invitation route so the longer path is not swallowed by it. */}
+        <Route
+          path="/donation/campaign/:campaignUniqueId/peer-to-peer/invitation/unsubscribe"
+          element={<InvitationUnsubscribePage />}
+        />
+        <Route
+          path="/donation/campaign/:campaignUniqueId/peer-to-peer/invitation"
+          element={<InvitationLandingPage />}
         />
         {/* Mirrors the backend team routes exactly, minus /api. "teams" and "new" are reserved slugs,
             so neither a fundraiser page nor a team can ever take one of these addresses. */}

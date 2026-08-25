@@ -117,3 +117,27 @@ export const moderatedTeamUrl = (campaignUniqueId: string, teamUniqueId: string)
 
 export const moderateTeamUrl = (campaignUniqueId: string, teamUniqueId: string): string =>
   `${moderatedTeamUrl(campaignUniqueId, teamUniqueId)}/moderate`;
+
+export const invitationsUrl = (campaignUniqueId: string): string =>
+  `${moderationUrl(campaignUniqueId)}/invitations`;
+
+export const invitationSupportersUrl = (campaignUniqueId: string): string =>
+  `${invitationsUrl(campaignUniqueId)}/supporters`;
+
+export const invitationPreviewUrl = (campaignUniqueId: string): string =>
+  `${invitationsUrl(campaignUniqueId)}/preview`;
+
+export const invitationUrl = (campaignUniqueId: string): string =>
+  `${moderationUrl(campaignUniqueId)}/invitation`;
+
+export const invitationAcceptUrl = (campaignUniqueId: string): string =>
+  `${invitationUrl(campaignUniqueId)}/accept`;
+
+export const invitationUnsubscribeUrl = (campaignUniqueId: string): string =>
+  `${invitationUrl(campaignUniqueId)}/unsubscribe`;
+
+export const emailTemplatesUrl = (campaignUniqueId: string): string =>
+  `${moderationUrl(campaignUniqueId)}/email-templates`;
+
+export const emailTemplateTestUrl = (campaignUniqueId: string): string =>
+  `${emailTemplatesUrl(campaignUniqueId)}/test`;

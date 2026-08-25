@@ -8,6 +8,8 @@ export const OVERSIGHT_HEADING = 'Supporter fundraising';
 export const SETTINGS_TAB = 'Settings';
 export const FUNDRAISERS_TAB = 'Fundraising pages';
 export const TEAMS_TAB = 'Teams';
+export const INVITATIONS_TAB = 'Invitations';
+export const EMAILS_TAB = 'Emails';
 export const BACK_LABEL = 'Back';
 
 /**

@@ -4,12 +4,16 @@ import { Box, Button, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
 import {
   BACK_LABEL,
+  EMAILS_TAB,
   FUNDRAISERS_TAB,
+  INVITATIONS_TAB,
   OVERSIGHT_HEADING,
   SETTINGS_TAB,
   TEAMS_TAB,
 } from './moderationCopy';
 import {
+  emailTemplatesPath,
+  invitationsPath,
   moderatedFundraisersPath,
   moderatedTeamsPath,
   peerToPeerSettingsPath,
@@ -59,6 +63,8 @@ export const ModerationShell = ({
 
   const fundraisersPath = moderatedFundraisersPath(campaignUniqueId);
   const teamsPath = moderatedTeamsPath(campaignUniqueId);
+  const invitesPath = invitationsPath(campaignUniqueId);
+  const emailsPath = emailTemplatesPath(campaignUniqueId);
 
   return (
     <Box
@@ -114,6 +120,12 @@ export const ModerationShell = ({
             isActive={pathname.startsWith(fundraisersPath)}
           />
           <TabLink to={teamsPath} label={TEAMS_TAB} isActive={pathname.startsWith(teamsPath)} />
+          <TabLink
+            to={invitesPath}
+            label={INVITATIONS_TAB}
+            isActive={pathname.startsWith(invitesPath)}
+          />
+          <TabLink to={emailsPath} label={EMAILS_TAB} isActive={pathname.startsWith(emailsPath)} />
         </Flex>
 
         {children}
