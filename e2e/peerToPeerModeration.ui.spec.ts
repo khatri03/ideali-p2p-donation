@@ -101,6 +101,24 @@ const probeTeamIsHidden = (): string =>
     WHERE DonationCampaignId = ${campaignIdSql} AND Slug = '${PROBE_TEAM_SLUG}' AND IsDeleted = 0;
   `);
 
+const probeDecisionEmails = (): string[] =>
+  query(`
+    SELECT dispatch.TemplateType + '|' + dispatch.DispatchKey
+    FROM PeerToPeerEmailDispatch dispatch
+    INNER JOIN CampaignFundraiser fundraiser ON fundraiser.Id = dispatch.CampaignFundraiserId
+    WHERE fundraiser.Slug = '${PROBE_PAGE_SLUG}' AND fundraiser.IsDeleted = 0
+    ORDER BY dispatch.Id;
+  `);
+
+const probeDecisionKeys = (): string[] =>
+  query(`
+    SELECT LOWER(REPLACE(CAST(entry.UniqueId AS VARCHAR(40)), '-', ''))
+    FROM PeerToPeerModerationEntry entry
+    WHERE entry.SubjectName = '${PROBE_PAGE_NAME}'
+      AND entry.Action IN ('Approve', 'Reject')
+    ORDER BY entry.Id;
+  `);
+
 const auditReasons = (): string[] =>
   query(`
     SELECT ISNULL(Reason, '(none)') FROM PeerToPeerModerationEntry
@@ -285,6 +303,72 @@ test.describe('Screen 18 - reviewing one page', () => {
 
     await expect(page.getByText(`${PROBE_PAGE_NAME} is live.`)).toBeVisible();
     expect(probePageStatus()).toBe('Active');
+  });
+
+  test('Approve_BeforeConfirming_SaysTheSupporterIsToldTheDecision', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await openProbePage(page);
+    await page.getByRole('button', { name: 'Approve' }).click();
+
+    await expect(visibleText(page, 'They are emailed that you approved it.')).toBeVisible();
+  });
+
+  test('Approve_Confirmed_ClaimsTheApprovalEmailForTheDecisionItJustRecorded', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await openProbePage(page);
+    await page.getByRole('button', { name: 'Approve' }).click();
+    await page.getByRole('button', { name: 'Approve this page' }).click();
+
+    await expect(page.getByText(`${PROBE_PAGE_NAME} is live.`)).toBeVisible();
+
+    const decisions = probeDecisionKeys();
+
+    expect(decisions).toHaveLength(1);
+    expect(probeDecisionEmails()).toEqual([`PageApproved|${decisions[0]}`]);
+  });
+
+  test('Reject_BeforeConfirming_SaysTheReasonStaysWithTheCharity', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await openProbePage(page);
+    await page.getByRole('button', { name: 'Turn down' }).click();
+
+    await expect(
+      visibleText(page, 'without the reason you write below'),
+    ).toBeVisible();
+    await expect(
+      visibleText(page, 'The supporter is not shown what you write here.'),
+    ).toBeVisible();
+  });
+
+  test('Reject_Confirmed_ClaimsTheRefusalEmailAndKeepsTheReasonOutOfIt', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await openProbePage(page);
+    await page.getByRole('button', { name: 'Turn down' }).click();
+    await page.getByLabel('Reason (optional)').fill('Photo belongs to somebody else');
+    await page.getByRole('button', { name: 'Turn this page down' }).click();
+
+    await expect(page.getByText(`${PROBE_PAGE_NAME} has been turned down.`)).toBeVisible();
+
+    const decisions = probeDecisionKeys();
+
+    expect(decisions).toHaveLength(1);
+    expect(probeDecisionEmails()).toEqual([`PageRejected|${decisions[0]}`]);
+    expect(auditReasons()).toContain('Photo belongs to somebody else');
+  });
+
+  test('Hide_Confirmed_ClaimsNoDecisionEmailBecauseNobodyIsWaitingOnIt', async ({ page }) => {
+    insertProbePage('Active');
+
+    await openProbePage(page);
+    await page.getByRole('button', { name: 'Hide' }).click();
+    await page.getByRole('button', { name: 'Hide this page' }).click();
+
+    await expect(page.getByText(`${PROBE_PAGE_NAME} is hidden.`)).toBeVisible();
+    expect(probeDecisionEmails()).toEqual([]);
   });
 
   test('Hide_Cancelled_ChangesNothing', async ({ page }) => {

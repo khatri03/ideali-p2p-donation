@@ -11,8 +11,8 @@ import { EMAILS_HEADING, EMAILS_NOTE, PLACEHOLDERS_NOTE } from './emailTemplateC
 import useEmailTemplates from './useEmailTemplates';
 
 /**
- * Screen 11. Six cards, one per lifecycle email, each editable and testable on its own so a charity
- * can change the one that reads badly without touching the five that do not.
+ * Screen 11. One card per lifecycle email, each editable and testable on its own so a charity can
+ * change the one that reads badly without touching the others.
  */
 export const EmailTemplatesPage = () => {
   const { campaignUniqueId = '' } = useParams<{ campaignUniqueId: string }>();

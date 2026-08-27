@@ -51,6 +51,64 @@ describe('EmailTemplatesPage', () => {
     expect(screen.getByText('As soon as a page goes live.')).toBeInTheDocument();
   });
 
+  it('Templates_DecisionNotices_AreEditableAlongsideTheRest', async () => {
+    getEmailTemplates.mockResolvedValue(
+      buildTemplateList([
+        buildTemplate(),
+        buildTemplate({
+          templateType: 'PageApproved',
+          displayName: 'Page approved',
+          whenItSends: 'As soon as the charity approves a page.',
+          subject: 'Your fundraising page has been approved',
+        }),
+        buildTemplate({
+          templateType: 'PageRejected',
+          displayName: 'Page not approved',
+          whenItSends: 'As soon as the charity turns a page down.',
+          subject: 'Your fundraising page has not been approved',
+        }),
+      ]),
+    );
+
+    renderPage();
+
+    expect(await screen.findByText('Page approved')).toBeInTheDocument();
+    expect(screen.getByText('Page not approved')).toBeInTheDocument();
+    expect(
+      screen.getByText('As soon as the charity approves a page.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('As soon as the charity turns a page down.'),
+    ).toBeInTheDocument();
+  });
+
+  it('Templates_RefusalNoticeSwitchedOff_SendsThatChoiceToTheServer', async () => {
+    getEmailTemplates.mockResolvedValue(
+      buildTemplateList([
+        buildTemplate({
+          templateType: 'PageRejected',
+          displayName: 'Page not approved',
+          whenItSends: 'As soon as the charity turns a page down.',
+          subject: 'Your fundraising page has not been approved',
+        }),
+      ]),
+    );
+    updateEmailTemplate.mockResolvedValue({ success: true, message: 'Template saved.' });
+
+    renderPage();
+
+    await screen.findByText('Page not approved');
+    await userEvent.click(screen.getByLabelText('Page not approved enabled'));
+    await userEvent.click(screen.getByRole('button', { name: 'Save template' }));
+
+    await waitFor(() =>
+      expect(updateEmailTemplate).toHaveBeenCalledWith(
+        CAMPAIGN_UNIQUE_ID,
+        expect.objectContaining({ templateType: 'PageRejected', isEnabled: false }),
+      ),
+    );
+  });
+
   it('Templates_ReadFails_ShowsTheServersSentenceAndOffersAnotherAttempt', async () => {
     getEmailTemplates.mockRejectedValue(new Error('Campaign not found.'));
 

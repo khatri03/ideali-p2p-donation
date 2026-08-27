@@ -1,6 +1,6 @@
 export const EMAILS_HEADING = 'Lifecycle emails';
 export const EMAILS_NOTE =
-  'What supporters receive while they fundraise. Each one can be edited, switched off, and sent to yourself first.';
+  'What supporters receive when you decide about their page and while they fundraise. Each one can be edited, switched off, and sent to yourself first.';
 
 export const SUBJECT_LABEL = 'Subject line';
 export const SUBJECT_REQUIRED_ERROR = 'Write a subject line before saving.';

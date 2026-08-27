@@ -286,11 +286,22 @@ test.describe('Following up on invitations', () => {
 });
 
 test.describe('Screen 11 - the lifecycle emails', () => {
-  test('Emails_Opened_ShowSixTemplatesEachWithWhenItSends', async ({ page }) => {
+  test('Emails_Opened_ShowEveryTemplateWithWhenItSends', async ({ page }) => {
     await page.goto(emailsPath);
 
     await expect(page.getByRole('heading', { name: 'Welcome', exact: true })).toBeVisible();
     await expect(visibleText(page, 'As soon as a page goes live.')).toBeVisible();
+
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+  });
+
+  test('Emails_Opened_OfferTheApprovalAndRefusalNoticesAsEditableCopy', async ({ page }) => {
+    await page.goto(emailsPath);
+
+    await expect(page.getByRole('heading', { name: 'Page approved', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Page not approved', exact: true })).toBeVisible();
+    await expect(visibleText(page, 'As soon as the charity approves a page.')).toBeVisible();
+    await expect(visibleText(page, 'As soon as the charity turns a page down.')).toBeVisible();
 
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
   });

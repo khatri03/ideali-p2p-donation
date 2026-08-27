@@ -366,11 +366,24 @@ test.describe('Following an invitation link', () => {
 });
 
 test.describe('Lifecycle email templates', () => {
-  test('Templates_NeverEdited_ComeBackAsSixPiecesOfRealCopy', async () => {
+  test('Templates_NeverEdited_ComeBackAsRealCopyForEveryEmailTheCampaignCanSend', async () => {
     const response = await api.get(emailTemplatesUrl(campaign.uniqueId));
     const body = await response.json();
 
-    expect(body.data.templates).toHaveLength(6);
+    expect(
+      body.data.templates.map((template: { templateType: string }) => template.templateType).sort(),
+    ).toEqual(
+      [
+        'CampaignEnding',
+        'FirstDonation',
+        'MilestoneReached',
+        'PageApproved',
+        'PageRejected',
+        'QuietWeek',
+        'ThankYou',
+        'Welcome',
+      ],
+    );
 
     for (const template of body.data.templates) {
       expect(template.subject.length).toBeGreaterThan(0);

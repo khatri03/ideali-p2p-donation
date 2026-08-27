@@ -1,4 +1,4 @@
-/** The six editable lifecycle emails, as the API describes them. */
+/** The editable lifecycle emails, as the API describes them. */
 
 export type EmailTemplateType =
   | 'Welcome'
@@ -6,7 +6,9 @@ export type EmailTemplateType =
   | 'MilestoneReached'
   | 'QuietWeek'
   | 'CampaignEnding'
-  | 'ThankYou';
+  | 'ThankYou'
+  | 'PageApproved'
+  | 'PageRejected';
 
 export interface EmailTemplate {
   templateType: EmailTemplateType;

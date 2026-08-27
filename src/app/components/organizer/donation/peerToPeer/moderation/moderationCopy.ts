@@ -139,7 +139,7 @@ export const fundraiserActionCopy = (
     case 'Approve':
       return {
         title: `Approve ${displayName}?`,
-        body: 'Their page goes live, its address starts working, and it can take donations from now on.',
+        body: 'Their page goes live, its address starts working, and it can take donations from now on. They are emailed that you approved it.',
         confirmLabel: 'Approve this page',
         busyLabel: 'Approving...',
         isDestructive: false,
@@ -147,7 +147,7 @@ export const fundraiserActionCopy = (
     case 'Reject':
       return {
         title: `Turn down ${displayName}?`,
-        body: 'Their page stops being reachable and cannot take donations. Money already raised stays with the campaign, and you can approve the page later if they put it right.',
+        body: 'Their page stops being reachable and cannot take donations. They are emailed that it was not approved, without the reason you write below. Money already raised stays with the campaign, and you can approve the page later if they put it right.',
         confirmLabel: 'Turn this page down',
         busyLabel: 'Turning down...',
         isDestructive: true,
