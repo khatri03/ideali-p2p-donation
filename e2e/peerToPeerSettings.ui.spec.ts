@@ -23,10 +23,27 @@ test.describe('Peer-to-peer settings page', () => {
   test('SettingsPage_Loaded_ShowsEverySettingTheOrganizerCanChange', async ({ page }) => {
     await expect(page.locator(enabledSwitch)).toBeVisible();
     await expect(page.getByText('Turn supporter fundraising on')).toBeVisible();
-    await expect(page.getByText('Suggested personal goal')).toBeVisible();
-    await expect(page.getByText('Allow teams')).toBeVisible();
     await expect(page.getByText('Review pages before they go live')).toBeVisible();
+    await expect(page.getByText('Allow teams')).toBeVisible();
+    await expect(page.getByText('Suggested personal goal')).toBeVisible();
     await expect(page.getByText('Who can see the leaderboard')).toBeVisible();
+  });
+
+  /**
+   * Whether a supporter's page reaches the public unread is the only setting here that can embarrass a
+   * charity, so it is read straight after the switch that creates those pages. Pushed further down, it
+   * is the one a hurried organiser scrolls past.
+   */
+  test('SettingsPage_Loaded_PutsTheApprovalGateDirectlyUnderTheMasterSwitch', async ({ page }) => {
+    const settingLabels = await page.locator('label[for^="peer-to-peer-"]').allTextContents();
+
+    expect(settingLabels).toEqual([
+      'Turn supporter fundraising on',
+      'Review pages before they go live',
+      'Allow teams',
+      'Suggested personal goal',
+      'Who can see the leaderboard',
+    ]);
   });
 
   test('SettingsPage_SaveChanges_ConfirmsAndSurvivesAReload', async ({ page }) => {

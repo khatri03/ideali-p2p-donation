@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Text, VStack, HStack, Icon } from '@chakra-ui/react';
 import { TbTargetArrow } from 'react-icons/tb';
 
@@ -10,6 +10,11 @@ interface CampaignDetailsProps {
   };
   goalAchieved?: number;
   description: string;
+  /**
+   * Rendered between the goal and the campaign story. A story has no length limit, so anything placed
+   * after it is only ever seen by a reader who reached the end.
+   */
+  callToAction?: ReactNode;
   themeColor: string;
   cardBg: string;
   cardBorder: string;
@@ -21,6 +26,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   fundRaisingGoal,
   goalAchieved = 0,
   description,
+  callToAction,
   themeColor,
   cardBg,
   cardBorder,
@@ -75,6 +81,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
           </VStack>
         </Box>
       )}
+
+      {callToAction}
 
       {/* Description Section */}
       <Box

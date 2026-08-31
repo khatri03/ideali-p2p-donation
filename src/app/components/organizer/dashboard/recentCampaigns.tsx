@@ -38,6 +38,7 @@ import CustomButton from 'app/components/common/CustomButton';
 import Loader from 'app/components/common/Loader';
 import { hasPermission, hasAnyPermission } from 'app/service/organizer/rolesPermissions/permissionsService';
 import { PeerToPeerMenuItem } from '../donation/peerToPeer/PeerToPeerMenuItem';
+import { PendingApprovalBadge } from 'app/components/organizer/donation/peerToPeer/moderation/PendingApprovalBadge';
 
 const recentCampaigns: React.FC = () => {
   // Campaign permissions
@@ -471,10 +472,11 @@ transform="translateY(-2px)"
               {/* ── Card Body ── */}
               <CardBody p={3} display="flex" flexDirection="column" flex={1}>
 
-                {/* Status badge */}
+                {/* Status badge, beside anything the campaign is waiting on us to do. The row keeps
+                    its height whether or not there is something waiting, so cards stay level. */}
+                <HStack mb={2} minH="44px" spacing={2} align="center" justify="flex-start" wrap="nowrap" minW={0}>
                 <Badge
-                  mb={2}
-                  alignSelf="flex-start"
+                  alignSelf="center"
                   fontSize="11px"
                   colorScheme={statusStyle.colorScheme}
                   bg={statusStyle.bg}
@@ -489,6 +491,11 @@ transform="translateY(-2px)"
                 >
                   {campaign.status}
                 </Badge>
+                  <PendingApprovalBadge
+                    campaignUniqueId={campaign.uniqueId}
+                    pendingCount={campaign.pendingFundraiserApprovalCount ?? 0}
+                  />
+                </HStack>
 
             {/* Campaign name + three-dot (shown here when no action buttons) */}
 <Flex justify="space-between" align="flex-start">

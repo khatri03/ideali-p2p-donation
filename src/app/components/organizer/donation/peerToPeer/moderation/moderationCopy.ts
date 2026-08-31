@@ -26,6 +26,18 @@ export const FUNDRAISER_COUNT_LABEL = 'Fundraising pages';
 export const TEAM_COUNT_LABEL = 'Teams';
 export const AWAITING_APPROVAL_LABEL = 'Waiting for you';
 
+/**
+ * The badge a charity sees on its own campaign list. It carries its own count rather than relying on a
+ * tooltip, because a phone has no hover and a lone icon would say only that something is wrong.
+ */
+export const pendingApprovalBadgeLabel = (count: number) =>
+  count === 1 ? '1 awaiting approval' : `${count} awaiting approval`;
+
+export const pendingApprovalBadgeHint = (count: number) =>
+  count === 1
+    ? 'One supporter fundraising page is waiting for your approval. Open it to approve or turn it down.'
+    : `${count} supporter fundraising pages are waiting for your approval. Open them to approve or turn them down.`;
+
 export const SEARCH_PAGES_LABEL = 'Search fundraising pages';
 export const SEARCH_TEAMS_LABEL = 'Search teams';
 export const SEARCH_PLACEHOLDER = 'Search by name';

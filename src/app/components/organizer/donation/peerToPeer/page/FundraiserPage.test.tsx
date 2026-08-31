@@ -64,7 +64,48 @@ describe('FundraiserPage', () => {
 
     const heading = await screen.findByRole('heading', { level: 1 });
     expect(heading).toHaveTextContent('Sarah Khan');
-    expect(screen.getByText(/Sarah Khan is fundraising for Hope Foundation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Fundraising for/i)).toBeInTheDocument();
+  });
+
+  /**
+   * A donor about to pay must know what the gift is ring-fenced to and which charity will receipt it.
+   * Both are readable text on the page, not decoration that a reader can mistake for a tag.
+   */
+  it('Page_LivePage_NamesTheCampaignTheMoneyIsForAndTheCharityThatReceiptsIt', async () => {
+    getFundraiserPage.mockResolvedValue(buildFundraiserPage());
+
+    renderPage();
+
+    expect(await screen.findByRole('link', { name: 'Winter Appeal' })).toBeInTheDocument();
+    expect(screen.getByText('by Hope Foundation')).toBeInTheDocument();
+  });
+
+  /**
+   * Naming the campaign without a way to open it invites a click that goes nowhere, so the name is the
+   * campaign's own address and a donor can check the cause before giving.
+   */
+  it('Page_CampaignNamed_LinksToTheCampaignSoADonorCanSeeWhatTheyWouldFund', async () => {
+    getFundraiserPage.mockResolvedValue(buildFundraiserPage());
+
+    renderPage();
+
+    expect(await screen.findByRole('link', { name: 'Winter Appeal' })).toHaveAttribute(
+      'href',
+      '/donate/3f2b19c4-0f6e-4a55-9a1d-52f0b7c9e881',
+    );
+  });
+
+  /**
+   * How many other people are fundraising answers nothing a donor is deciding, and at one it reads as
+   * nobody else caring. The page never puts that number in front of them.
+   */
+  it('Page_LivePage_DoesNotCountOtherFundraisersAtTheDonor', async () => {
+    getFundraiserPage.mockResolvedValue(buildFundraiserPage());
+
+    renderPage();
+
+    await screen.findByRole('heading', { level: 1, name: 'Sarah Khan' });
+    expect(screen.queryByText(/fundraisers? on this campaign/i)).not.toBeInTheDocument();
   });
 
   it('Page_LivePage_ShowsTheRaisedTotalAgainstTheGoal', async () => {
@@ -197,7 +238,7 @@ describe('FundraiserPage', () => {
 
     await screen.findByRole('heading', { level: 1, name: 'Sarah Khan' });
     await waitFor(() =>
-      expect(document.title).toBe('Sarah Khan is fundraising for Hope Foundation'),
+      expect(document.title).toBe('Sarah Khan is fundraising for Winter Appeal'),
     );
   });
 });

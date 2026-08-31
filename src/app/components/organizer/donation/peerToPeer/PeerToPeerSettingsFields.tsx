@@ -33,6 +33,11 @@ const LEADERBOARD_OPTIONS: Array<{ value: LeaderboardVisibility; label: string }
 /**
  * The five peer-to-peer controls with no save behaviour of their own, so the settings page and the
  * campaign wizard step render one identical set of fields.
+ *
+ * They are ordered by consequence rather than by kind: the master switch, then whether a supporter's
+ * page reaches the public before anyone on the charity has read it, then what supporters may do, and
+ * only then presentation. Approval answers the question the master switch immediately raises, so it
+ * sits next to it instead of behind two settings nobody can get wrong.
  */
 export const PeerToPeerSettingsFields = ({
   settings,
@@ -72,30 +77,19 @@ export const PeerToPeerSettingsFields = ({
       <Divider />
 
       <PeerToPeerSettingRow
-        label="Suggested personal goal"
-        description="Pre-filled when a supporter creates their page. They can change it. Leave blank for no suggestion."
-        htmlFor="peer-to-peer-default-goal"
+        label="Review pages before they go live"
+        description="New supporter pages wait for someone on your team to approve them instead of publishing straight away."
+        htmlFor="peer-to-peer-requires-approval"
         isDisabled={areDetailsLocked}
         control={
-          <FormControl isInvalid={Boolean(form.goalError)}>
-            <InputGroup size="md">
-              <InputLeftAddon>$</InputLeftAddon>
-              <Input
-                id="peer-to-peer-default-goal"
-                type="number"
-                min={1}
-                step="1"
-                inputMode="decimal"
-                placeholder="No suggestion"
-                value={form.goalInput}
-                isDisabled={areDetailsLocked}
-                onChange={(event) => form.setGoalInput(event.target.value)}
-                onBlur={form.validate}
-                sx={{ cursor: areDetailsLocked ? 'not-allowed' : 'text' }}
-              />
-            </InputGroup>
-            {form.goalError && <FormErrorMessage fontSize="xs">{form.goalError}</FormErrorMessage>}
-          </FormControl>
+          <Switch
+            id="peer-to-peer-requires-approval"
+            size="lg"
+            isChecked={form.requiresApproval}
+            isDisabled={areDetailsLocked}
+            onChange={(event) => form.setRequiresApproval(event.target.checked)}
+            sx={{ cursor: areDetailsLocked ? 'not-allowed' : 'pointer' }}
+          />
         }
       />
 
@@ -121,19 +115,30 @@ export const PeerToPeerSettingsFields = ({
       <Divider />
 
       <PeerToPeerSettingRow
-        label="Review pages before they go live"
-        description="New supporter pages wait for someone on your team to approve them instead of publishing straight away."
-        htmlFor="peer-to-peer-requires-approval"
+        label="Suggested personal goal"
+        description="Pre-filled when a supporter creates their page. They can change it. Leave blank for no suggestion."
+        htmlFor="peer-to-peer-default-goal"
         isDisabled={areDetailsLocked}
         control={
-          <Switch
-            id="peer-to-peer-requires-approval"
-            size="lg"
-            isChecked={form.requiresApproval}
-            isDisabled={areDetailsLocked}
-            onChange={(event) => form.setRequiresApproval(event.target.checked)}
-            sx={{ cursor: areDetailsLocked ? 'not-allowed' : 'pointer' }}
-          />
+          <FormControl isInvalid={Boolean(form.goalError)}>
+            <InputGroup size="md">
+              <InputLeftAddon>$</InputLeftAddon>
+              <Input
+                id="peer-to-peer-default-goal"
+                type="number"
+                min={1}
+                step="1"
+                inputMode="decimal"
+                placeholder="No suggestion"
+                value={form.goalInput}
+                isDisabled={areDetailsLocked}
+                onChange={(event) => form.setGoalInput(event.target.value)}
+                onBlur={form.validate}
+                sx={{ cursor: areDetailsLocked ? 'not-allowed' : 'text' }}
+              />
+            </InputGroup>
+            {form.goalError && <FormErrorMessage fontSize="xs">{form.goalError}</FormErrorMessage>}
+          </FormControl>
         }
       />
 

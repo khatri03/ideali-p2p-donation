@@ -13,6 +13,7 @@ import {
   VERIFY_REFUSED,
   VERIFY_WORKING,
 } from './verifyCopy';
+import PublicPageShell from '../page/PublicPageShell';
 
 /**
  * Where the link in a confirmation email lands.
@@ -67,7 +68,7 @@ export const VerifyEmailPage = () => {
   const joinPath = fundraiserJoinPath(campaignUniqueId ?? '');
 
   return (
-    <Box maxW="640px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 8, md: 12 }}>
+    <PublicPageShell maxWidth="640px">
       <Stack gap={5}>
         <Heading as="h1" fontSize={{ base: 'xl', md: '2xl' }}>
           {VERIFY_HEADING}
@@ -120,7 +121,7 @@ export const VerifyEmailPage = () => {
           </Text>
         )}
       </Stack>
-    </Box>
+    </PublicPageShell>
   );
 };
 

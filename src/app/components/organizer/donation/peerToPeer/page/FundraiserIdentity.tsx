@@ -1,14 +1,16 @@
 import type { ReactNode } from 'react';
-import { Avatar, Badge, Box, Heading, Stack, Text } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+import { Avatar, Box, Heading, Link, Stack, Text } from '@chakra-ui/react';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
-import { fundraiserCountSummary, fundraisingSince, initialsOf } from './pageCopy';
+import { byOrganizer, fundraisingForCampaign, fundraisingSince, initialsOf } from './pageCopy';
 
 interface FundraiserIdentityProps {
   displayName: string;
   campaignName: string;
+  /** The campaign a donor can open to see what they would be funding. */
+  campaignUniqueId: string;
   organizerName: string;
   fundraisingSinceUtc: string;
-  campaignFundraiserCount: number;
   /** The supporter's own photo. Absent until they upload one, in which case initials stand in. */
   photoUniqueId?: string | null;
   /** The link to the team behind this person, when they are in one. Absent otherwise. */
@@ -16,15 +18,16 @@ interface FundraiserIdentityProps {
 }
 
 /**
- * The person first, the charity second. This is the whole point of a peer-to-peer page: a donor is
- * giving because they know the person, so the person's name leads and the campaign supports it.
+ * The person first, then what their money is for, then who receipts it. A donor deciding here needs the
+ * campaign the gift is ring-fenced to and the charity that will issue the receipt, so both are readable
+ * text rather than decorative tags.
  */
 export const FundraiserIdentity = ({
   displayName,
   campaignName,
+  campaignUniqueId,
   organizerName,
   fundraisingSinceUtc,
-  campaignFundraiserCount,
   photoUniqueId,
   team,
 }: FundraiserIdentityProps) => (
@@ -55,18 +58,29 @@ export const FundraiserIdentity = ({
           {displayName}
         </Heading>
 
-        <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
-          {`${displayName} is fundraising for ${organizerName}`}
+        <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.700" _dark={{ color: 'gray.200' }}>
+          {`${fundraisingForCampaign} `}
+          <Link
+            as={RouterLink}
+            to={`/donate/${campaignUniqueId}`}
+            color="brand.600"
+            _dark={{ color: 'brand.300' }}
+            fontWeight="semibold"
+            textDecoration="underline"
+            cursor="pointer"
+          >
+            {campaignName}
+          </Link>
         </Text>
 
-        <Stack direction="row" gap={2} flexWrap="wrap">
-          <Badge colorScheme="purple" borderRadius="full" px={3} py={1} textTransform="none">
-            {campaignName}
-          </Badge>
-          <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
-            {fundraiserCountSummary(campaignFundraiserCount)}
-          </Badge>
-        </Stack>
+        <Text
+          fontSize={{ base: 'sm', md: 'md' }}
+          fontWeight="medium"
+          color="gray.700"
+          _dark={{ color: 'gray.200' }}
+        >
+          {byOrganizer(organizerName)}
+        </Text>
 
         <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
           {fundraisingSince(fundraisingSinceUtc)}

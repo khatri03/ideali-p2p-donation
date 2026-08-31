@@ -44,6 +44,7 @@ export const buildJoinContext = (
   requiresApproval: false,
   canJoin: true,
   blockedReason: null,
+  blockedKind: 'None',
   alreadyJoined: false,
   slug: null,
   currentStatus: null,
@@ -78,7 +79,6 @@ export const buildFundraiserPage = (
   goal: 500,
   raisedAmount: 310,
   donorCount: 22,
-  campaignFundraiserCount: 86,
   team: null,
   recentSupporters: [
     { donorName: 'Ahmed K.', amount: 50, givenOnUtc: '2026-03-10T00:00:00Z' },

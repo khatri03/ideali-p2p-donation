@@ -3,7 +3,7 @@ import {
   FundraiserJoinContext,
   FundraiserJoinRequest,
 } from 'app/interface/donationInter/fundraiserJoinDto';
-import { JOIN_SUBMIT } from './joinCopy';
+import { JOIN_LEAD, JOIN_SUBMIT } from './joinCopy';
 import FundraiserJoinFields from './FundraiserJoinFields';
 import { useFundraiserJoinForm } from './useFundraiserJoinForm';
 
@@ -37,11 +37,15 @@ export const FundraiserJoinForm = ({
       bg="white"
       _dark={{ bg: 'navy.700' }}
       borderRadius="16px"
-      p={{ base: 4, md: 6 }}
+      p={{ base: 5, md: 8 }}
       boxShadow="sm"
       noValidate
     >
       <Stack gap={5}>
+        <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }} lineHeight="1.7">
+          {JOIN_LEAD}
+        </Text>
+
         {context.requiresApproval && (
           <Alert status="info" borderRadius="12px">
             <AlertIcon />

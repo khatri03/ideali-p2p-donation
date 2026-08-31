@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Alert, AlertIcon, Box, Heading, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Alert, AlertIcon, Heading, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { unsubscribeFromInvitations } from 'app/service/organizer/donation/fundraiserInvitationService';
 import { extractApiError } from 'app/utils/apiError';
 import {
@@ -10,6 +10,7 @@ import {
   UNSUBSCRIBE_HEADING,
   UNSUBSCRIBE_WORKING,
 } from './invitationLandingCopy';
+import PublicPageShell from '../page/PublicPageShell';
 
 /**
  * The way out of these emails. Anonymous on purpose: an unsubscribe that demanded a password would
@@ -59,7 +60,7 @@ export const InvitationUnsubscribePage = () => {
   }, [campaignUniqueId, token]);
 
   return (
-    <Box maxW="640px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 8, md: 12 }}>
+    <PublicPageShell maxWidth="640px">
       <Stack gap={5}>
         <Heading as="h1" fontSize={{ base: 'xl', md: '2xl' }}>
           {UNSUBSCRIBE_HEADING}
@@ -88,7 +89,7 @@ export const InvitationUnsubscribePage = () => {
           </Alert>
         )}
       </Stack>
-    </Box>
+    </PublicPageShell>
   );
 };
 

@@ -1,5 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
-import { anonymousApi, authenticatedApi, joinUrl, settingsUrl, signIn } from './support/apiSession';
+import { anonymousApi, authenticatedApi, joinUrl, settingsUrl, signIn, signInAsSupporter } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { clearFundraiserPages, restoreFundraiserPages } from './support/fundraiserPages';
@@ -16,7 +16,13 @@ import { clearFundraiserPages, restoreFundraiserPages } from './support/fundrais
 const campaign = liveCampaign();
 const PROBE_TAG = 'e2e-attribution';
 
+/**
+ * Two identities. Only the charity that runs the campaign can change its settings, and only somebody
+ * who does not run it can hold a fundraising page on it, so `api` acts as the supporter throughout and
+ * `organizer` is used for the campaign setup around them.
+ */
 let api: APIRequestContext;
+let organizer: APIRequestContext;
 let anonymous: APIRequestContext;
 let campaignSlug: string;
 let fundraiserSlug: string;
@@ -59,14 +65,15 @@ const removeProbeGifts = (): void =>
   `);
 
 test.beforeAll(async () => {
-  api = await authenticatedApi(await signIn());
+  api = await authenticatedApi(await signInAsSupporter());
+  organizer = await authenticatedApi(await signIn());
   anonymous = await anonymousApi();
 
-  originalSettings = (await (await api.get(settingsUrl(campaign.uniqueId))).json()).data;
+  originalSettings = (await (await organizer.get(settingsUrl(campaign.uniqueId))).json()).data;
 
   removeProbeGifts();
   removeJoinedPages();
-  await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings() });
+  await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings() });
 
   campaignSlug = querySingleValue(`
     SELECT PeerToPeerSlug FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}';
@@ -92,8 +99,9 @@ test.afterEach(() => removeProbeGifts());
 test.afterAll(async () => {
   removeProbeGifts();
   restoreFundraiserPages();
-  await api.post(settingsUrl(campaign.uniqueId), { data: originalSettings });
+  await organizer.post(settingsUrl(campaign.uniqueId), { data: originalSettings });
   await api.dispose();
+  await organizer.dispose();
   await anonymous.dispose();
 });
 

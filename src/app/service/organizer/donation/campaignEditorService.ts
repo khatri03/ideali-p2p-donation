@@ -10,6 +10,8 @@ export interface Campaign {
     goalAchieved: number;
   };
   invoiceCount: number;
+  /** Fundraising pages on this campaign waiting for the charity to approve them. Zero when none are. */
+  pendingFundraiserApprovalCount: number;
   startDate: string;
   endDate: string;
   cancellationDateUtc: string | null;

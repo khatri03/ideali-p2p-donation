@@ -6,6 +6,7 @@ import {
   joinUrl,
   settingsUrl,
   signIn,
+  signInAsSupporter,
   teamCaptainUrl,
   teamMembersUrl,
   teamUrl,
@@ -29,7 +30,13 @@ const campaign = liveCampaign();
 const PROBE_TAG = 'e2e-team';
 const SECOND_MEMBER_SLUG = 'e2e-team-second-member';
 
+/**
+ * Two identities. Only the charity that runs the campaign can change its settings, and only somebody
+ * who does not run it can hold a fundraising page on it, so `api` acts as the supporter throughout and
+ * `organizer` is used for the campaign setup around them.
+ */
 let api: APIRequestContext;
+let organizer: APIRequestContext;
 let anonymous: APIRequestContext;
 let campaignSlug: string;
 let captainSlug: string;
@@ -208,15 +215,16 @@ const createTeamAndReadSlug = async (name: string): Promise<string> => {
 };
 
 test.beforeAll(async () => {
-  api = await authenticatedApi(await signIn());
+  api = await authenticatedApi(await signInAsSupporter());
+  organizer = await authenticatedApi(await signIn());
   anonymous = await anonymousApi();
 
-  originalSettings = (await (await api.get(settingsUrl(campaign.uniqueId))).json()).data;
+  originalSettings = (await (await organizer.get(settingsUrl(campaign.uniqueId))).json()).data;
 
   clearFundraiserPages(campaign.uniqueId);
   removeProbeData();
 
-  await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(true) });
+  await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(true) });
 
   campaignSlug = querySingleValue(`
     SELECT PeerToPeerSlug FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}';
@@ -237,14 +245,15 @@ test.beforeAll(async () => {
 test.beforeEach(async () => {
   removeProbeData();
 
-  await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(true) });
+  await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(true) });
 });
 
 test.afterAll(async () => {
   removeProbeData();
   restoreFundraiserPages();
-  await api.post(settingsUrl(campaign.uniqueId), { data: originalSettings });
+  await organizer.post(settingsUrl(campaign.uniqueId), { data: originalSettings });
   await api.dispose();
+  await organizer.dispose();
   await anonymous.dispose();
 });
 
@@ -468,7 +477,7 @@ test.describe('Team endpoints', () => {
   });
 
   test('TeamsSwitchedOff_NewTeam_IsRefused', async () => {
-    await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
+    await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
 
     const response = await createTeam('E2E Team While Off');
 
@@ -479,7 +488,7 @@ test.describe('Team endpoints', () => {
   test('TeamsSwitchedOff_TeamsThatAlreadyExist_StayReadableRatherThanDisappearing', async () => {
     const teamSlug = await createTeamAndReadSlug('E2E Still Here');
 
-    await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
+    await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
 
     const response = await anonymous.get(teamUrl(campaignSlug, teamSlug));
 
@@ -493,7 +502,7 @@ test.describe('Team endpoints', () => {
   test('TeamsSwitchedOff_Joining_IsRefusedToo', async () => {
     const teamSlug = await createTeamAndReadSlug('E2E Closed Doors');
 
-    await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
+    await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
 
     const response = await api.post(teamMembersUrl(campaignSlug, teamSlug), { data: {} });
 
@@ -517,7 +526,7 @@ test.describe('Team endpoints', () => {
   });
 
   test('Console_TeamsSwitchedOff_SaysSoSoTheConsoleOffersNoWayIn', async () => {
-    await api.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
+    await organizer.post(settingsUrl(campaign.uniqueId), { data: enabledSettings(false) });
 
     const entry = await readCaptainConsoleEntry();
 

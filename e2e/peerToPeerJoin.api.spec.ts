@@ -5,6 +5,7 @@ import {
   joinUrl,
   settingsUrl,
   signIn,
+  signInAsSupporter,
 } from './support/apiSession';
 import { foreignCampaignUniqueId, liveCampaign } from './support/campaignFixtures';
 import { querySingleValue } from './support/database';
@@ -14,16 +15,21 @@ import { clearFundraiserPages, restoreFundraiserPages } from './support/fundrais
  * Joining is the only endpoint in this feature that writes a row for the caller, so its refusals
  * matter more than its happy path. Every page this suite creates is deleted afterwards, keyed on the
  * campaign and the signed-in user, so nothing is left behind on a shared database.
+ *
+ * Two identities are needed. The campaign's settings can only be changed by the charity that runs it,
+ * and a fundraising page on that campaign can only be created by somebody who does not - so `api`
+ * joins as a supporter while `organizer` sets the campaign up around it.
  */
 
 let api: APIRequestContext;
+let organizer: APIRequestContext;
 let anonymous: APIRequestContext;
 let campaignUniqueId: string;
 let campaignName: string;
 let originalSettings: Record<string, unknown>;
 
 const applySettings = async (settings: Record<string, unknown>) => {
-  const response = await api.post(settingsUrl(campaignUniqueId), { data: settings });
+  const response = await organizer.post(settingsUrl(campaignUniqueId), { data: settings });
   expect(response.status()).toBe(200);
 };
 
@@ -47,14 +53,15 @@ const livePageCount = (): string =>
   `);
 
 test.beforeAll(async () => {
-  api = await authenticatedApi(await signIn());
+  api = await authenticatedApi(await signInAsSupporter());
+  organizer = await authenticatedApi(await signIn());
   anonymous = await anonymousApi();
 
   const campaign = liveCampaign();
   campaignUniqueId = campaign.uniqueId;
   campaignName = campaign.name;
 
-  originalSettings = (await (await api.get(settingsUrl(campaignUniqueId))).json()).data;
+  originalSettings = (await (await organizer.get(settingsUrl(campaignUniqueId))).json()).data;
 });
 
 test.beforeEach(async () => {
@@ -66,7 +73,7 @@ test.afterAll(async () => {
   restoreFundraiserPages();
 
   if (originalSettings) {
-    await api.post(settingsUrl(campaignUniqueId), {
+    await organizer.post(settingsUrl(campaignUniqueId), {
       data: {
         isPeerToPeerEnabled: originalSettings.isPeerToPeerEnabled,
         defaultPersonalGoal: originalSettings.defaultPersonalGoal,
@@ -78,6 +85,7 @@ test.afterAll(async () => {
   }
 
   await api.dispose();
+  await organizer.dispose();
   await anonymous.dispose();
 });
 
@@ -114,6 +122,7 @@ test.describe('Peer-to-peer join endpoint', () => {
     expect(Object.keys(data).sort()).toEqual(
       [
         'alreadyJoined',
+        'blockedKind',
         'blockedReason',
         'campaignName',
         'campaignSlug',
@@ -279,6 +288,32 @@ test.describe('Peer-to-peer join endpoint', () => {
 
     expect(response.status()).toBe(400);
     expect(livePageCount()).toBe('0');
+  });
+
+  /**
+   * A charity approving its own fundraising page would be counting itself among its own supporters,
+   * and the refusal has to hold at the endpoint rather than only in the screen that hides the button.
+   */
+  test('Join_AccountThatRunsTheCampaign_IsRefusedAndWritesNothing', async () => {
+    const response = await organizer.post(joinUrl(campaignUniqueId), {
+      data: { displayName: 'The Charity Itself' },
+    });
+
+    expect(response.status()).toBe(400);
+    expect((await response.json()).message).toContain('runs this campaign');
+    expect(livePageCount()).toBe('0');
+  });
+
+  /**
+   * The screen decides whether to offer the form from this field, so the reason a charity cannot join
+   * has to be named as its own kind rather than left for the wording to be matched against.
+   */
+  test('JoinContext_AccountThatRunsTheCampaign_NamesTheReasonAsItsOwnKind', async () => {
+    const { data } = await (await organizer.get(joinUrl(campaignUniqueId))).json();
+
+    expect(data.canJoin).toBe(false);
+    expect(data.blockedKind).toBe('RunsThisCampaign');
+    expect(data.blockedReason).toContain('runs this campaign');
   });
 
   test('Join_Refusal_CarriesNoStackTraceOrInternalDetail', async () => {

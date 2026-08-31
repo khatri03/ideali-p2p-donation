@@ -7,6 +7,7 @@ import {
   leaderboardUrl,
   settingsUrl,
   signIn,
+  signInAsSupporter,
 } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
@@ -21,7 +22,13 @@ import { clearFundraiserPages, restoreFundraiserPages } from './support/fundrais
  * test.
  */
 
+/**
+ * Two identities. Only the charity that runs the campaign can change its settings, and only somebody
+ * who does not run it can hold a fundraising page on it, so `api` acts as the supporter throughout and
+ * `organizer` is used for the campaign setup around them.
+ */
 let api: APIRequestContext;
+let organizer: APIRequestContext;
 let anonymous: APIRequestContext;
 let campaignUniqueId: string;
 let campaignSlug: string;
@@ -38,7 +45,7 @@ const settingsWith = (overrides: Record<string, unknown> = {}) => ({
 });
 
 const applySettings = async (overrides: Record<string, unknown> = {}) => {
-  const response = await api.post(settingsUrl(campaignUniqueId), { data: settingsWith(overrides) });
+  const response = await organizer.post(settingsUrl(campaignUniqueId), { data: settingsWith(overrides) });
   expect(response.status()).toBe(200);
 };
 
@@ -52,11 +59,12 @@ const setPageStatus = (status: string): void =>
   `);
 
 test.beforeAll(async () => {
-  api = await authenticatedApi(await signIn());
+  api = await authenticatedApi(await signInAsSupporter());
+  organizer = await authenticatedApi(await signIn());
   anonymous = await anonymousApi();
 
   campaignUniqueId = liveCampaign().uniqueId;
-  originalSettings = (await (await api.get(settingsUrl(campaignUniqueId))).json()).data;
+  originalSettings = (await (await organizer.get(settingsUrl(campaignUniqueId))).json()).data;
 
   clearFundraiserPages(campaignUniqueId);
   await applySettings();
@@ -75,8 +83,9 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   restoreFundraiserPages();
-  await api.post(settingsUrl(campaignUniqueId), { data: originalSettings });
+  await organizer.post(settingsUrl(campaignUniqueId), { data: originalSettings });
   await api.dispose();
+  await organizer.dispose();
   await anonymous.dispose();
 });
 
@@ -291,7 +300,7 @@ test.describe('Leaderboard endpoint', () => {
   });
 
   test('Board_SwitchedOffCampaign_IsRefusedWithTheSameSentence', async () => {
-    await api.post(settingsUrl(campaignUniqueId), {
+    await organizer.post(settingsUrl(campaignUniqueId), {
       data: settingsWith({ isPeerToPeerEnabled: false }),
     });
 

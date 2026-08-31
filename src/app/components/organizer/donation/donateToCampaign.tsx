@@ -41,7 +41,7 @@ import DonationSuccessModal from './organizerDonationComponents/DonationSuccessM
 import DonationFailureModal from './organizerDonationComponents/DonationFailureModal';
 import DonationProgressIndicator from './organizerDonationComponents/DonationProgressIndicator';
 import CampaignDetails from './organizerDonationComponents/CampaignDetails';
-import FundraiseForThisButton from './peerToPeer/join/FundraiseForThisButton';
+import FundraisePanel from './peerToPeer/join/FundraisePanel';
 import SupportingFundraiserBanner from './peerToPeer/page/SupportingFundraiserBanner';
 import DonationAmountSelector from './organizerDonationComponents/DonationAmountSelector';
 import DonationStep2Content from './organizerDonationComponents/DonationStep2Content';
@@ -1564,15 +1564,22 @@ export default function DonateToCampaign({
                 <CampaignDetails
                   fundRaisingGoal={currentCampaignForDonation.fundRaisingGoal}
                   description={currentCampaignForDonation.description}
+                  callToAction={
+                    <FundraisePanel
+                      campaignUniqueId={campaignId!}
+                      isPeerToPeerEnabled={currentCampaignForDonation.isPeerToPeerEnabled}
+                      themeColor={themeColor}
+                      cardBg={cardBg}
+                      cardBorder={cardBorder}
+                      textColor={textColor}
+                      subTextColor={subTextColor}
+                    />
+                  }
                   themeColor={themeColor}
                   cardBg={cardBg}
                   cardBorder={cardBorder}
                   textColor={textColor}
                   subTextColor={subTextColor}
-                />
-                <FundraiseForThisButton
-                  campaignUniqueId={campaignId!}
-                  isPeerToPeerEnabled={currentCampaignForDonation.isPeerToPeerEnabled}
                 />
               </Stack>
 

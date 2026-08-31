@@ -46,6 +46,7 @@ import {
   STORY_PLACEHOLDER,
   VIEW_PAGE_LABEL,
 } from './invitationLandingCopy';
+import PublicPageShell from '../page/PublicPageShell';
 
 const isSignedIn = () => Boolean(localStorage.getItem('AuthToken'));
 
@@ -135,7 +136,7 @@ export const InvitationLandingPage = () => {
   };
 
   return (
-    <Box maxW="640px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 8, md: 12 }}>
+    <PublicPageShell maxWidth="640px">
       <Stack gap={5}>
         <Heading as="h1" fontSize={{ base: 'xl', md: '2xl' }}>
           {accepted
@@ -278,7 +279,7 @@ export const InvitationLandingPage = () => {
           </Stack>
         )}
       </Stack>
-    </Box>
+    </PublicPageShell>
   );
 };
 

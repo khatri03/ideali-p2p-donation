@@ -9,7 +9,23 @@ export const AWAITING_APPROVAL_HEADING = 'This page is waiting to be approved';
 export const CLOSED_HEADING = 'This page is not taking donations';
 export const CAMPAIGN_ENDED_HEADING = 'This campaign has finished';
 
-export const DONATE_CTA = (displayName: string) => `Donate to ${displayName}`;
+/**
+ * The longest name a donate button says out loud. A supporter may give their page a name of up to 80
+ * characters, and a button repeating one that long reads as a sentence however neatly it wraps, so past
+ * this length the button states the action alone. Nothing is lost: the name is the heading immediately
+ * above the button on every screen that uses it.
+ */
+export const DONATE_CTA_NAME_LIMIT = 24;
+
+/** What the donate button says when the name is too long to belong in a control. */
+export const DONATE_CTA_WITHOUT_NAME = 'Donate now';
+
+export const DONATE_CTA = (displayName: string) => {
+  const name = (displayName ?? '').trim();
+  return name && name.length <= DONATE_CTA_NAME_LIMIT
+    ? `Donate to ${name}`
+    : DONATE_CTA_WITHOUT_NAME;
+};
 export const DONATE_REASSURANCE = (organizerName: string) =>
   `Goes straight to ${organizerName}`;
 
@@ -19,11 +35,17 @@ export const SUPPORTERS_EMPTY_HEADING = 'No donations yet';
 export const SUPPORTERS_EMPTY_GUIDANCE =
   'Be the first to give, and your name appears here.';
 
-export const SHARE_HEADING = (displayName: string) => `Share ${displayName}'s page`;
+/**
+ * A supporter names their page after the cause as often as after themselves, and a possessive built
+ * from such a name reads as broken English - "Share Raise fund for the shelter's page". Whose page it
+ * is, is the heading immediately above this panel on every screen that uses it, so the panel names the
+ * thing rather than its owner.
+ */
+export const SHARE_HEADING = 'Share this page';
 export const SHARE_COPY_LINK = 'Copy link';
 export const SHARE_LINK_COPIED = 'Link copied';
 export const SHARE_LINK_COPY_FAILED =
-  'Your browser would not copy the link. Select the address bar and copy it instead.';
+  'Your browser would not copy the link. Copy the address below by hand instead.';
 
 export const RETRY_LABEL = 'Try again';
 
@@ -33,13 +55,27 @@ export const supportingBanner = (displayName: string) =>
 export const raisedSummary = (raised: string, goal: string | null) =>
   goal ? `${raised} of ${goal}` : raised;
 
+/** Reads the bar out loud. A bare percentage beside a money total says nothing about what it measures. */
+export const percentOfGoal = (percentage: number) => `${percentage}% of goal`;
+
 export const donorSummary = (donorCount: number) =>
   donorCount === 1 ? '1 donor' : `${donorCount} donors`;
 
-export const fundraiserCountSummary = (count: number) =>
-  count === 1
-    ? '1 fundraiser on this campaign'
-    : `${count} fundraisers on this campaign`;
+/**
+ * The campaign is what a donation is actually ring-fenced to, so it leads the line rather than sitting
+ * in a badge. The person's own name is already the heading above it and is not repeated here.
+ */
+export const fundraisingForCampaign = 'Fundraising for';
+
+/** The charity that receipts the gift, named in full rather than abbreviated into a tag. */
+export const byOrganizer = (organizerName: string) => `by ${organizerName}`;
+
+/**
+ * The tab and shared-link title. It repeats the person's name because there is no heading beside it
+ * once the link leaves the site.
+ */
+export const socialPreviewTitle = (displayName: string, campaignName: string) =>
+  `${displayName} is fundraising for ${campaignName}`;
 
 export const fundraisingSince = (isoDate: string) => {
   const started = new Date(isoDate);

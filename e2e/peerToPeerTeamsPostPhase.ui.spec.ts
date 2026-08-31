@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { Locator, Page, expect, test } from '@playwright/test';
 import { endedCampaign, liveCampaign, secondLiveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { e2eEnv } from './support/e2eEnv';
@@ -855,6 +855,21 @@ test.describe('The team link a stranger follows', () => {
   });
 });
 
+
+/**
+ * The console groups a supporter's pages by campaign and only opens a section on its own when it is
+ * the only one, so anything reading what is behind the disclosure opens it first.
+ */
+const openConsoleSection = async (card: Locator): Promise<void> => {
+  const header = card.locator('button[aria-expanded]').first();
+
+  if ((await header.getAttribute('aria-expanded')) === 'false') {
+    await header.click();
+  }
+
+  await expect(header).toHaveAttribute('aria-expanded', 'true');
+};
+
 test.describe('One fundraiser, more than one campaign', () => {
   test('Console_InATeamAfterTeamsWereSwitchedOff_StillReachesTheirOwnTeam', async ({ page }) => {
     insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
@@ -865,6 +880,8 @@ test.describe('One fundraiser, more than one campaign', () => {
 
     const card = page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` });
 
+    await openConsoleSection(card);
+
     await expect(card.getByRole('button', { name: `My team: ${TEAM_NAME}` })).toBeVisible();
     await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
   });
@@ -874,6 +891,9 @@ test.describe('One fundraiser, more than one campaign', () => {
     insertTeam({ captainIsMine: true, memberSlugs: [MINE_SLUG] });
 
     await page.goto('/member/my-fundraising');
+    await openConsoleSection(
+      page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` }),
+    );
 
     expect(await cursorOf(page, `My team: ${TEAM_NAME}`)).toBe('pointer');
   });

@@ -6,6 +6,12 @@ interface FundraiserPageNoticeProps {
   heading: string;
   message: string;
   action?: ReactNode;
+  /**
+   * An h1 when the notice is the whole screen, which is how most of its callers use it. A screen that
+   * keeps its own heading and shows the notice beneath it passes h2, so the page never announces two
+   * first-level headings and a screen reader can still tell which one owns the screen.
+   */
+  headingLevel?: 'h1' | 'h2';
   onRetry?: () => void;
   retryLabel?: string;
 }
@@ -19,6 +25,7 @@ export const FundraiserPageNotice = ({
   heading,
   message,
   action,
+  headingLevel = 'h1',
   onRetry,
   retryLabel,
 }: FundraiserPageNoticeProps) => (
@@ -34,7 +41,7 @@ export const FundraiserPageNotice = ({
       <Icon as={MdInfoOutline} boxSize="40px" color="brand.500" aria-hidden="true" />
 
       <Heading
-        as="h1"
+        as={headingLevel}
         fontSize={{ base: 'lg', md: 'xl' }}
         color="navy.700"
         _dark={{ color: 'white' }}

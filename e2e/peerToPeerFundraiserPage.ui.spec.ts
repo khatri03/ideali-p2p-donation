@@ -34,7 +34,13 @@ const insertProbePage = (status: string): void =>
   execute(`
     DECLARE @campaignId INT = (SELECT Id FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}');
     DECLARE @organizerId INT = (SELECT OrganizerId FROM DonationCampaign WHERE Id = @campaignId);
-    DECLARE @userId INT = (SELECT TOP 1 Id FROM [User] ORDER BY Id);
+    DECLARE @userId INT = (
+      SELECT MIN(u.Id) FROM [User] u
+      WHERE NOT EXISTS (
+        SELECT 1 FROM CampaignFundraiser held
+        WHERE held.DonationCampaignId = @campaignId AND held.UserId = u.Id AND held.IsDeleted = 0
+      )
+    );
 
     INSERT INTO CampaignFundraiser
       (UniqueId, RowVersion, OrganizerId, DonationCampaignId, UserId, Slug, DisplayName, Story,
@@ -58,6 +64,40 @@ const enablePeerToPeer = (): void => {
 };
 
 const pagePath = () => `/campaigns/${campaignSlug}/${FUNDRAISER_SLUG}`;
+
+const LONG_NAME_SLUG = 'e2e-public-page-long-name';
+const LONG_DISPLAY_NAME = 'Raise fund for Osama to test PAD and every payment method';
+
+/**
+ * The account the page is put against is one holding no live page on this campaign, because the
+ * "one page per person per campaign" index counts live rows: a real supporter fundraising here would
+ * otherwise refuse the insert and fail the run for a reason that has nothing to do with the screen.
+ *
+ * A page named the way a real supporter names one: after the cause rather than after themselves. The
+ * name is well inside the eighty characters the join form allows, so nothing here is an edge case the
+ * product refuses to store.
+ */
+const insertLongNamedProbePage = (): void =>
+  execute(`
+    DECLARE @campaignId INT = (SELECT Id FROM DonationCampaign WHERE UniqueId = '${campaign.uniqueId}');
+    DECLARE @organizerId INT = (SELECT OrganizerId FROM DonationCampaign WHERE Id = @campaignId);
+    DECLARE @userId INT = (
+      SELECT MAX(u.Id) FROM [User] u
+      WHERE NOT EXISTS (
+        SELECT 1 FROM CampaignFundraiser held
+        WHERE held.DonationCampaignId = @campaignId AND held.UserId = u.Id AND held.IsDeleted = 0
+      )
+    );
+
+    INSERT INTO CampaignFundraiser
+      (UniqueId, RowVersion, OrganizerId, DonationCampaignId, UserId, Slug, DisplayName, Story,
+       PersonalGoal, CurrentStatus, IsDeleted, CreatedBy, CreatedOnUtc)
+    VALUES
+      (NEWID(), 0, @organizerId, @campaignId, @userId, '${LONG_NAME_SLUG}', '${LONG_DISPLAY_NAME}',
+       'I support this campaign.', 20000, 'Active', 0, 'e2e-page', SYSUTCDATETIME());
+  `);
+
+const longNamedPagePath = () => `/campaigns/${campaignSlug}/${LONG_NAME_SLUG}`;
 const donatePath = () => `${pagePath()}/donate`;
 
 test.beforeAll(() => {
@@ -220,5 +260,33 @@ test.describe('Public fundraiser page', () => {
 
     expect(donate?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(copyLink?.height ?? 0).toBeGreaterThanOrEqual(44);
+  });
+
+  test('Donate_PageNamedAfterTheCause_KeepsTheButtonInsideItsPanel', async ({ page }) => {
+    insertLongNamedProbePage();
+
+    await page.goto(longNamedPagePath());
+    await expect(page.getByRole('heading', { level: 1, name: LONG_DISPLAY_NAME })).toBeVisible();
+
+    const donate = page.getByRole('button', { name: 'Donate now' });
+    await expect(donate).toBeVisible();
+
+    const clipped = await donate.evaluate((element) => element.scrollWidth - element.clientWidth);
+    expect(clipped).toBeLessThanOrEqual(1);
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
+  test('Donate_PageNamedAfterTheCause_StillReachesThePaymentScreen', async ({ page }) => {
+    insertLongNamedProbePage();
+
+    await page.goto(longNamedPagePath());
+    await page.getByRole('button', { name: 'Donate now' }).click();
+
+    await expect(page).toHaveURL(new RegExp(`${LONG_NAME_SLUG}/donate$`));
+    await expect(page.getByText(`You are supporting ${LONG_DISPLAY_NAME}`)).toBeVisible();
   });
 });

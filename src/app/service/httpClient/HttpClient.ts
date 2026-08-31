@@ -26,6 +26,14 @@ const processQueue = (error: any = null, token: string | null = null) => {
     failedQueue = [];
 };
 
+/**
+ * What a caller may show a user when the session cannot be renewed. The conditions behind it - no
+ * stored refresh token, a response the endpoint shaped unexpectedly - are internal, and extractApiError
+ * surfaces the message of any non-Axios Error straight to the screen, so the message itself has to be
+ * the sentence a person should read rather than the reason a developer would want.
+ */
+const SESSION_EXPIRED_MESSAGE = 'Your session has expired. Please sign in again.';
+
 // Function to handle logout
 const handleLogout = () => {
     localStorage.removeItem('AuthToken');
@@ -46,7 +54,7 @@ const refreshAuthToken = async (): Promise<string> => {
         console.warn('[Token Refresh] No valid refresh token — skipping refresh, session may expire naturally.');
         // Don't log out — the current AuthToken may still be valid.
         // Let the 401 propagate so the caller can decide what to do.
-        throw new Error('No refresh token available');
+        throw new Error(SESSION_EXPIRED_MESSAGE);
     }
 
     const formData = new FormData();
@@ -54,7 +62,6 @@ const refreshAuthToken = async (): Promise<string> => {
 
     try {
         console.log('[Token Refresh] Calling refresh endpoint...');
-        console.log('[Token Refresh] Refresh token being sent:', refreshToken.substring(0, 20) + '...');
         const response = await axios.post(
             `${import.meta.env.VITE_API_BASE_URL}/api/identity/account/refresh-token`,
             formData,
@@ -94,7 +101,7 @@ const refreshAuthToken = async (): Promise<string> => {
         }
 
         console.error('[Token Refresh] Could not find access token in response. Keys found:', Object.keys(responseData || {}));
-        throw new Error('Invalid refresh token response');
+        throw new Error(SESSION_EXPIRED_MESSAGE);
     } catch (error) {
         console.error('[Token Refresh] Failed:', error);
         if (axios.isAxiosError(error)) {

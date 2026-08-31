@@ -1,6 +1,14 @@
 import { APIRequestContext, request } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
-import { API_TOKEN_PATH, e2eEnv } from './e2eEnv';
+import { API_TOKEN_PATH, SUPPORTER_API_TOKEN_PATH, e2eEnv } from './e2eEnv';
+
+/** Where the setup project left each identity's token, so a spec spends no sign-in attempt of its own. */
+const cachedTokenPath = (userName: string): string | null => {
+  if (userName === e2eEnv.organizerUsername) return API_TOKEN_PATH;
+  if (userName === e2eEnv.supporterUsername) return SUPPORTER_API_TOKEN_PATH;
+
+  return null;
+};
 
 /**
  * Talks to the API the way the browser does - multipart authenticate, bearer token afterwards - so a
@@ -10,11 +18,13 @@ export const signIn = async (
   userName: string = e2eEnv.organizerUsername,
   password: string = e2eEnv.organizerPassword,
 ): Promise<string> => {
-  // The organiser signed in once in the setup project. Spending another of the five attempts a
+  // Both accounts signed in once in the setup project. Spending another of the five attempts a
   // minute the endpoint allows would make the suite fail on that limit rather than on the rule
   // each spec was written to prove.
-  if (userName === e2eEnv.organizerUsername && existsSync(API_TOKEN_PATH)) {
-    const cached = readFileSync(API_TOKEN_PATH, 'utf8').trim();
+  const tokenPath = cachedTokenPath(userName);
+
+  if (tokenPath && existsSync(tokenPath)) {
+    const cached = readFileSync(tokenPath, 'utf8').trim();
 
     if (cached !== '') {
       return cached;
@@ -45,6 +55,14 @@ export const signIn = async (
 
   return accessToken;
 };
+
+/**
+ * The account that supports campaigns rather than running them. Every endpoint that writes a
+ * fundraising page has to be called as this identity: the charity that owns a campaign is refused a
+ * page on it, so proving the happy path with the organiser's token proves nothing at all.
+ */
+export const signInAsSupporter = (): Promise<string> =>
+  signIn(e2eEnv.supporterUsername, e2eEnv.supporterPassword);
 
 export const authenticatedApi = async (accessToken: string): Promise<APIRequestContext> =>
   request.newContext({

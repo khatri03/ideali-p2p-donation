@@ -15,6 +15,7 @@ import {
   NOT_FOUND_GUIDANCE,
   NOT_FOUND_HEADING,
   RETRY_LABEL,
+  socialPreviewTitle,
   unavailableExplanation,
   unavailableHeading,
 } from './pageCopy';
@@ -92,7 +93,7 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
   const shareUrl = `${window.location.origin}${fundraiserPagePath(page.campaignSlug, page.slug)}`;
 
   useSocialPreview({
-    title: `${page.displayName} is fundraising for ${page.organizerName}`,
+    title: socialPreviewTitle(page.displayName, page.campaignName),
     description: page.story?.slice(0, 200) ?? `Support ${page.campaignName}.`,
     url: shareUrl,
   });
@@ -103,9 +104,9 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
         <FundraiserIdentity
           displayName={page.displayName}
           campaignName={page.campaignName}
+          campaignUniqueId={page.campaignUniqueId}
           organizerName={page.organizerName}
           fundraisingSinceUtc={page.fundraisingSinceUtc}
-          campaignFundraiserCount={page.campaignFundraiserCount}
           photoUniqueId={page.photoUniqueId}
           team={
             page.team ? <FundraiserTeamLink campaignSlug={page.campaignSlug} team={page.team} /> : null
@@ -131,7 +132,7 @@ const LiveFundraiserPage = ({ page, onDonate }: LiveFundraiserPageProps) => {
           onDonate={onDonate}
         />
 
-        <SharePanel displayName={page.displayName} shareUrl={shareUrl} />
+        <SharePanel shareUrl={shareUrl} />
 
         <LeaderboardLink
           campaignSlug={page.campaignSlug}

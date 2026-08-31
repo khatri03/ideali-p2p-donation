@@ -14,7 +14,7 @@ export const EMPTY_ACTION = 'Find a campaign';
 
 export const ALL_FINISHED_HEADING = 'Your campaigns have all finished';
 export const ALL_FINISHED_GUIDANCE =
-  'Your pages above stay as a record of what you raised. To fundraise again, pick a campaign that is still taking supporter pages.';
+  'Your pages below stay as a record of what you raised. To fundraise again, pick a campaign that is still taking supporter pages.';
 
 export const VIEW_PUBLIC_PAGE = 'View my page';
 export const OPENS_IN_A_NEW_TAB = '(opens in a new tab)';
@@ -25,8 +25,22 @@ export const fundraisingCardLabel = (displayName: string, campaignName: string) 
 export const myTeamLabel = (teamName: string) => `My team: ${teamName}`;
 export const BACK_TO_CONSOLE = 'Back to my fundraising';
 
-export const SUPPORTERS_HEADING = 'Recent donations';
-export const SUPPORTERS_EMPTY = 'No donations yet. Share your link to get the first one.';
+/**
+ * A section is named after the campaign it groups, so the supporter's own page is named beneath it -
+ * and named as a page rather than with a possessive, because a page called after the cause would read
+ * as broken English the moment one was written.
+ */
+export const FUNDRAISING_PAGE_PREFIX = 'Your page:';
+
+export const EXPAND_ALL = 'Expand all';
+export const COLLAPSE_ALL = 'Collapse all';
+
+export const SUMMARY_HEADING = 'Everything you have raised';
+export const SUMMARY_RAISED = 'Raised in total';
+export const SUMMARY_PAGES = 'Fundraising pages';
+export const SUMMARY_DONORS = 'Donors';
+export const SUMMARY_MIXED_CURRENCY =
+  'Your pages raise in different currencies, so each total is shown on the page it belongs to.';
 
 export const CAMPAIGN_CLOSED_NOTE =
   'This campaign has finished, so the page is no longer taking donations.';

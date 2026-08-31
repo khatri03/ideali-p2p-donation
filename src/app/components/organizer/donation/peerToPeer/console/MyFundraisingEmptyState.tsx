@@ -1,4 +1,5 @@
-import { Box, Button, Heading, Icon, Text } from '@chakra-ui/react';
+import { Button, Heading, Icon, Text } from '@chakra-ui/react';
+import Card from 'themeComponents/card/Card';
 import { MdVolunteerActivism } from 'react-icons/md';
 import { EMPTY_ACTION, EMPTY_GUIDANCE, EMPTY_HEADING } from './consoleCopy';
 
@@ -19,14 +20,7 @@ export const MyFundraisingEmptyState = ({
   heading = EMPTY_HEADING,
   guidance = EMPTY_GUIDANCE,
 }: MyFundraisingEmptyStateProps) => (
-  <Box
-    bg="white"
-    _dark={{ bg: 'navy.700' }}
-    borderRadius="16px"
-    boxShadow="sm"
-    p={{ base: 6, md: 10 }}
-    textAlign="center"
-  >
+  <Card p={{ base: 6, md: 10 }} textAlign="center" alignItems="center">
     <Icon as={MdVolunteerActivism} boxSize="40px" color="brand.500" mb={4} aria-hidden="true" />
 
     <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} color="navy.700" _dark={{ color: 'white' }}>
@@ -55,7 +49,7 @@ export const MyFundraisingEmptyState = ({
     >
       {EMPTY_ACTION}
     </Button>
-  </Box>
+  </Card>
 );
 
 export default MyFundraisingEmptyState;

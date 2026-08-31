@@ -133,10 +133,10 @@ const horizontalOverflow = (page: Page) =>
  * width and only one of them is on screen. Every assertion here therefore looks for the visible copy
  * rather than the first one in the DOM.
  */
-const visibleText = (page: Page, text: string) =>
+const visibleText = (page: Page, text: string | RegExp) =>
   page.getByText(text).filter({ visible: true }).first();
 
-const visibleLink = (page: Page, name: string) =>
+const visibleLink = (page: Page, name: string | RegExp) =>
   page.getByRole('link', { name }).filter({ visible: true }).first();
 
 const openProbePage = async (page: Page) => {
@@ -542,6 +542,84 @@ test.describe('Screen 16 and 17 - teams', () => {
 
     await openProbeTeam(page);
 
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+  });
+});
+
+/**
+ * The one place a charity learns that somebody is waiting on it. Everything else in this suite assumes
+ * the charity already opened the oversight screens; these tests prove they are told to.
+ */
+test.describe('Campaign list approval badge', () => {
+  const campaignsPath = '/organizer/donation/manage-donation-module';
+
+  const campaignCard = (page: Page) =>
+    page.getByText(campaign.name).filter({ visible: true }).first();
+
+  test.beforeEach(() => {
+    removeProbeData();
+  });
+
+  test.afterEach(() => {
+    removeProbeData();
+  });
+
+  /**
+   * A page waiting on a decision is announced on the campaign card itself, in words rather than an
+   * icon, because an icon alone says only that something is wrong.
+   */
+  test('CampaignList_PageWaitingForApproval_SaysSoOnTheCampaignCard', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await page.goto(campaignsPath);
+    await expect(campaignCard(page)).toBeVisible();
+
+    await expect(visibleText(page, /\d+ awaiting approval/)).toBeVisible();
+  });
+
+  /**
+   * Following the badge lands on the pages already narrowed to the ones waiting, each carrying the way
+   * in to its decision, so the charity never has to set the filter by hand to find what is waiting.
+   */
+  test('CampaignList_BadgeFollowed_OpensThePagesAlreadyNarrowedToTheWaitingOnes', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await page.goto(campaignsPath);
+    await visibleLink(page, /\d+ awaiting approval/).click();
+
+    await expect(page).toHaveURL(/\/peer-to-peer\/fundraisers\?status=PendingApproval/);
+    await expect(visibleText(page, PROBE_PAGE_NAME)).toBeVisible();
+    await expect(visibleLink(page, `Review ${PROBE_PAGE_NAME}`)).toBeVisible();
+  });
+
+  /**
+   * A campaign with nothing waiting shows no badge. A warning that is always there is a warning nobody
+   * reads, and the charity would stop trusting the one that matters.
+   */
+  test('CampaignList_NothingWaiting_ShowsNoBadgeAtAll', async ({ page }) => {
+    insertProbePage('Active');
+
+    await page.goto(campaignsPath);
+    await expect(campaignCard(page)).toBeVisible();
+
+    await expect(page.getByText(/awaiting approval/)).toHaveCount(0);
+  });
+
+  /**
+   * The badge is a control a finger has to hit, so it is at least 44px tall however small the pill it
+   * draws, and it must not push the page sideways at any supported width.
+   */
+  test('CampaignList_Badge_IsReachableByTouchAndDoesNotScrollThePageSideways', async ({ page }) => {
+    insertProbePage('PendingApproval');
+
+    await page.goto(campaignsPath);
+
+    const badge = visibleLink(page, /\d+ awaiting approval/);
+    await expect(badge).toBeVisible();
+
+    const box = await badge.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
   });
 });

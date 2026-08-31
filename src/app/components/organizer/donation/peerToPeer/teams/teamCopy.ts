@@ -94,6 +94,9 @@ export const membersCount = (count: number) =>
 export const teamDonorSummary = (count: number) =>
   count === 1 ? '1 donor across the team' : `${count} donors across the team`;
 export const CAPTAIN_BADGE = 'Captain';
+
+/** Mirrors the fundraiser page: the campaign leads the line, the charity is named under it. */
+export const TEAM_FUNDRAISING_FOR = 'Fundraising together for';
 export const raisedByMember = (amount: string) => `${amount} raised`;
 export const VIEW_MEMBER_PAGE = 'View page';
 export const VIEW_TEAM = 'View team';

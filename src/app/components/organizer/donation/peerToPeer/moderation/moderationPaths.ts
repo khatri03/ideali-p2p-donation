@@ -10,6 +10,14 @@ export const moderatedFundraisersPath = (campaignUniqueId: string) =>
 export const moderatedFundraiserPath = (campaignUniqueId: string, fundraiserUniqueId: string) =>
   `${moderatedFundraisersPath(campaignUniqueId)}/${fundraiserUniqueId}`;
 
+/**
+ * The fundraising pages already narrowed to the ones waiting on a decision. Somebody following a
+ * warning about pending approvals wants the approve and reject buttons, not the whole list to filter
+ * again by hand.
+ */
+export const pendingFundraisersPath = (campaignUniqueId: string) =>
+  `${moderatedFundraisersPath(campaignUniqueId)}?status=PendingApproval`;
+
 export const moderatedTeamsPath = (campaignUniqueId: string) => `${base(campaignUniqueId)}/teams`;
 
 export const moderatedTeamPath = (campaignUniqueId: string, teamUniqueId: string) =>

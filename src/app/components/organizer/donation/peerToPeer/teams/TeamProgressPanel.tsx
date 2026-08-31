@@ -1,4 +1,6 @@
-import { Box, Button, Progress, Stack, Text } from '@chakra-ui/react';
+import { Box, Stack, Text } from '@chakra-ui/react';
+import GoalProgressBar from '../page/GoalProgressBar';
+import DonateButton from '../page/DonateButton';
 import { formatMoney, goalPercentage } from '../page/money';
 import { raisedSummary } from '../page/pageCopy';
 import {
@@ -68,12 +70,10 @@ export const TeamProgressPanel = ({
 
         {percentage !== null && (
           <Stack gap={1}>
-            <Progress
-              value={percentage}
-              size="sm"
-              borderRadius="full"
+            <GoalProgressBar
+              percentage={percentage}
+              label={`${percentage}% of the team goal raised`}
               colorScheme="purple"
-              aria-label={`${percentage}% of the team goal raised`}
             />
             <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
               {`${percentage}% there`}
@@ -83,18 +83,11 @@ export const TeamProgressPanel = ({
 
         {isCampaignOpen ? (
           <>
-            <Button
+            <DonateButton
+              label={DONATE_CTA}
               onClick={onDonate}
-              colorScheme="purple"
-              size="lg"
-              w="full"
-              minH="48px"
-              borderRadius="12px"
-              cursor="pointer"
               isDisabled={memberCount === 0}
-            >
-              {DONATE_CTA}
-            </Button>
+            />
 
             <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }} textAlign="center">
               {DONATE_REASSURANCE(organizerName)}

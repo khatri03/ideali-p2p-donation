@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { e2eEnv } from './support/e2eEnv';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
@@ -92,19 +92,122 @@ test.afterAll(() => {
   `);
 });
 
+/**
+ * The console groups a supporter's pages by campaign, and a section only opens itself when it is the
+ * only one. The account this suite signs in as may already be fundraising elsewhere, so anything that
+ * reads what is behind the disclosure opens the probe's own section first rather than assuming it.
+ */
+/**
+ * Opens the probe page's section and hands back the panel it opened. The account can be fundraising
+ * for several campaigns, and every other section stays shut, so a locator that is not scoped to this
+ * panel reaches a control inside a collapsed one and reports it hidden.
+ */
+const openProbeSection = async (page: Page): Promise<Locator> => {
+  const section = page.getByRole('button', { name: new RegExp(DISPLAY_NAME) });
+
+  await expect(section).toBeVisible();
+
+  if ((await section.getAttribute('aria-expanded')) === 'false') {
+    await section.click();
+  }
+
+  await expect(section).toHaveAttribute('aria-expanded', 'true');
+
+  const panelId = await section.getAttribute('aria-controls');
+  expect(panelId, 'the section header names no panel').toBeTruthy();
+
+  return page.locator(`#${panelId}`);
+};
+
 test.describe('Fundraiser console screens', () => {
-  test('Console_Opened_ListsThePageWithItsCampaignAndTotal', async ({ page }) => {
+  test('Console_Opened_LeadsWithTheSupportersOwnPageAndNamesItsCampaign', async ({ page }) => {
     await page.goto(CONSOLE_PATH);
 
     await expect(page.getByRole('heading', { level: 1, name: 'My fundraising' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: campaign.name })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Edit my page' })).toBeVisible();
+
+    const section = page.getByRole('heading', { level: 2, name: new RegExp(DISPLAY_NAME) });
+
+    await expect(section).toBeVisible();
+    await expect(section).toContainText(campaign.name);
+    await expect(section).toContainText(DISPLAY_NAME);
   });
 
-  test('Console_ShareLink_IsShownInFullSoItCanBeCopiedByHand', async ({ page }) => {
+  /**
+   * A shut section still has to answer how the campaign is going, or collapsing has hidden the point
+   * of the screen rather than the noise around it.
+   */
+  test('Console_SectionShut_StillStatesItsCampaignAndWhatItHasRaised', async ({ page }) => {
     await page.goto(CONSOLE_PATH);
 
-    await expect(page.getByText(new RegExp(`/campaigns/[^/]+/${SLUG}$`))).toBeVisible();
+    const section = page.getByRole('button', { name: new RegExp(DISPLAY_NAME) });
+
+    await expect(section).toBeVisible();
+    await expect(section).toContainText(campaign.name);
+    await expect(section).toContainText('500');
+  });
+
+  /**
+   * A card's own panel sits below it in the outline, so a console listing several pages reads as one
+   * heading per page rather than repeating sections with no owner.
+   */
+  test('Console_PanelsInsideACard_SitBelowItInTheHeadingOutline', async ({ page }) => {
+    await page.goto(CONSOLE_PATH);
+    await openProbeSection(page);
+
+    await expect(page.getByRole('heading', { level: 2, name: new RegExp(DISPLAY_NAME) })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Recent supporters' }).first()).toBeVisible();
+  });
+
+  /**
+   * The member layout's navigation bar is fixed, so a screen that starts at the top of the scrolling
+   * area loses its own heading underneath it.
+   */
+  test('Console_Opened_StartsBelowTheFixedNavigationBarRatherThanUnderneathIt', async ({ page }) => {
+    await page.goto(CONSOLE_PATH);
+
+    const heading = page.getByRole('heading', { level: 1, name: 'My fundraising' });
+    await expect(heading).toBeVisible();
+
+    const box = await heading.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y).toBeGreaterThan(60);
+  });
+
+  /**
+   * The project's Progress base style fixes the track at the width of a switch, which draws a goal as
+   * a stub beside the money it is meant to measure.
+   */
+  test('Console_GoalBar_SpansItsPanelRatherThanDrawingAStub', async ({ page }) => {
+    await page.goto(CONSOLE_PATH);
+    const panel = await openProbeSection(page);
+
+    // The role sits on the filled part, which is nothing at all on a page that has raised nothing.
+    // What has to span the panel is the track it runs along, so that is what is measured.
+    const filled = panel.getByRole('progressbar').first();
+    await expect(filled).toBeAttached();
+
+    const track = filled.locator('xpath=..');
+    await expect(track).toBeVisible();
+
+    const box = await track.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThan(200);
+  });
+
+  /**
+   * Editing, opening and sending the page are the three things a supporter came here to do, and the
+   * address itself is not a fourth: the copy control puts it on the clipboard and "View my page"
+   * opens it, so printing it as well spent a panel per page restating both.
+   */
+  test('Console_Card_OffersEditViewAndCopyWithoutPrintingTheAddress', async ({ page }) => {
+    await page.goto(CONSOLE_PATH);
+    await openProbeSection(page);
+
+    await expect(page.getByRole('button', { name: 'Edit my page' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /View my page/ }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Copy link' }).first()).toBeVisible();
+
+    await expect(page.getByText(new RegExp(`/campaigns/[^/]+/${SLUG}$`))).toHaveCount(0);
   });
 
   test('Console_ViewMyPage_OpensThePublicPageInANewTabAndLeavesTheConsoleWhereItWas', async ({
@@ -112,10 +215,11 @@ test.describe('Fundraiser console screens', () => {
     context,
   }) => {
     await page.goto(CONSOLE_PATH);
+    await openProbeSection(page);
 
     const [publicPage] = await Promise.all([
       context.waitForEvent('page'),
-      page.getByRole('link', { name: /View my page/ }).click(),
+      page.getByRole('link', { name: /View my page/ }).first().click(),
     ]);
 
     await publicPage.waitForLoadState('domcontentloaded');
@@ -128,7 +232,8 @@ test.describe('Fundraiser console screens', () => {
 
   test('Console_EditPressed_OpensThatPagesEditorPrefilled', async ({ page }) => {
     await page.goto(CONSOLE_PATH);
-    await page.getByRole('button', { name: 'Edit my page' }).click();
+    await openProbeSection(page);
+    await page.getByRole('button', { name: 'Edit my page' }).first().click();
 
     await expect(page).toHaveURL(new RegExp(`${pageUniqueId}$`));
     await expect(page.getByLabel('Name on your page')).toHaveValue(DISPLAY_NAME);

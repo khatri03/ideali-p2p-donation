@@ -11,6 +11,13 @@ import {
 interface RecentSupportersPanelProps {
   supporters: FundraiserPageSupporter[];
   currencySymbol: string;
+  /**
+   * Where this panel sits in the page outline. A panel nested inside a card that already carries a
+   * heading is an h3, so the outline a screen reader announces matches what the eye sees.
+   */
+  headingLevel?: 'h2' | 'h3';
+  /** Flattens the panel for use inside a card, which already carries the surface and the shadow. */
+  isNested?: boolean;
 }
 
 const formatGivenOn = (isoDate: string): string => {
@@ -28,17 +35,19 @@ const formatGivenOn = (isoDate: string): string => {
 export const RecentSupportersPanel = ({
   supporters,
   currencySymbol,
+  headingLevel = 'h2',
+  isNested = false,
 }: RecentSupportersPanelProps) => (
   <Box
-    bg="white"
-    _dark={{ bg: 'navy.700' }}
-    borderRadius="16px"
-    boxShadow="sm"
-    p={{ base: 4, md: 6 }}
+    bg={isNested ? 'secondaryGray.300' : 'white'}
+    _dark={{ bg: isNested ? 'whiteAlpha.100' : 'navy.700' }}
+    borderRadius={isNested ? '14px' : '16px'}
+    boxShadow={isNested ? 'none' : 'sm'}
+    p={isNested ? 4 : { base: 4, md: 6 }}
   >
     <Heading
-      as="h2"
-      fontSize={{ base: 'md', md: 'lg' }}
+      as={headingLevel}
+      fontSize={{ base: 'sm', md: 'md' }}
       mb={4}
       color="navy.700"
       _dark={{ color: 'white' }}

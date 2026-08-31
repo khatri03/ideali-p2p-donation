@@ -35,7 +35,7 @@ export const LiveTeamPage = ({
   const shareUrl = `${window.location.origin}${teamPagePath(team.campaignSlug, team.slug)}`;
 
   useSocialPreview({
-    title: `${team.name} is fundraising for ${team.organizerName}`,
+    title: `${team.name} is fundraising for ${team.campaignName}`,
     description: team.story?.slice(0, 200) ?? `Support ${team.campaignName}.`,
     url: shareUrl,
   });
@@ -65,11 +65,7 @@ export const LiveTeamPage = ({
             onDonate={() => setIsChoosingMember(true)}
           />
 
-          <SharePanel
-            displayName={team.name}
-            heading={shareHeading(team.name)}
-            shareUrl={shareUrl}
-          />
+          <SharePanel heading={shareHeading(team.name)} shareUrl={shareUrl} />
 
           <LeaderboardLink
             campaignSlug={team.campaignSlug}

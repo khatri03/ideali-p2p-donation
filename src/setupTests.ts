@@ -2,20 +2,22 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 
-// Chakra reads matchMedia for responsive props and colour mode; happy-dom does not implement it.
-if (!window.matchMedia) {
-  window.matchMedia = (query: string) =>
-    ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: (): void => undefined,
-      removeListener: (): void => undefined,
-      addEventListener: (): void => undefined,
-      removeEventListener: (): void => undefined,
-      dispatchEvent: () => false,
-    }) as MediaQueryList;
-}
+// Chakra reads matchMedia for responsive props, colour mode and motion preference; happy-dom does not
+// implement it. Reduced motion is answered yes on purpose: there is no compositor here, so a component
+// that animates open would otherwise leave its contents unreadable for as long as the animation claims
+// to be running, and a test would be waiting on frames that never arrive. What the animation itself
+// looks like is proven in a real browser by the Playwright suite.
+window.matchMedia = (query: string) =>
+  ({
+    matches: query.includes('prefers-reduced-motion'),
+    media: query,
+    onchange: null,
+    addListener: (): void => undefined,
+    removeListener: (): void => undefined,
+    addEventListener: (): void => undefined,
+    removeEventListener: (): void => undefined,
+    dispatchEvent: () => false,
+  }) as MediaQueryList;
 
 if (!window.scrollTo) {
   window.scrollTo = vi.fn();

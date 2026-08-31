@@ -1,15 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Stack,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Heading, Stack, Text, useToast } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
 import { FundraiserJoinRequest } from 'app/interface/donationInter/fundraiserJoinDto';
 import { ensureAuthenticated } from 'utils/auth';
@@ -17,9 +7,11 @@ import { fundraiserJoinPath } from 'app/utils/returnPath';
 import { signOutAndReturnTo, storedDisplayName } from 'app/utils/session';
 import FundraiseAccessModal from '../access/FundraiseAccessModal';
 import { JOIN_HEADING } from './joinCopy';
+import PublicPageShell from '../page/PublicPageShell';
 import FundraiserJoinForm from './FundraiserJoinForm';
 import FundraiserJoinSkeleton from './FundraiserJoinSkeleton';
 import FundraiserJoinSuccess from './FundraiserJoinSuccess';
+import { myFundraisingPath } from '../console/MyFundraisingPage';
 import { useFundraiserJoin } from './useFundraiserJoin';
 
 /**
@@ -57,50 +49,46 @@ export const FundraiserJoinPage = () => {
   // confirmation email - is offered both ways in here rather than being bounced to another screen.
   if (!isSignedIn) {
     return (
-      <Box maxW="820px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 10 }}>
+      <PublicPageShell maxWidth="820px">
         <FundraiseAccessModal
           campaignUniqueId={campaignUniqueId ?? ''}
           isOpen
           onClose={() => navigate(-1)}
         />
-      </Box>
+      </PublicPageShell>
     );
   }
 
   return (
-    <Box maxW="820px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 10 }}>
+    <PublicPageShell maxWidth="820px">
       <Stack gap={4}>
-        <Flex align={{ base: 'stretch', md: 'center' }} gap={3} wrap="wrap">
-          <Button
-            variant="ghost"
-            size="sm"
-            leftIcon={<MdArrowBack />}
-            minH="44px"
-            alignSelf={{ base: 'flex-start', md: 'center' }}
-            onClick={() => navigate(-1)}
-            sx={{ cursor: 'pointer' }}
-          >
-            Back
-          </Button>
-          <Stack gap={1} minW={0}>
-            <Heading as="h1" fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
-              {JOIN_HEADING}
-            </Heading>
-            {context?.campaignName && (
-              <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
-                Campaign:{' '}
-                <Text
-                  as="span"
-                  fontWeight="600"
-                  color="secondaryGray.900"
-                  _dark={{ color: 'white' }}
-                >
-                  {context.campaignName}
-                </Text>
+        {/* Its own row, so the heading and the card below it share one left edge. */}
+        <Button
+          variant="ghost"
+          size="sm"
+          leftIcon={<MdArrowBack />}
+          minH="44px"
+          alignSelf="flex-start"
+          ml={-3}
+          onClick={() => navigate(-1)}
+          sx={{ cursor: 'pointer' }}
+        >
+          Back
+        </Button>
+
+        <Stack gap={1} minW={0}>
+          <Heading as="h1" fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
+            {JOIN_HEADING}
+          </Heading>
+          {context?.campaignName && (
+            <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
+              Campaign:{' '}
+              <Text as="span" fontWeight="600" color="secondaryGray.900" _dark={{ color: 'white' }}>
+                {context.campaignName}
               </Text>
-            )}
-          </Stack>
-        </Flex>
+            </Text>
+          )}
+        </Stack>
 
         {loadError && (
           <Alert status="error" borderRadius="12px">
@@ -137,6 +125,7 @@ export const FundraiserJoinPage = () => {
               currentStatus: context.currentStatus ?? 'Active',
               alreadyJoined: true,
             }}
+            onGoToConsole={() => navigate(myFundraisingPath)}
             onSignOutAndBackIn={() => signOutAndReturnTo(returnPath)}
           />
         )}
@@ -153,11 +142,12 @@ export const FundraiserJoinPage = () => {
         {result && (
           <FundraiserJoinSuccess
             result={result}
+            onGoToConsole={() => navigate(myFundraisingPath)}
             onSignOutAndBackIn={() => signOutAndReturnTo(returnPath)}
           />
         )}
       </Stack>
-    </Box>
+    </PublicPageShell>
   );
 };
 

@@ -1,9 +1,12 @@
-import { Badge, Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+import { Badge, Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/react';
 import { CampaignTeamPage } from 'app/interface/donationInter/campaignTeamDto';
+import { byOrganizer } from '../page/pageCopy';
 import {
   CAPTAIN_BADGE,
   LEAVE_LABEL,
   MANAGE_TEAM,
+  TEAM_FUNDRAISING_FOR,
   TEAM_STORY_HEADING,
   membersCount,
 } from './teamCopy';
@@ -15,7 +18,10 @@ interface TeamIdentityPanelProps {
   onLeave?: () => void;
 }
 
-/** The team first, the charity second, and only the actions this particular caller actually has. */
+/**
+ * The team first, then the campaign the gifts are ring-fenced to, then the charity that receipts them.
+ * Reads the same way as a member's own page so the two surfaces never say it differently.
+ */
 export const TeamIdentityPanel = ({ team, onManage, onLeave }: TeamIdentityPanelProps) => {
   const captain = team.members.find((member) => member.isCaptain);
 
@@ -38,14 +44,31 @@ export const TeamIdentityPanel = ({ team, onManage, onLeave }: TeamIdentityPanel
             {team.name}
           </Heading>
 
-          <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
-            {`Fundraising together for ${team.organizerName}`}
+          <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.700" _dark={{ color: 'gray.200' }}>
+            {`${TEAM_FUNDRAISING_FOR} `}
+            <Link
+              as={RouterLink}
+              to={`/donate/${team.campaignUniqueId}`}
+              color="brand.600"
+              _dark={{ color: 'brand.300' }}
+              fontWeight="semibold"
+              textDecoration="underline"
+              cursor="pointer"
+            >
+              {team.campaignName}
+            </Link>
+          </Text>
+
+          <Text
+            fontSize={{ base: 'sm', md: 'md' }}
+            fontWeight="medium"
+            color="gray.700"
+            _dark={{ color: 'gray.200' }}
+          >
+            {byOrganizer(team.organizerName)}
           </Text>
 
           <Stack direction="row" gap={2} flexWrap="wrap">
-            <Badge colorScheme="purple" borderRadius="full" px={3} py={1} textTransform="none">
-              {team.campaignName}
-            </Badge>
             <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
               {membersCount(team.members.length)}
             </Badge>

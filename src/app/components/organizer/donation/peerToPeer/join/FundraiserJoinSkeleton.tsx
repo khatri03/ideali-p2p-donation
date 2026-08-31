@@ -6,10 +6,11 @@ export const FundraiserJoinSkeleton = () => (
     bg="white"
     _dark={{ bg: 'navy.700' }}
     borderRadius="16px"
-    p={{ base: 4, md: 6 }}
+    p={{ base: 5, md: 8 }}
     boxShadow="sm"
   >
     <Stack gap={5}>
+      <SkeletonText noOfLines={2} spacing={2} skeletonHeight="12px" />
       <Skeleton height="20px" width={{ base: '60%', md: '200px' }} borderRadius="md" />
       <Skeleton height="44px" borderRadius="12px" />
       <Skeleton height="20px" width={{ base: '50%', md: '180px' }} borderRadius="md" />

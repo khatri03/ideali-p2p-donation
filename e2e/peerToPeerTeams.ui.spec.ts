@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { Locator, expect, test } from '@playwright/test';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
 import { e2eEnv } from './support/e2eEnv';
@@ -399,10 +399,26 @@ test.describe('Reaching a team without typing its address', () => {
   const consoleCard = (page: import('@playwright/test').Page) =>
     page.getByRole('region', { name: `${CAPTAIN_NAME} fundraising for ${campaign.name}` });
 
+
+/**
+ * The console groups a supporter's pages by campaign and only opens a section on its own when it is
+ * the only one, so anything reading what is behind the disclosure opens it first.
+ */
+const openConsoleSection = async (card: Locator): Promise<void> => {
+  const header = card.locator('button[aria-expanded]').first();
+
+  if ((await header.getAttribute('aria-expanded')) === 'false') {
+    await header.click();
+  }
+
+  await expect(header).toHaveAttribute('aria-expanded', 'true');
+};
+
   test('Console_FundraiserWithNoTeam_ReachesTheTeamsScreenForThatCampaign', async ({ page }) => {
     insertCaptainPageOnly(signedInUserId);
 
     await page.goto('/member/my-fundraising');
+    await openConsoleSection(consoleCard(page));
     await consoleCard(page).getByRole('button', { name: 'Find a team' }).click();
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams$`));
@@ -413,6 +429,7 @@ test.describe('Reaching a team without typing its address', () => {
     insertTeamWithTwoMembers(signedInUserId);
 
     await page.goto('/member/my-fundraising');
+    await openConsoleSection(consoleCard(page));
     await consoleCard(page).getByRole('button', { name: `My team: ${TEAM_NAME}` }).click();
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams/${TEAM_SLUG}$`));
@@ -427,6 +444,8 @@ test.describe('Reaching a team without typing its address', () => {
 
     const card = consoleCard(page);
 
+    await openConsoleSection(card);
+
     await expect(card.getByRole('button', { name: 'Edit my page' })).toBeVisible();
     await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
   });
@@ -435,6 +454,7 @@ test.describe('Reaching a team without typing its address', () => {
     insertCaptainPageOnly(signedInUserId);
 
     await page.goto('/member/my-fundraising');
+    await openConsoleSection(consoleCard(page));
 
     const control = consoleCard(page).getByRole('button', { name: 'Find a team' });
 

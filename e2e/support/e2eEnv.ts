@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 const ENV_FILE = '.env.e2e.local';
 
 /**
- * The suite reads one gitignored file rather than pulling in a dotenv dependency for six keys. Values
+ * The suite reads one gitignored file rather than pulling in a dotenv dependency for a handful of keys. Values
  * are taken verbatim after the first '=' so passwords containing '=' survive intact, and anything
  * already exported in the shell wins so CI can override without editing a file.
  */
@@ -54,6 +54,8 @@ export const e2eEnv = {
   apiBaseUrl: required('E2E_API_BASE_URL'),
   organizerUsername: required('E2E_ORGANIZER_USERNAME'),
   organizerPassword: required('E2E_ORGANIZER_PASSWORD'),
+  supporterUsername: required('E2E_SUPPORTER_USERNAME'),
+  supporterPassword: required('E2E_SUPPORTER_PASSWORD'),
   sqlcmdPath: required('E2E_SQLCMD'),
   apiSecretsFile: required('E2E_API_SECRETS_FILE'),
 };
@@ -61,8 +63,20 @@ export const e2eEnv = {
 export const STORAGE_STATE_PATH = 'e2e/.auth/organizer.json';
 
 /**
+ * A supporter's session, kept apart from the organiser's.
+ *
+ * Whoever runs a campaign cannot also hold a fundraising page on it - the charity would be approving
+ * its own page and counting itself among its own supporters - so every screen and endpoint that joins
+ * a campaign has to be exercised by an account that supports it rather than administers it.
+ */
+export const SUPPORTER_STORAGE_STATE_PATH = 'e2e/.auth/supporter.json';
+
+/**
  * Where the organiser's access token is kept for the run. The sign-in endpoint allows five attempts
  * a minute per address - a real protection that this suite must not need relaxing - so the token is
  * produced once by the setup project and read by every api spec instead of each one signing in.
  */
 export const API_TOKEN_PATH = 'e2e/.auth/organizer-token.txt';
+
+/** The supporter's access token, produced once by the setup project for the same reason. */
+export const SUPPORTER_API_TOKEN_PATH = 'e2e/.auth/supporter-token.txt';

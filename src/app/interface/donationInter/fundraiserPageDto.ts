@@ -42,7 +42,6 @@ export interface FundraiserPage {
   goal: number | null;
   raisedAmount: number;
   donorCount: number;
-  campaignFundraiserCount: number;
   /** True only when the charity publishes the standings to everyone, so no public surface offers a dead link. */
   isLeaderboardPublished: boolean;
   /** The team this page belongs to, so a donor can reach the wider effort. Null when there is none. */

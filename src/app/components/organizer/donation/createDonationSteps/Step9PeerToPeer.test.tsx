@@ -258,4 +258,29 @@ describe('Step9PeerToPeer', () => {
     expect(props.onPrevStep).toHaveBeenCalledTimes(1);
     expect(updatePeerToPeerSettings).not.toHaveBeenCalled();
   });
+
+  /**
+   * The order of these settings is the order a charity decides them in: the master switch, then the
+   * one decision that carries real risk — whether a supporter's page reaches the public before anyone
+   * on the charity has read it — then what supporters may do, then presentation. Reordering them puts
+   * the approval gate below the fold of the reader's attention, which is how it gets left off.
+   */
+  it('Step_SettingsShown_PutsTheApprovalGateDirectlyUnderTheMasterSwitch', async () => {
+    settingsResolve(buildSettings());
+
+    renderStep();
+    await waitForFields();
+
+    const settingLabels = Array.from(
+      document.querySelectorAll('label[for^="peer-to-peer-"]'),
+    ).map((label) => label.textContent);
+
+    expect(settingLabels).toEqual([
+      'Turn supporter fundraising on',
+      'Review pages before they go live',
+      'Allow teams',
+      'Suggested personal goal',
+      'Who can see the leaderboard',
+    ]);
+  });
 });

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FundraiserStatus } from 'app/interface/donationInter/fundraiserConsoleDto';
 import {
   ModerationListResult,
@@ -22,6 +23,15 @@ export interface ModerationFilters {
 }
 
 const EMPTY_FILTERS: ModerationFilters = { search: '', sortBy: 'Newest' };
+
+const KNOWN_STATUSES: FundraiserStatus[] = ['PendingApproval', 'Active', 'Paused', 'Rejected'];
+
+/**
+ * The status a link asked for, or nothing. The value arrives from the address bar, so it is matched
+ * against the statuses that exist rather than trusted and passed to the server as written.
+ */
+const statusFromAddress = (value: string | null): FundraiserStatus | undefined =>
+  KNOWN_STATUSES.find((status) => status === value);
 
 interface ModerationListState<T> {
   result: ModerationListResult<T> | null;
@@ -52,7 +62,12 @@ export const useModerationList = <T>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [filters, setFiltersState] = useState<ModerationFilters>(EMPTY_FILTERS);
+  const [searchParams] = useSearchParams();
+  // Read once: after this the filter controls own the value, so changing one does not fight the address.
+  const [filters, setFiltersState] = useState<ModerationFilters>(() => ({
+    ...EMPTY_FILTERS,
+    status: statusFromAddress(searchParams.get('status')),
+  }));
   const [reloadToken, setReloadToken] = useState(0);
 
   const setFilters = useCallback((next: ModerationFilters) => {

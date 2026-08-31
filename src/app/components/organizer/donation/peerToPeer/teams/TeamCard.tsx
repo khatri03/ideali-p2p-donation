@@ -1,4 +1,5 @@
-import { Badge, Box, Button, Heading, Progress, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
+import GoalProgressBar from '../page/GoalProgressBar';
 import { CampaignTeamSummary } from 'app/interface/donationInter/campaignTeamDto';
 import { formatMoney, goalPercentage } from '../page/money';
 import {
@@ -76,12 +77,10 @@ export const TeamCard = ({ team, currencySymbol, onJoin, onOpen }: TeamCardProps
 
           {percentage !== null && (
             <Stack gap={1}>
-              <Progress
-                value={percentage}
-                size="sm"
-                borderRadius="full"
+              <GoalProgressBar
+                percentage={percentage}
+                label={`${percentage}% of the team goal raised`}
                 colorScheme="purple"
-                aria-label={`${percentage}% of the team goal raised`}
               />
               <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
                 {`${percentage}% of ${formatMoney(team.teamGoal, currencySymbol)}`}
