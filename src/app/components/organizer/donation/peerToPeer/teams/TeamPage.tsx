@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Stack } from '@chakra-ui/react';
-import { leaveCampaignTeam } from 'app/service/organizer/donation/campaignTeamService';
+import {
+  joinCampaignTeam,
+  leaveCampaignTeam,
+} from 'app/service/organizer/donation/campaignTeamService';
+import { fundraiserJoinPath } from 'app/utils/returnPath';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import PublicPageShell from '../page/PublicPageShell';
 import { fundraiserDonatePath, fundraiserPagePath } from '../page/FundraiserPage';
@@ -11,19 +15,24 @@ import TeamActionError from './TeamActionError';
 import TeamPageSkeleton from './TeamPageSkeleton';
 import { leaveWarningFor } from './teamConfirmations';
 import {
+  JOINING_LABEL,
+  JOIN_CONFIRM_ACTION,
+  JOIN_CONFIRM_BODY,
   LEAVE_CONFIRM_ACTION,
   LEAVE_CONFIRM_BODY,
   LEAVING_LABEL,
   RETRY_LABEL,
   TEAM_NOT_FOUND_GUIDANCE,
   TEAM_NOT_FOUND_HEADING,
+  joinConfirmTitle,
   leaveConfirmTitle,
 } from './teamCopy';
-import { browseTeamsPath, teamMembersPath } from './teamPaths';
+import { browseTeamsPath, teamMembersPath, teamPagePath } from './teamPaths';
 import { useTeamAction } from './useTeamAction';
 import { useTeamPage } from './useTeamPage';
 
 const LEAVE_FAILED = 'Could not leave the team.';
+const JOIN_FAILED = 'Could not join the team.';
 
 /**
  * Screen 05. Composition only. A team whose last member left answers "not found", and that is rendered
@@ -33,9 +42,23 @@ const LEAVE_FAILED = 'Could not leave the team.';
 export const TeamPageScreen = () => {
   const { campaignSlug, teamSlug } = useParams<{ campaignSlug: string; teamSlug: string }>();
   const navigate = useNavigate();
-  const { team, isLoading, loadError, reload } = useTeamPage(campaignSlug, teamSlug);
+  const { team, isLoading, loadError, applyTeam, reload } = useTeamPage(campaignSlug, teamSlug);
   const { isBusy, actionError, clearActionError, run } = useTeamAction();
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const [isJoinOpen, setIsJoinOpen] = useState(false);
+
+  const confirmJoin = async () => {
+    if (!team) return;
+
+    const joined = await run(() => joinCampaignTeam(team.campaignSlug, team.slug), JOIN_FAILED);
+    setIsJoinOpen(false);
+
+    // The server answers with the team as it now stands, so the page becomes a member's page without
+    // a second read and without the join panel lingering over a team it has just been added to.
+    if (joined) {
+      applyTeam(joined);
+    }
+  };
 
   const confirmLeave = async () => {
     if (!team) return;
@@ -87,6 +110,11 @@ export const TeamPageScreen = () => {
               : undefined
           }
           onLeave={isMember ? () => setIsLeaveOpen(true) : undefined}
+          onJoin={() => setIsJoinOpen(true)}
+          onSetUpMyPage={() => navigate(fundraiserJoinPath(team.campaignUniqueId))}
+          onGoToMyTeam={(myTeamSlug) =>
+            navigate(teamPagePath(team.campaignSlug, myTeamSlug))
+          }
           onViewMember={(member) =>
             navigate(fundraiserPagePath(team.campaignSlug, member.fundraiserSlug))
           }
@@ -95,6 +123,17 @@ export const TeamPageScreen = () => {
           }
         />
       </Stack>
+
+      <ConfirmActionDialog
+        isOpen={isJoinOpen}
+        title={joinConfirmTitle(team.name)}
+        body={JOIN_CONFIRM_BODY}
+        confirmLabel={JOIN_CONFIRM_ACTION}
+        busyLabel={JOINING_LABEL}
+        isBusy={isBusy}
+        onConfirm={confirmJoin}
+        onCancel={() => setIsJoinOpen(false)}
+      />
 
       <ConfirmActionDialog
         isOpen={isLeaveOpen}

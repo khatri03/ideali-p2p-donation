@@ -33,6 +33,19 @@ export const ALREADY_IN_A_TEAM_GUIDANCE =
   'One fundraiser belongs to one team on a campaign. Leave the team you are in before starting another.';
 export const GO_TO_MY_TEAM = 'Go to my team';
 
+/**
+ * Said on the team's own page, which is the address a captain shares to recruit. Each line answers the
+ * one question the reader arrived with - can I be part of this - so nobody is sent back to the browse
+ * screen to look for the team already in front of them.
+ */
+export const JOIN_INVITE = 'Fundraising for this campaign? Add your page to this team.';
+export const JOIN_NOT_FUNDRAISER =
+  'Set up your own fundraising page on this campaign, and you can join this team.';
+export const joinBlockedByOtherTeam = (organizerName: string) =>
+  `You are already in another team on this campaign. Leave it first, and ${organizerName} counts your total towards this one instead.`;
+export const JOIN_TEAMS_OFF =
+  'This campaign is no longer taking new team members, so this team is closed to new joins.';
+
 export const JOIN_LABEL = 'Join this team';
 export const JOINING_LABEL = 'Joining...';
 export const joinConfirmTitle = (teamName: string) => `Join ${teamName}?`;
@@ -89,6 +102,17 @@ export const TEAM_NOT_FOUND_GUIDANCE =
 
 export const TEAM_STORY_HEADING = 'Why this team is fundraising';
 export const MEMBERS_HEADING = 'Team members';
+
+/**
+ * A team may hold more fundraisers than fit above the fold on a phone, and the donate action sits below
+ * the list. The list is cut to a readable length and the rest asked for, so the page a team shares
+ * always reaches its own call to action.
+ */
+export const MEMBERS_VISIBLE_LIMIT = 8;
+export const showAllMembers = (count: number) => `Show all ${count} fundraisers`;
+export const SHOW_FEWER_MEMBERS = 'Show fewer';
+export const MEMBERS_EMPTY =
+  'Nobody is fundraising in this team yet. The team total starts as soon as somebody joins.';
 export const membersCount = (count: number) =>
   count === 1 ? '1 fundraiser' : `${count} fundraisers`;
 export const teamDonorSummary = (count: number) =>

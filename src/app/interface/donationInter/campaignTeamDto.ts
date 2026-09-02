@@ -70,6 +70,10 @@ export interface CampaignTeamPage {
   /** True only when the charity publishes the standings to everyone, so no public surface offers a dead link. */
   isLeaderboardPublished: boolean;
   viewerRole: CampaignTeamViewerRole;
+  /** True only when the caller holds an approved fundraising page on this campaign. */
+  isFundraiser: boolean;
+  /** The team the caller is already in, so the page never offers a second join. Null when in none. */
+  myTeamSlug: string | null;
   members: CampaignTeamMember[];
 }
 

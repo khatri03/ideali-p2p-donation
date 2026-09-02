@@ -172,6 +172,8 @@ export const buildTeamPage = (overrides: Partial<CampaignTeamPage> = {}): Campai
   areTeamsAllowed: true,
   isLeaderboardPublished: true,
   viewerRole: 'Visitor',
+  isFundraiser: false,
+  myTeamSlug: null,
   members: [
     buildTeamMember(),
     buildTeamMember({

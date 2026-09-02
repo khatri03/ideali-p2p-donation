@@ -6,6 +6,7 @@ import SharePanel from '../page/SharePanel';
 import { useSocialPreview } from '../page/useSocialPreview';
 import ChooseMemberModal from './ChooseMemberModal';
 import TeamIdentityPanel from './TeamIdentityPanel';
+import TeamJoinPanel from './TeamJoinPanel';
 import TeamMembersPanel from './TeamMembersPanel';
 import TeamProgressPanel from './TeamProgressPanel';
 import { shareHeading } from './teamCopy';
@@ -15,6 +16,9 @@ interface LiveTeamPageProps {
   team: CampaignTeamPage;
   onManage?: () => void;
   onLeave?: () => void;
+  onJoin: () => void;
+  onSetUpMyPage: () => void;
+  onGoToMyTeam: (teamSlug: string) => void;
   onViewMember: (member: CampaignTeamMember) => void;
   onDonateToMember: (member: CampaignTeamMember) => void;
 }
@@ -28,6 +32,9 @@ export const LiveTeamPage = ({
   team,
   onManage,
   onLeave,
+  onJoin,
+  onSetUpMyPage,
+  onGoToMyTeam,
   onViewMember,
   onDonateToMember,
 }: LiveTeamPageProps) => {
@@ -45,6 +52,13 @@ export const LiveTeamPage = ({
       <SimpleGrid columns={{ base: 1, lg: 3 }} gap={{ base: 4, md: 6 }} alignItems="start">
         <Stack gridColumn={{ lg: 'span 2' }} gap={{ base: 4, md: 6 }} minW={0}>
           <TeamIdentityPanel team={team} onManage={onManage} onLeave={onLeave} />
+
+          <TeamJoinPanel
+            team={team}
+            onJoin={onJoin}
+            onSetUpMyPage={onSetUpMyPage}
+            onGoToMyTeam={onGoToMyTeam}
+          />
 
           <TeamMembersPanel
             members={team.members}
