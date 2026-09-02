@@ -231,7 +231,7 @@ describe('Step9PeerToPeer', () => {
     settingsResolve(
       buildSettings({
         canEnable: false,
-        blockedReason: 'Publish this campaign before setting up peer-to-peer fundraising.',
+        blockedReason: 'Publish this campaign before setting up P2P fundraising.',
       }),
     );
 
@@ -241,7 +241,7 @@ describe('Step9PeerToPeer', () => {
     expect(enabledSwitch()).toBeDisabled();
     expect(saveAndNext()).toBeDisabled();
     expect(
-      screen.getByText('Publish this campaign before setting up peer-to-peer fundraising.'),
+      screen.getByText('Publish this campaign before setting up P2P fundraising.'),
     ).toBeInTheDocument();
   });
 

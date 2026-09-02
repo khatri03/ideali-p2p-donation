@@ -137,7 +137,7 @@ export default function CreateDonationPage() {
         return !!campaignData.images?.length;
       case 8: // Thank You Email
         return false; // Step 8 data not yet implemented
-      case 9: // Peer-to-peer Fundraising
+      case 9: // P2P Fundraising
         return false; // Loaded by the step itself, not part of the campaign payload
       case 10: // Review & Confirm
         return true; // Always accessible
@@ -155,7 +155,7 @@ export default function CreateDonationPage() {
     { number: 6, label: 'Campaign Color' },
     { number: 7, label: 'Select Banner' },
     { number: 8, label: 'Thank You Email' },
-    { number: 9, label: 'Peer-to-peer Fundraising' },
+    { number: 9, label: 'P2P Fundraising' },
     { number: 10, label: 'Review & Confirm' },
   ];
 

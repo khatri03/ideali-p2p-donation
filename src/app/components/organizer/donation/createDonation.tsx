@@ -1947,7 +1947,7 @@ export default function CreateDonationModule({
         />
       )}
 
-      {/* Step 9 - Peer-to-peer Fundraising */}
+      {/* Step 9 - P2P Fundraising */}
       {step === 9 && (
         <Step9PeerToPeer
           campaignUniqueId={UniqueId}

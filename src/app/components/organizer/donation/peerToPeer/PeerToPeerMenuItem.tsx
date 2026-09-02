@@ -1,8 +1,8 @@
 import { MenuItem } from '@chakra-ui/react';
 
-export const PEER_TO_PEER_MENU_LABEL = 'Peer-to-peer Fundraising';
+export const PEER_TO_PEER_MENU_LABEL = 'P2P Fundraising';
 export const PEER_TO_PEER_DRAFT_HINT =
-  'Publish this campaign before setting up peer-to-peer fundraising.';
+  'Publish this campaign before setting up P2P fundraising.';
 
 /**
  * A draft campaign has no public page, so a supporter page raised against it would point at nothing.

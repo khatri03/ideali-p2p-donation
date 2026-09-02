@@ -2,8 +2,8 @@ import { Page, expect, test } from '@playwright/test';
 import { draftCampaign, liveCampaign } from './support/campaignFixtures';
 
 const CAMPAIGNS_PATH = '/organizer/donation/manage-donation-module';
-const MENU_LABEL = 'Peer-to-peer Fundraising';
-const DRAFT_HINT = 'Publish this campaign before setting up peer-to-peer fundraising.';
+const MENU_LABEL = 'P2P Fundraising';
+const DRAFT_HINT = 'Publish this campaign before setting up P2P fundraising.';
 
 const draft = draftCampaign();
 const live = liveCampaign();
@@ -54,7 +54,7 @@ test.describe('Peer-to-peer entry point in the campaign menu', () => {
     await expect(page).toHaveURL(
       new RegExp(`/donation/campaign/${live.uniqueId}/peer-to-peer$`, 'i'),
     );
-    await expect(page.getByRole('heading', { name: 'Peer-to-peer fundraising' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'P2P fundraising' })).toBeVisible();
   });
 
   test('CampaignsList_AnySupportedViewport_DoesNotScrollHorizontally', async ({ page }) => {

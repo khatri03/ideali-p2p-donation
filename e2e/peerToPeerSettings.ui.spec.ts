@@ -12,7 +12,7 @@ const enabledSwitchLabel = 'label.chakra-switch:has(#peer-to-peer-enabled)';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(settingsPath);
-  await expect(page.getByRole('heading', { name: 'Peer-to-peer fundraising' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'P2P fundraising' })).toBeVisible();
 });
 
 test.describe('Peer-to-peer settings page', () => {

@@ -147,7 +147,7 @@ function PeerToPeerStepForm({
 }
 
 /**
- * Step 9: Peer-to-peer fundraising.
+ * Step 9: P2P fundraising.
  *
  * Reads and writes through the campaign's own peer-to-peer endpoints rather than the wizard's form
  * state, so the settings edited here and on the settings page cannot drift apart.
@@ -160,7 +160,7 @@ export default function Step9PeerToPeer({
   onExit,
   onStepComplete,
   isSubmitting,
-  stepTitle = 'Peer-to-peer Fundraising',
+  stepTitle = 'P2P Fundraising',
 }: Step9PeerToPeerProps) {
   const { settings, isLoading, isSaving, loadError, reload, save } =
     usePeerToPeerSettings(campaignUniqueId);

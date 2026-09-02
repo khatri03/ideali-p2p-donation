@@ -483,7 +483,7 @@ export const organizerRoutes = [
     component: <CreateDonationPage />,
   },
   {
-    name: 'Peer-to-peer Fundraising',
+    name: 'P2P Fundraising',
     layout: '/organizer',
     path: '/donation/campaign/:campaignUniqueId/peer-to-peer',
     component: <PeerToPeerSettingsPage />,

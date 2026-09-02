@@ -75,7 +75,7 @@ export const PeerToPeerSettingsPage = () => {
     <ModerationShell
       campaignUniqueId={campaignUniqueId ?? ''}
       campaignName={settings?.campaignName}
-      heading="Peer-to-peer fundraising"
+      heading="P2P fundraising"
     >
       <Stack gap={4}>
         {loadError && (
