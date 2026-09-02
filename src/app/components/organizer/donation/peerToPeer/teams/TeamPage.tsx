@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Stack } from '@chakra-ui/react';
+import { Stack, useToast } from '@chakra-ui/react';
 import {
   joinCampaignTeam,
   leaveCampaignTeam,
@@ -18,21 +18,22 @@ import {
   JOINING_LABEL,
   JOIN_CONFIRM_ACTION,
   JOIN_CONFIRM_BODY,
+  JOIN_FAILED,
   LEAVE_CONFIRM_ACTION,
   LEAVE_CONFIRM_BODY,
+  LEAVE_FAILED,
   LEAVING_LABEL,
   RETRY_LABEL,
   TEAM_NOT_FOUND_GUIDANCE,
   TEAM_NOT_FOUND_HEADING,
   joinConfirmTitle,
+  joinedTeamMessage,
   leaveConfirmTitle,
+  leftTeamMessage,
 } from './teamCopy';
 import { browseTeamsPath, teamMembersPath, teamPagePath } from './teamPaths';
 import { useTeamAction } from './useTeamAction';
 import { useTeamPage } from './useTeamPage';
-
-const LEAVE_FAILED = 'Could not leave the team.';
-const JOIN_FAILED = 'Could not join the team.';
 
 /**
  * Screen 05. Composition only. A team whose last member left answers "not found", and that is rendered
@@ -46,6 +47,12 @@ export const TeamPageScreen = () => {
   const { isBusy, actionError, clearActionError, run } = useTeamAction();
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
   const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const toast = useToast();
+
+  // Both outcomes move the reader: joining rewrites the page under them and leaving takes them off it
+  // altogether. Neither is allowed to happen silently.
+  const announce = (message: string) =>
+    toast({ title: message, status: 'success', duration: 5000, isClosable: true });
 
   const confirmJoin = async () => {
     if (!team) return;
@@ -57,6 +64,7 @@ export const TeamPageScreen = () => {
     // a second read and without the join panel lingering over a team it has just been added to.
     if (joined) {
       applyTeam(joined);
+      announce(joinedTeamMessage(team.name));
     }
   };
 
@@ -70,6 +78,7 @@ export const TeamPageScreen = () => {
     setIsLeaveOpen(false);
 
     if (left) {
+      announce(leftTeamMessage(team.name));
       navigate(browseTeamsPath(team.campaignSlug));
     }
   };

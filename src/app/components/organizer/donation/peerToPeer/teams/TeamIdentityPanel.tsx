@@ -1,8 +1,12 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { Badge, Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/react';
+import { MdGroups } from 'react-icons/md';
 import { CampaignTeamPage } from 'app/interface/donationInter/campaignTeamDto';
+import FundraiserAvatar from '../page/FundraiserAvatar';
 import { byOrganizer } from '../page/pageCopy';
 import {
+  ALL_TEAMS_LINK,
+  CAMPAIGN_FINISHED_BADGE,
   CAPTAIN_BADGE,
   LEAVE_LABEL,
   MANAGE_TEAM,
@@ -10,6 +14,7 @@ import {
   TEAM_STORY_HEADING,
   membersCount,
 } from './teamCopy';
+import { browseTeamsPath } from './teamPaths';
 
 interface TeamIdentityPanelProps {
   team: CampaignTeamPage;
@@ -21,6 +26,9 @@ interface TeamIdentityPanelProps {
 /**
  * The team first, then the campaign the gifts are ring-fenced to, then the charity that receipts them.
  * Reads the same way as a member's own page so the two surfaces never say it differently.
+ *
+ * The mark is a group rather than a photo because a team has none to upload, and the way out to the
+ * other teams lives here because a shared team address is often the only one somebody was given.
  */
 export const TeamIdentityPanel = ({ team, onManage, onLeave }: TeamIdentityPanelProps) => {
   const captain = team.members.find((member) => member.isCaptain);
@@ -34,49 +42,78 @@ export const TeamIdentityPanel = ({ team, onManage, onLeave }: TeamIdentityPanel
       p={{ base: 4, md: 6 }}
     >
       <Stack gap={4}>
-        <Stack gap={2} minW={0}>
-          <Heading
-            as="h1"
-            fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
-            color="navy.700"
-            _dark={{ color: 'white' }}
-          >
-            {team.name}
-          </Heading>
+        <Stack direction={{ base: 'column', '2sm': 'row' }} gap={4} align={{ '2sm': 'flex-start' }}>
+          <FundraiserAvatar displayName={team.name} photoUrl={null} icon={MdGroups} />
 
-          <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.700" _dark={{ color: 'gray.200' }}>
-            {`${TEAM_FUNDRAISING_FOR} `}
+          <Stack gap={2} flex="1" minW={0}>
+            <Heading
+              as="h1"
+              fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
+              color="navy.700"
+              _dark={{ color: 'white' }}
+              wordBreak="break-word"
+            >
+              {team.name}
+            </Heading>
+
+            <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.700" _dark={{ color: 'gray.200' }}>
+              {`${TEAM_FUNDRAISING_FOR} `}
+              <Link
+                as={RouterLink}
+                to={`/donate/${team.campaignUniqueId}`}
+                color="brand.600"
+                _dark={{ color: 'brand.300' }}
+                fontWeight="semibold"
+                textDecoration="underline"
+                cursor="pointer"
+              >
+                {team.campaignName}
+              </Link>
+            </Text>
+
+            <Text
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight="medium"
+              color="gray.700"
+              _dark={{ color: 'gray.200' }}
+            >
+              {byOrganizer(team.organizerName)}
+            </Text>
+
+            <Stack direction="row" gap={2} flexWrap="wrap">
+              <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
+                {membersCount(team.members.length)}
+              </Badge>
+
+              {captain && (
+                <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
+                  {`${CAPTAIN_BADGE}: ${captain.displayName}`}
+                </Badge>
+              )}
+
+              {!team.isCampaignOpen && (
+                <Badge colorScheme="orange" borderRadius="full" px={3} py={1} textTransform="none">
+                  {CAMPAIGN_FINISHED_BADGE}
+                </Badge>
+              )}
+            </Stack>
+
             <Link
               as={RouterLink}
-              to={`/donate/${team.campaignUniqueId}`}
+              to={browseTeamsPath(team.campaignSlug)}
+              fontSize="sm"
               color="brand.600"
               _dark={{ color: 'brand.300' }}
               fontWeight="semibold"
               textDecoration="underline"
               cursor="pointer"
+              alignSelf="flex-start"
+              display="inline-flex"
+              alignItems="center"
+              minH="44px"
             >
-              {team.campaignName}
+              {ALL_TEAMS_LINK}
             </Link>
-          </Text>
-
-          <Text
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight="medium"
-            color="gray.700"
-            _dark={{ color: 'gray.200' }}
-          >
-            {byOrganizer(team.organizerName)}
-          </Text>
-
-          <Stack direction="row" gap={2} flexWrap="wrap">
-            <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
-              {membersCount(team.members.length)}
-            </Badge>
-            {captain && (
-              <Badge colorScheme="gray" borderRadius="full" px={3} py={1} textTransform="none">
-                {`${CAPTAIN_BADGE}: ${captain.displayName}`}
-              </Badge>
-            )}
           </Stack>
         </Stack>
 

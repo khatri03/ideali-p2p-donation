@@ -8,7 +8,7 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { MdSearch } from 'react-icons/md';
-import { SEARCH_LABEL, SEARCH_PLACEHOLDER } from './teamCopy';
+import { SEARCHING_LABEL, SEARCH_LABEL, SEARCH_PLACEHOLDER } from './teamCopy';
 
 interface TeamSearchFieldProps {
   value: string;
@@ -32,7 +32,6 @@ export const TeamSearchField = ({ value, isSearching, onChange }: TeamSearchFiel
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={SEARCH_PLACEHOLDER}
-        aria-label={SEARCH_LABEL}
         bg="white"
         _dark={{ bg: 'navy.700' }}
         minH="44px"
@@ -40,7 +39,7 @@ export const TeamSearchField = ({ value, isSearching, onChange }: TeamSearchFiel
       />
       {isSearching && (
         <InputRightElement h="44px">
-          <Spinner size="sm" color="brand.500" aria-label={SEARCH_LABEL} />
+          <Spinner size="sm" color="brand.500" aria-label={SEARCHING_LABEL} />
         </InputRightElement>
       )}
     </InputGroup>

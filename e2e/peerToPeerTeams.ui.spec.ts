@@ -223,7 +223,7 @@ test.describe('Team screens a stranger can open', () => {
     insertTeamWithTwoMembers(signedInUserId);
 
     await page.goto(teamPath());
-    await page.getByRole('button', { name: 'Donate to this team' }).click();
+    await page.getByRole('button', { name: 'Donate to a team member' }).click();
 
     await expect(page.getByText('Choose who to support')).toBeVisible();
 
@@ -272,7 +272,7 @@ test.describe('Team screens a stranger can open', () => {
 
     await page.goto(teamPath());
 
-    const donate = await page.getByRole('button', { name: 'Donate to this team' }).boundingBox();
+    const donate = await page.getByRole('button', { name: 'Donate to a team member' }).boundingBox();
     const copyLink = await page.getByRole('button', { name: 'Copy link' }).boundingBox();
 
     expect(donate?.height ?? 0).toBeGreaterThanOrEqual(44);

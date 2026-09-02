@@ -7,6 +7,7 @@ import {
   CAMPAIGN_CLOSED_NOTE,
   DONATE_CTA,
   DONATE_REASSURANCE,
+  RAISED_SO_FAR,
   membersCount,
   teamDonorSummary,
 } from './teamCopy';
@@ -50,6 +51,19 @@ export const TeamProgressPanel = ({
     >
       <Stack gap={4}>
         <Stack gap={1}>
+          {teamGoal === null && (
+            <Text
+              fontSize="xs"
+              fontWeight="600"
+              textTransform="uppercase"
+              letterSpacing="wide"
+              color="gray.600"
+              _dark={{ color: 'gray.400' }}
+            >
+              {RAISED_SO_FAR}
+            </Text>
+          )}
+
           <Text
             fontSize={{ base: '2xl', md: '3xl' }}
             fontWeight="700"

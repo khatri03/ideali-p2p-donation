@@ -568,7 +568,7 @@ test.describe('The public team page, as the people in it see it', () => {
     insertTeam({ captainIsMine: false, memberSlugs: [THEIRS_SLUG] });
 
     await page.goto(teamPath());
-    await page.getByRole('button', { name: 'Donate to this team' }).click();
+    await page.getByRole('button', { name: 'Donate to a team member' }).click();
     await page.getByRole('button', { name: `Donate to ${THEIRS_NAME}` }).click();
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/${THEIRS_SLUG}/donate$`));
@@ -608,7 +608,7 @@ test.describe('The public team page, as the people in it see it', () => {
     await page.goto(teamPath(TEAM_SLUG, finishedCampaignSlug));
 
     await expect(page.getByText(/no longer taking donations/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Donate to this team' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Donate to a team member' })).toHaveCount(0);
   });
 
   test('TeamPage_SharePanel_ShowsTheAddressInFullAndConfirmsTheCopy', async ({ page, context }) => {

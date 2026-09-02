@@ -1,3 +1,4 @@
+import type { IconType } from 'react-icons';
 import { Flex, Icon, Image } from '@chakra-ui/react';
 import { MdVolunteerActivism } from 'react-icons/md';
 
@@ -7,6 +8,11 @@ interface FundraiserAvatarProps {
   /** The uploaded photo. Null while the supporter has not chosen one. */
   photoUrl: string | null;
   size?: string;
+  /**
+   * The mark drawn when there is no photo. A team passes its own, because a group and a person are not
+   * the same thing to look at, and a team carries no photo of its own at all.
+   */
+  icon?: IconType;
 }
 
 /**
@@ -17,7 +23,12 @@ interface FundraiserAvatarProps {
  * stand for nothing and read as a mistake next to a page whose owner did use their own name. A neutral
  * mark says the same thing without inventing an identity.
  */
-export const FundraiserAvatar = ({ displayName, photoUrl, size = '64px' }: FundraiserAvatarProps) =>
+export const FundraiserAvatar = ({
+  displayName,
+  photoUrl,
+  size = '64px',
+  icon = MdVolunteerActivism,
+}: FundraiserAvatarProps) =>
   photoUrl ? (
     <Image
       src={photoUrl}
@@ -39,7 +50,7 @@ export const FundraiserAvatar = ({ displayName, photoUrl, size = '64px' }: Fundr
       role="img"
       aria-label={displayName}
     >
-      <Icon as={MdVolunteerActivism} boxSize="55%" />
+      <Icon as={icon} boxSize="55%" />
     </Flex>
   );
 

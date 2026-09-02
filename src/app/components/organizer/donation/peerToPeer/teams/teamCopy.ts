@@ -7,6 +7,8 @@ export const RETRY_LABEL = 'Try again';
 
 export const SEARCH_LABEL = 'Search teams';
 export const SEARCH_PLACEHOLDER = 'Search by team name';
+/** Named apart from the field itself, so the field and its busy indicator do not announce the same thing. */
+export const SEARCHING_LABEL = 'Searching';
 export const SEARCH_NO_MATCH_HEADING = 'No team matches that search';
 export const SEARCH_NO_MATCH_GUIDANCE =
   'Try part of the team name, or clear the search to see every team on this campaign.';
@@ -126,17 +128,47 @@ export const VIEW_MEMBER_PAGE = 'View page';
 export const VIEW_TEAM = 'View team';
 export const viewTeamLabel = (teamName: string) => `View ${teamName}`;
 
-export const DONATE_CTA = 'Donate to this team';
+/**
+ * A team is not itself a payee: pressing this opens the list of the people in it. The label says that,
+ * because a button that promises to take money and then asks a question instead has broken its word.
+ */
+export const DONATE_CTA = 'Donate to a team member';
 export const DONATE_REASSURANCE = (organizerName: string) => `Goes straight to ${organizerName}`;
 export const CHOOSE_MEMBER_TITLE = 'Choose who to support';
 export const CHOOSE_MEMBER_BODY =
   'Every donation goes to one fundraiser and counts once towards the team. Pick the person you want to support.';
 export const donateToMember = (displayName: string) => `Donate to ${displayName}`;
+export const CHOOSE_MEMBER_SEARCH_LABEL = 'Search this team';
+export const CHOOSE_MEMBER_SEARCH_PLACEHOLDER = 'Search by name';
+export const CHOOSE_MEMBER_NO_MATCH =
+  'Nobody in this team matches that search. Clear it to see everybody again.';
 
 export const CAMPAIGN_CLOSED_NOTE =
   'This campaign has finished, so the team is no longer taking donations.';
 
 export const shareHeading = (teamName: string) => `Share ${teamName}`;
+
+/**
+ * A team page is often the only address somebody was sent. Without this the campaign's other teams are
+ * unreachable from it, and the browse screen is a place they have to be told about separately.
+ */
+export const ALL_TEAMS_LINK = 'See every team on this campaign';
+
+/** Said on the team itself, not only beside the donate action, so the page never reads as still live. */
+export const CAMPAIGN_FINISHED_BADGE = 'Campaign finished';
+
+/** A bare figure with no target beside it says nothing about what it measures. */
+export const RAISED_SO_FAR = 'Raised so far';
+
+export const JOIN_FAILED = 'Could not join the team.';
+export const LEAVE_FAILED = 'Could not leave the team.';
+
+/**
+ * Joining changes the page under the reader and leaving takes them off it altogether, so each says out
+ * loud what just happened rather than leaving the reader to infer it from a screen that moved.
+ */
+export const joinedTeamMessage = (teamName: string) => `You are now fundraising with ${teamName}.`;
+export const leftTeamMessage = (teamName: string) => `You have left ${teamName}.`;
 
 export const MANAGE_TEAM = 'Manage team';
 export const MANAGE_HEADING = 'Manage this team';
