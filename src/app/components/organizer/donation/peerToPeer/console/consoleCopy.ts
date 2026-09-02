@@ -22,7 +22,18 @@ export const EDIT_PAGE = 'Edit my page';
 export const FIND_A_TEAM = 'Find a team';
 export const fundraisingCardLabel = (displayName: string, campaignName: string) =>
   `${displayName} fundraising for ${campaignName}`;
-export const myTeamLabel = (teamName: string) => `My team: ${teamName}`;
+
+/**
+ * Being in a team is a fact, so it is labelled as one and the button beside it says what it does. The
+ * spoken name carries the team as well, because a console listing several campaigns would otherwise
+ * offer a row of buttons all called the same thing.
+ */
+export const YOUR_TEAM_LABEL = 'Your team';
+export const VIEW_TEAM = 'View team';
+export const viewTeamLabel = (teamName: string) => `${VIEW_TEAM} ${teamName}`;
+
+/** Said out loud rather than left as a gap, so nobody hunts for a teams screen this campaign has not opened. */
+export const TEAMS_NOT_RUNNING = 'This campaign is not running teams.';
 export const BACK_TO_CONSOLE = 'Back to my fundraising';
 
 /**

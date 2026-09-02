@@ -430,7 +430,7 @@ const openConsoleSection = async (card: Locator): Promise<void> => {
 
     await page.goto('/member/my-fundraising');
     await openConsoleSection(consoleCard(page));
-    await consoleCard(page).getByRole('button', { name: `My team: ${TEAM_NAME}` }).click();
+    await consoleCard(page).getByRole('button', { name: `View team ${TEAM_NAME}` }).click();
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams/${TEAM_SLUG}$`));
     await expect(page.getByRole('heading', { level: 1, name: TEAM_NAME })).toBeVisible();

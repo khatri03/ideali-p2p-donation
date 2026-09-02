@@ -111,9 +111,9 @@ export const MyFundraisingCard = ({
               <ViewPublicPageLink shareUrl={shareUrl} />
 
               <CopyLinkButton shareUrl={shareUrl} />
-
-              <MyTeamAction page={page} onOpen={onOpenTeams} />
             </Stack>
+
+            <MyTeamAction page={page} onOpen={onOpenTeams} />
 
             <RecentSupportersPanel
               supporters={page.recentSupporters}

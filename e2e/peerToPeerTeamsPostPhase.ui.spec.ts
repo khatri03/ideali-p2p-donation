@@ -882,7 +882,7 @@ test.describe('One fundraiser, more than one campaign', () => {
 
     await openConsoleSection(card);
 
-    await expect(card.getByRole('button', { name: `My team: ${TEAM_NAME}` })).toBeVisible();
+    await expect(card.getByRole('button', { name: `View team ${TEAM_NAME}` })).toBeVisible();
     await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
   });
 
@@ -895,7 +895,7 @@ test.describe('One fundraiser, more than one campaign', () => {
       page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` }),
     );
 
-    expect(await cursorOf(page, `My team: ${TEAM_NAME}`)).toBe('pointer');
+    expect(await cursorOf(page, `View team ${TEAM_NAME}`)).toBe('pointer');
   });
 
   test('Teams_JoinedOnOneCampaign_LeaveFundraisingOnAnotherAlone', async ({ page }) => {
@@ -916,5 +916,69 @@ test.describe('One fundraiser, more than one campaign', () => {
 
     await page.goto(teamPath());
     await expect(page.getByRole('heading', { level: 1, name: TEAM_NAME })).toBeVisible();
+  });
+});
+
+test.describe('How the console states the team a fundraiser belongs to', () => {
+  /**
+   * Being in a team is a fact about the person. Stating it under a label, with an action beside it
+   * that says what pressing it does, is what stops one control announcing a status and giving no clue
+   * what it would do.
+   */
+  test('Console_InATeam_NamesTheTeamAsAFactRatherThanInsideTheButton', async ({ page }) => {
+    insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
+    insertTeam({ captainIsMine: true, memberSlugs: [MINE_SLUG] });
+
+    await page.goto('/member/my-fundraising');
+
+    const card = page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` });
+
+    await openConsoleSection(card);
+
+    await expect(card.getByText('Your team')).toBeVisible();
+    await expect(card.getByText(TEAM_NAME, { exact: true })).toBeVisible();
+    await expect(card.getByRole('button', { name: `View team ${TEAM_NAME}` })).toBeVisible();
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+  });
+
+  /**
+   * A team may carry all eighty characters the form allows. The name is held to one line so it cannot
+   * decide the width of the card, and the page never scrolls sideways at any width because of it.
+   */
+  test('Console_TeamNamedAtFullLength_DoesNotStretchTheCardOrThePage', async ({ page }) => {
+    const longName = 'Extremely Long Team Name For Layout Probing Purposes Only Yes Really Truly Ok';
+
+    insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
+    insertTeam({ captainIsMine: true, memberSlugs: [MINE_SLUG] });
+    execute(
+      `UPDATE CampaignTeam SET Name = '${longName}' WHERE Slug = '${TEAM_SLUG}';`,
+    );
+
+    await page.goto('/member/my-fundraising');
+
+    const card = page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` });
+
+    await openConsoleSection(card);
+
+    await expect(card.getByRole('button', { name: `View team ${longName}` })).toBeVisible();
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+  });
+
+  /**
+   * A gap where a control would be is something the fundraiser has to interpret. Saying it plainly
+   * stops them hunting for a teams screen this campaign never opened.
+   */
+  test('Console_CampaignNotRunningTeams_SaysSoRatherThanLeavingAGap', async ({ page }) => {
+    setPeerToPeer(campaign.uniqueId, 1, 0);
+    insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
+
+    await page.goto('/member/my-fundraising');
+
+    const card = page.getByRole('region', { name: `${MINE_NAME} fundraising for ${campaign.name}` });
+
+    await openConsoleSection(card);
+
+    await expect(card.getByText('This campaign is not running teams.')).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
   });
 });

@@ -68,7 +68,7 @@ describe('MyFundraisingPage', () => {
 
     renderConsole();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'My team: Night Runners' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'View team Night Runners' }));
 
     expect(screen.getByText('Team page screen')).toBeInTheDocument();
   });
