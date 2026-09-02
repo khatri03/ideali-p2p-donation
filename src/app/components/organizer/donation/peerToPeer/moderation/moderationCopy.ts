@@ -9,7 +9,13 @@ export const SETTINGS_TAB = 'Settings';
 export const FUNDRAISERS_TAB = 'Fundraising pages';
 export const TEAMS_TAB = 'Teams';
 export const INVITATIONS_TAB = 'Invitations';
+/**
+ * Held for the deferred lifecycle-emails tab rather than deleted: the screen behind it is built and
+ * reachable by address, and the tab returns in the change that proves its sends. See
+ * docs/p2p-lifecycle-emails-next-phase.md.
+ */
 export const EMAILS_TAB = 'Emails';
+export const LEADERBOARD_TAB = 'Leaderboard';
 export const BACK_LABEL = 'Back';
 
 /**
@@ -118,6 +124,26 @@ export const ACTION_LABELS: Record<ModerationAction, string> = {
   Unhide: 'Bring back',
 };
 
+/**
+ * The same decision, named for the page it is being taken against. Turning something down answers a
+ * request that is still waiting; a page that is already live was answered long ago and is being ended
+ * instead. One label for both states makes a charity press the button to find out which one it is.
+ */
+export const TAKE_DOWN_LABEL = 'Take down';
+
+/**
+ * What each decision does and, above all, who hears about it. This is the part that separates hiding
+ * from turning down, and until now it was only readable after the button had already been pressed.
+ */
+export const APPROVE_HINT = 'Goes live and can take donations. The supporter is emailed.';
+export const LET_BACK_IN_HINT = 'Puts the page back up. The supporter is emailed.';
+export const TURN_DOWN_HINT = 'Refuses the request. The supporter is emailed.';
+export const TAKE_DOWN_HINT = 'Ends a page that is already live. The supporter is emailed.';
+export const HIDE_PAGE_HINT = 'Off the site for now. Nobody is told, and you can bring it back.';
+export const UNHIDE_PAGE_HINT = 'Back on the site with everything it raised.';
+export const HIDE_TEAM_HINT = 'Out of browsing. The pages in it stay live and keep raising.';
+export const UNHIDE_TEAM_HINT = 'Back in browsing with its members and its total.';
+
 export const HISTORY_ACTION_LABELS: Record<ModerationAction, string> = {
   Approve: 'Approved',
   Reject: 'Turned down',
@@ -143,10 +169,27 @@ interface ActionCopy {
   isDestructive: boolean;
 }
 
+/**
+ * The wording of one confirmation.
+ *
+ * @param isAlreadyLive Whether the page has been published before now. A page that is live is taken
+ * down rather than turned down, and the dialog has to say the same word the button did.
+ */
 export const fundraiserActionCopy = (
   action: ModerationAction,
   displayName: string,
+  isAlreadyLive = false,
 ): ActionCopy => {
+  if (action === 'Reject' && isAlreadyLive) {
+    return {
+      title: `Take down ${displayName}?`,
+      body: 'Their page stops being reachable and cannot take donations. They are emailed that it was taken down, without the reason you write below. Money already raised stays with the campaign, and you can put the page back later.',
+      confirmLabel: 'Take this page down',
+      busyLabel: 'Taking down...',
+      isDestructive: true,
+    };
+  }
+
   switch (action) {
     case 'Approve':
       return {
@@ -200,12 +243,20 @@ export const teamActionCopy = (action: ModerationAction, name: string): ActionCo
         isDestructive: false,
       };
 
-export const actionDoneMessage = (action: ModerationAction, name: string) => {
+/**
+ * @param isAlreadyLive Whether the page was published before the decision, so the confirmation names
+ * what happened in the same words the charity chose.
+ */
+export const actionDoneMessage = (
+  action: ModerationAction,
+  name: string,
+  isAlreadyLive = false,
+) => {
   switch (action) {
     case 'Approve':
       return `${name} is live.`;
     case 'Reject':
-      return `${name} has been turned down.`;
+      return isAlreadyLive ? `${name} has been taken down.` : `${name} has been turned down.`;
     case 'Hide':
       return `${name} is hidden.`;
     default:

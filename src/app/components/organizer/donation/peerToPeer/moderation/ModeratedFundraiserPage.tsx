@@ -37,7 +37,7 @@ import {
   fundraiserActionCopy,
 } from './moderationCopy';
 import ModerationActionDialog from './ModerationActionDialog';
-import ModerationActionsBar, { fundraiserActionsFor } from './ModerationActionsBar';
+import ModerationActionsBar, { fundraiserChoices } from './ModerationActionsBar';
 import ModerationHistoryPanel from './ModerationHistoryPanel';
 import ModerationShell from './ModerationShell';
 import {
@@ -113,6 +113,12 @@ export const ModeratedFundraiserPage = () => {
 
   const moderation = useModerationAction(send);
 
+  /**
+   * A page that has already been published is ended rather than refused, and the wording follows that
+   * everywhere it appears: on the button, in the confirmation, and in what is said once it is done.
+   */
+  const isAlreadyLive = detail?.currentStatus === 'Active' || detail?.currentStatus === 'Paused';
+
   const handleConfirm = async () => {
     const pending = moderation.pending;
 
@@ -134,7 +140,7 @@ export const ModeratedFundraiserPage = () => {
     }
 
     toast({
-      title: actionDoneMessage(pending.action, pending.subjectName),
+      title: actionDoneMessage(pending.action, pending.subjectName, isAlreadyLive),
       status: 'success',
       duration: 4000,
       isClosable: true,
@@ -148,7 +154,7 @@ export const ModeratedFundraiserPage = () => {
     : null;
 
   const dialogCopy = moderation.pending
-    ? fundraiserActionCopy(moderation.pending.action, moderation.pending.subjectName)
+    ? fundraiserActionCopy(moderation.pending.action, moderation.pending.subjectName, isAlreadyLive)
     : null;
 
   return (
@@ -206,7 +212,7 @@ export const ModeratedFundraiserPage = () => {
               </Text>
 
               <ModerationActionsBar
-                actions={fundraiserActionsFor(detail.currentStatus)}
+                choices={fundraiserChoices(detail.currentStatus)}
                 isBusy={moderation.isSaving}
                 onChoose={(action) =>
                   moderation.ask({

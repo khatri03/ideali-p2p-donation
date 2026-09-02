@@ -99,6 +99,21 @@ describe('ModeratedFundraiserPage', () => {
     expect(screen.queryByRole('button', { name: 'Approve' })).not.toBeInTheDocument();
   });
 
+  /**
+   * Two red buttons that both take a page off the site, named for a decision that was made months ago,
+   * left the charity pressing one to find out what it did. The live page is ended, not refused.
+   */
+  it('Actions_LivePage_NamesEndingItTakingItDownAndSaysTheSupporterIsTold', async () => {
+    getModeratedFundraiser.mockResolvedValue(buildFundraiserDetail({ currentStatus: 'Active' }));
+
+    renderDetail();
+
+    expect(await screen.findByRole('button', { name: 'Take down' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Turn down' })).not.toBeInTheDocument();
+    expect(screen.getByText(/Nobody is told/)).toBeInTheDocument();
+    expect(screen.getByText(/Ends a page that is already live/)).toBeInTheDocument();
+  });
+
   it('Actions_HiddenPage_OffersBringingItBack', async () => {
     getModeratedFundraiser.mockResolvedValue(buildFundraiserDetail({ currentStatus: 'Paused' }));
 

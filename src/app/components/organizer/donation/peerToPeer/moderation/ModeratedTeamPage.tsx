@@ -30,7 +30,7 @@ import {
   teamActionCopy,
 } from './moderationCopy';
 import ModerationActionDialog from './ModerationActionDialog';
-import ModerationActionsBar, { teamActionsFor } from './ModerationActionsBar';
+import ModerationActionsBar, { teamChoices } from './ModerationActionsBar';
 import ModerationHistoryPanel from './ModerationHistoryPanel';
 import ModerationShell from './ModerationShell';
 import { ModerationError, ModerationSkeleton, TeamVisibilityBadge } from './ModerationStates';
@@ -193,7 +193,7 @@ export const ModeratedTeamPage = () => {
               </Text>
 
               <ModerationActionsBar
-                actions={teamActionsFor(detail.isHidden)}
+                choices={teamChoices(detail.isHidden)}
                 isBusy={moderation.isSaving}
                 onChoose={(action) =>
                   moderation.ask({
