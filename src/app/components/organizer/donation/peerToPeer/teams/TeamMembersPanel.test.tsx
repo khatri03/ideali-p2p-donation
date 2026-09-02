@@ -16,6 +16,14 @@ const membersNumbering = (count: number) =>
     }),
   );
 
+const renderMembers = (members: ReturnType<typeof buildTeamMember>[]) => {
+  render(
+    <ChakraProvider>
+      <TeamMembersPanel members={members} currencySymbol="USD" onViewPage={vi.fn()} />
+    </ChakraProvider>,
+  );
+};
+
 const renderPanel = (count: number) => {
   render(
     <ChakraProvider>
@@ -81,5 +89,24 @@ describe('TeamMembersPanel', () => {
         'Nobody is fundraising in this team yet. The team total starts as soon as somebody joins.',
       ),
     ).toBeInTheDocument();
+  });
+
+  /**
+   * A public roster is read by donors, and it names real people. Printing nothing raised against
+   * somebody puts them on display for it and tells the reader to pick a different row, which is the
+   * opposite of what a roster on a fundraising page is for.
+   */
+  it('TeamMembers_MemberHasRaisedNothingYet_DoesNotPrintAZeroAgainstTheirName', () => {
+    renderMembers([buildTeamMember({ displayName: 'Sarah Khan', raisedAmount: 0 })]);
+
+    expect(screen.queryByText('$0 raised')).not.toBeInTheDocument();
+    expect(screen.getByText('Just getting started')).toBeInTheDocument();
+  });
+
+  /** A member who has raised something has it stated exactly, because the team total is made of these. */
+  it('TeamMembers_MemberHasRaisedSomething_StatesTheirOwnTotal', () => {
+    renderMembers([buildTeamMember({ displayName: 'Sarah Khan', raisedAmount: 240 })]);
+
+    expect(screen.getByText('$240 raised')).toBeInTheDocument();
   });
 });

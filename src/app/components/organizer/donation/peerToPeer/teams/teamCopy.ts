@@ -1,3 +1,5 @@
+import { formatMoney } from '../page/money';
+
 export const BROWSE_HEADING = 'Fundraising teams';
 export const browseSubheading = (campaignName: string) =>
   `Teams raising money together for ${campaignName}.`;
@@ -40,11 +42,11 @@ export const GO_TO_MY_TEAM = 'Go to my team';
  * one question the reader arrived with - can I be part of this - so nobody is sent back to the browse
  * screen to look for the team already in front of them.
  */
-export const JOIN_INVITE = 'Fundraising for this campaign? Add your page to this team.';
+export const JOIN_INVITE = 'Fundraising for this campaign? Join this team and your total counts towards it too.';
 export const JOIN_NOT_FUNDRAISER =
-  'Set up your own fundraising page on this campaign, and you can join this team.';
+  'Set up your fundraising page for this campaign and you can join this team in the same step.';
 export const joinBlockedByOtherTeam = (organizerName: string) =>
-  `You are already in another team on this campaign. Leave it first, and ${organizerName} counts your total towards this one instead.`;
+  `You are already in another team on this campaign. Open your team and leave it, and ${organizerName} will count your total towards this one instead.`;
 export const JOIN_TEAMS_OFF =
   'This campaign is no longer taking new team members, so this team is closed to new joins.';
 
@@ -71,7 +73,7 @@ export const CANCEL_LABEL = 'Cancel';
 export const CREATE_HEADING = 'Start a team';
 export const createSubheading = (campaignName: string) =>
   `Your team raises money together for ${campaignName}.`;
-export const CREATE_ACTION = 'Create team';
+export const CREATE_ACTION = 'Start a team';
 export const CREATING_LABEL = 'Creating...';
 export const CREATE_NOTE =
   'You become the captain, and your own fundraising page joins the team straight away.';
@@ -119,11 +121,39 @@ export const membersCount = (count: number) =>
   count === 1 ? '1 fundraiser' : `${count} fundraisers`;
 export const teamDonorSummary = (count: number) =>
   count === 1 ? '1 donor across the team' : `${count} donors across the team`;
+
+/**
+ * A donor count only works as encouragement once it reads as other people, plural. Below this it does
+ * the opposite of what it is there for: it tells the reader almost nobody has given, which is the last
+ * thing somebody deciding whether to give needs to be told. The team is described by the people
+ * fundraising in it until the count is worth showing.
+ */
+export const DONOR_COUNT_VISIBLE_FROM = 3;
+
+/**
+ * The people and, once it helps, the donors behind the total. The figure itself is always shown; only
+ * this supporting line changes, so nothing about what the team has raised is ever hidden.
+ */
+export const teamProgressSummary = (donorCount: number, memberCount: number) =>
+  donorCount >= DONOR_COUNT_VISIBLE_FROM
+    ? `${teamDonorSummary(donorCount)} · ${membersCount(memberCount)}`
+    : membersCount(memberCount);
 export const CAPTAIN_BADGE = 'Captain';
 
 /** Mirrors the fundraiser page: the campaign leads the line, the charity is named under it. */
 export const TEAM_FUNDRAISING_FOR = 'Fundraising together for';
 export const raisedByMember = (amount: string) => `${amount} raised`;
+
+/**
+ * Said instead of a zero total. A public roster that prints nothing raised against a named person puts
+ * them on display for it, and tells a donor to skip that row rather than pick it. This says the same
+ * fact without the judgement, and points the next donation at somebody who still needs one.
+ */
+export const MEMBER_NOT_STARTED = 'Just getting started';
+
+/** What one member's total says about them, written the same way everywhere a member is listed. */
+export const memberRaisedNotice = (raisedAmount: number, currencySymbol: string) =>
+  raisedAmount > 0 ? raisedByMember(formatMoney(raisedAmount, currencySymbol)) : MEMBER_NOT_STARTED;
 export const VIEW_MEMBER_PAGE = 'View page';
 export const VIEW_TEAM = 'View team';
 export const viewTeamLabel = (teamName: string) => `View ${teamName}`;
@@ -159,6 +189,13 @@ export const CAMPAIGN_FINISHED_BADGE = 'Campaign finished';
 
 /** A bare figure with no target beside it says nothing about what it measures. */
 export const RAISED_SO_FAR = 'Raised so far';
+
+/**
+ * The progress bar already shows how far along the team is, and its own label states the figure. The
+ * sentence under it repeats that in words, which at a low percentage reads as a verdict on the team
+ * rather than as progress, so it is written only once the number is worth reading twice.
+ */
+export const GOAL_PERCENT_VISIBLE_FROM = 10;
 
 export const JOIN_FAILED = 'Could not join the team.';
 export const LEAVE_FAILED = 'Could not leave the team.';

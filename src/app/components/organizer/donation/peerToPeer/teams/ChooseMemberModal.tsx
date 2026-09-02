@@ -19,7 +19,6 @@ import {
 import { MdSearch } from 'react-icons/md';
 import { CampaignTeamMember } from 'app/interface/donationInter/campaignTeamDto';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
-import { formatMoney } from '../page/money';
 import { initialsOf } from '../page/pageCopy';
 import {
   CHOOSE_MEMBER_BODY,
@@ -29,7 +28,7 @@ import {
   CHOOSE_MEMBER_TITLE,
   MEMBERS_VISIBLE_LIMIT,
   donateToMember,
-  raisedByMember,
+  memberRaisedNotice,
 } from './teamCopy';
 
 interface ChooseMemberModalProps {
@@ -141,7 +140,7 @@ export const ChooseMemberModal = ({
                           {member.displayName}
                         </Text>
                         <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
-                          {raisedByMember(formatMoney(member.raisedAmount, currencySymbol))}
+                          {memberRaisedNotice(member.raisedAmount, currencySymbol)}
                         </Text>
                       </Stack>
                     </Stack>

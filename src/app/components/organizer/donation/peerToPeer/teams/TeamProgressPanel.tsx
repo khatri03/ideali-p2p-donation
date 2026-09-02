@@ -7,9 +7,9 @@ import {
   CAMPAIGN_CLOSED_NOTE,
   DONATE_CTA,
   DONATE_REASSURANCE,
+  GOAL_PERCENT_VISIBLE_FROM,
   RAISED_SO_FAR,
-  membersCount,
-  teamDonorSummary,
+  teamProgressSummary,
 } from './teamCopy';
 
 interface TeamProgressPanelProps {
@@ -78,7 +78,7 @@ export const TeamProgressPanel = ({
           </Text>
 
           <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
-            {`${teamDonorSummary(donorCount)} · ${membersCount(memberCount)}`}
+            {teamProgressSummary(donorCount, memberCount)}
           </Text>
         </Stack>
 
@@ -89,9 +89,11 @@ export const TeamProgressPanel = ({
               label={`${percentage}% of the team goal raised`}
               colorScheme="purple"
             />
-            <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
-              {`${percentage}% there`}
-            </Text>
+            {percentage >= GOAL_PERCENT_VISIBLE_FROM && (
+              <Text fontSize="xs" color="gray.600" _dark={{ color: 'gray.400' }}>
+                {`${percentage}% there`}
+              </Text>
+            )}
           </Stack>
         )}
 

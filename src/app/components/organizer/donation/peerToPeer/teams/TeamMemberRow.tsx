@@ -3,8 +3,7 @@ import { Avatar, Badge, Button, Stack, Text } from '@chakra-ui/react';
 import { CampaignTeamMember } from 'app/interface/donationInter/campaignTeamDto';
 import { fundraiserPhotoUrl } from 'app/service/organizer/donation/fundraiserConsoleService';
 import { initialsOf } from '../page/pageCopy';
-import { formatMoney } from '../page/money';
-import { CAPTAIN_BADGE, VIEW_MEMBER_PAGE, raisedByMember } from './teamCopy';
+import { CAPTAIN_BADGE, VIEW_MEMBER_PAGE, memberRaisedNotice } from './teamCopy';
 
 interface TeamMemberRowProps {
   member: CampaignTeamMember;
@@ -64,7 +63,7 @@ export const TeamMemberRow = ({
         </Stack>
 
         <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
-          {raisedByMember(formatMoney(member.raisedAmount, currencySymbol))}
+          {memberRaisedNotice(member.raisedAmount, currencySymbol)}
         </Text>
       </Stack>
     </Stack>
