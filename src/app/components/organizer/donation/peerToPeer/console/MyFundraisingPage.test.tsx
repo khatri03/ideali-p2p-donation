@@ -53,7 +53,7 @@ describe('MyFundraisingPage', () => {
 
     renderConsole();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Find a team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Join a team' }));
 
     expect(screen.getByText('Browse teams screen')).toBeInTheDocument();
   });

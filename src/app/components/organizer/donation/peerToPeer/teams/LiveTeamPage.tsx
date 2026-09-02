@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SimpleGrid, Stack } from '@chakra-ui/react';
 import { CampaignTeamMember, CampaignTeamPage } from 'app/interface/donationInter/campaignTeamDto';
 import LeaderboardLink from '../leaderboard/LeaderboardLink';
+import { leaderboardPath } from '../leaderboard/leaderboardPaths';
 import RecentSupportersPanel from '../page/RecentSupportersPanel';
 import SharePanel from '../page/SharePanel';
 import { useSocialPreview } from '../page/useSocialPreview';
@@ -88,7 +89,7 @@ export const LiveTeamPage = ({
           <SharePanel heading={shareHeading(team.name)} shareUrl={shareUrl} />
 
           <LeaderboardLink
-            campaignSlug={team.campaignSlug}
+            to={leaderboardPath(team.campaignSlug)}
             isReachable={team.isLeaderboardPublished}
           />
         </Stack>

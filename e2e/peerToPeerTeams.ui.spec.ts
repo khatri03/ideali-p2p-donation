@@ -419,7 +419,7 @@ const openConsoleSection = async (card: Locator): Promise<void> => {
 
     await page.goto('/member/my-fundraising');
     await openConsoleSection(consoleCard(page));
-    await consoleCard(page).getByRole('button', { name: 'Find a team' }).click();
+    await consoleCard(page).getByRole('button', { name: 'Join a team' }).click();
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams$`));
     await expect(page.getByRole('heading', { level: 1, name: 'Fundraising teams' })).toBeVisible();
@@ -447,7 +447,7 @@ const openConsoleSection = async (card: Locator): Promise<void> => {
     await openConsoleSection(card);
 
     await expect(card.getByRole('button', { name: 'Edit my page' })).toBeVisible();
-    await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
+    await expect(card.getByRole('button', { name: 'Join a team' })).toHaveCount(0);
   });
 
   test('Console_TeamControl_MeetsTheTouchTargetMinimum', async ({ page }) => {
@@ -456,7 +456,7 @@ const openConsoleSection = async (card: Locator): Promise<void> => {
     await page.goto('/member/my-fundraising');
     await openConsoleSection(consoleCard(page));
 
-    const control = consoleCard(page).getByRole('button', { name: 'Find a team' });
+    const control = consoleCard(page).getByRole('button', { name: 'Join a team' });
 
     expect((await control.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
   });

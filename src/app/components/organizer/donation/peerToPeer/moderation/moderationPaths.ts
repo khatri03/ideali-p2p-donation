@@ -28,3 +28,11 @@ export const invitationsPath = (campaignUniqueId: string) =>
 
 export const emailTemplatesPath = (campaignUniqueId: string) =>
   `${base(campaignUniqueId)}/email-templates`;
+
+/**
+ * The charity's own address for the standings. A route of its own, keyed by the campaign's unique id
+ * like every other oversight screen, so a charity reading its board keeps the navigation it started
+ * from instead of being dropped onto the public page.
+ */
+export const organizerLeaderboardPath = (campaignUniqueId: string) =>
+  `${base(campaignUniqueId)}/leaderboard`;

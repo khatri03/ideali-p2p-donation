@@ -64,3 +64,9 @@ export const CAPPED_NOTICE = (shown: number, total: number) =>
 
 export const leaderboardSubtitle = (campaignName: string, organizerName: string) =>
   organizerName ? `${campaignName} · ${organizerName}` : campaignName;
+
+export const HIDDEN_HEADING = 'The leaderboard is switched off';
+export const HIDDEN_GUIDANCE =
+  'Nobody sees standings for this campaign while the leaderboard is hidden, your charity included. Turn it on under Settings to start ranking your supporters.';
+export const HIDDEN_ACTION_LABEL = 'Go to settings';
+export const VIEW_PUBLIC_BOARD_LABEL = 'Open the public board';

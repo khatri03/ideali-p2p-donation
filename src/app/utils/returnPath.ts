@@ -7,7 +7,9 @@
  * a cosmetic bug.
  */
 const ALLOWED_RETURN_PATHS: RegExp[] = [
-  /^\/donation\/campaign\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/peer-to-peer\/join$/i,
+  // The join screen, optionally carrying the team the supporter came from. The slug character set is
+  // pinned so the query cannot be used to smuggle a second parameter past the allow-list.
+  /^\/donation\/campaign\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/peer-to-peer\/join(\?team=[a-z0-9-]{1,120})?$/i,
   // The invitation link is the one return path that carries a query string, because the token is
   // what identifies the invitation. The token character set is pinned so the query cannot be used to
   // smuggle a second parameter past the allow-list.
@@ -33,9 +35,27 @@ export function sanitiseReturnPath(candidate: string | null | undefined): string
   return ALLOWED_RETURN_PATHS.some((allowed) => allowed.test(trimmed)) ? trimmed : null;
 }
 
-/** The join screen for one campaign, which is the only return path this feature produces. */
-export const fundraiserJoinPath = (campaignUniqueId: string): string =>
-  `/donation/campaign/${campaignUniqueId}/peer-to-peer/join`;
+/**
+ * The team address a join link may carry, or null when it carries none. Anything outside the character
+ * set a slug is allocated from is discarded rather than trimmed, because this value reaches the screen
+ * from the address bar and is sent on to the server as the team to join.
+ */
+const TEAM_SLUG_PATTERN = /^[a-z0-9-]{1,120}$/i;
+
+export const sanitiseTeamSlug = (candidate: string | null | undefined): string | null =>
+  candidate && TEAM_SLUG_PATTERN.test(candidate) ? candidate : null;
+
+/**
+ * The join screen for one campaign, optionally carrying the team the supporter was looking at when
+ * they decided to fundraise. Carrying it is what stops a shared team link ending in a console screen
+ * with the team forgotten.
+ */
+export const fundraiserJoinPath = (campaignUniqueId: string, teamSlug?: string | null): string => {
+  const base = `/donation/campaign/${campaignUniqueId}/peer-to-peer/join`;
+  const team = sanitiseTeamSlug(teamSlug);
+
+  return team ? `${base}?team=${team}` : base;
+};
 
 /** Where an invitation link lands, with the code that identifies it. */
 export const fundraiserInvitationPath = (campaignUniqueId: string, token: string): string =>

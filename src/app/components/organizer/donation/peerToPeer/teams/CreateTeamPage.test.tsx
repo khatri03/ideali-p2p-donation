@@ -51,7 +51,7 @@ describe('CreateTeamPage', () => {
 
     renderCreate();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Create team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Start a team' }));
 
     expect(await screen.findByText('Enter a name for your team.')).toBeInTheDocument();
     expect(createCampaignTeam).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('CreateTeamPage', () => {
 
     await userEvent.type(await screen.findByLabelText(/Team name/), 'The Early Risers');
     await userEvent.type(screen.getByLabelText('Team goal'), '0');
-    await userEvent.click(screen.getByRole('button', { name: 'Create team' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Start a team' }));
 
     expect(
       await screen.findByText('Enter a goal greater than zero, or leave it blank.'),
@@ -91,7 +91,7 @@ describe('CreateTeamPage', () => {
 
     await userEvent.type(await screen.findByLabelText(/Team name/), '  The Early Risers  ');
     await userEvent.type(screen.getByLabelText('Team goal'), '1000');
-    await userEvent.click(screen.getByRole('button', { name: 'Create team' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Start a team' }));
 
     expect(createCampaignTeam).toHaveBeenCalledWith('winter-appeal', {
       name: 'The Early Risers',
@@ -111,7 +111,7 @@ describe('CreateTeamPage', () => {
     renderCreate();
 
     await userEvent.type(await screen.findByLabelText(/Team name/), 'The Early Risers');
-    await userEvent.click(screen.getByRole('button', { name: 'Create team' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Start a team' }));
 
     expect(
       await screen.findByText('You are already in a team on this campaign.'),
@@ -125,7 +125,7 @@ describe('CreateTeamPage', () => {
     renderCreate();
 
     expect(await screen.findByText('This campaign is not using teams')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Create team' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Start a team' })).not.toBeInTheDocument();
   });
 
   it('Create_CallerIsNotFundraisingYet_PointsThemAtSettingUpTheirOwnPageFirst', async () => {

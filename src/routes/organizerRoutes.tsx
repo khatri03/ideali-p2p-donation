@@ -51,6 +51,10 @@ const ModeratedTeamsPage = lazy(
 const ModeratedTeamPage = lazy(
   () => import('../app/components/organizer/donation/peerToPeer/moderation/ModeratedTeamPage'),
 );
+const OrganizerLeaderboardPage = lazy(
+  () =>
+    import('../app/components/organizer/donation/peerToPeer/leaderboard/OrganizerLeaderboardPage'),
+);
 const InvitationsPage = lazy(
   () => import('../app/components/organizer/donation/peerToPeer/invitations/InvitationsPage'),
 );
@@ -522,6 +526,13 @@ export const organizerRoutes = [
     layout: '/organizer',
     path: '/donation/campaign/:campaignUniqueId/peer-to-peer/invitations',
     component: <InvitationsPage />,
+    invisible: true,
+  },
+  {
+    name: 'Fundraising Leaderboard',
+    layout: '/organizer',
+    path: '/donation/campaign/:campaignUniqueId/peer-to-peer/leaderboard',
+    component: <OrganizerLeaderboardPage />,
     invisible: true,
   },
   {

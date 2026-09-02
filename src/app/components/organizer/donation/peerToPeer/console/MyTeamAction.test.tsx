@@ -32,7 +32,7 @@ describe('MyTeamAction', () => {
   it('Console_CampaignFormingTeams_OffersTheWayIntoTheTeamsScreen', async () => {
     const onOpen = renderAction(buildMyFundraisingPage({ areTeamsAllowed: true, myTeam: null }));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Find a team' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Join a team' }));
 
     expect(onOpen).toHaveBeenCalledWith('/campaigns/winter-appeal/teams');
   });
@@ -127,7 +127,7 @@ describe('MyTeamAction', () => {
   it('Console_TeamAction_IsATouchTargetWithAPointerCursor', () => {
     renderAction(buildMyFundraisingPage({ areTeamsAllowed: true, myTeam: null }));
 
-    const action = screen.getByRole('button', { name: 'Find a team' });
+    const action = screen.getByRole('button', { name: 'Join a team' });
 
     expect(action).toHaveStyle({ minHeight: '44px', cursor: 'pointer' });
   });

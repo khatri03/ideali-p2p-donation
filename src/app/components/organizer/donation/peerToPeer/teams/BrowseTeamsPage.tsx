@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Stack } from '@chakra-ui/react';
 import { CampaignTeamSummary } from 'app/interface/donationInter/campaignTeamDto';
 import { joinCampaignTeam } from 'app/service/organizer/donation/campaignTeamService';
+import BackToMyFundraisingLink from '../console/BackToMyFundraisingLink';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import PublicPageShell from '../page/PublicPageShell';
 import LeaderboardLink from '../leaderboard/LeaderboardLink';
+import { leaderboardPath } from '../leaderboard/leaderboardPaths';
 import BrowseTeamsHeader from './BrowseTeamsHeader';
 import BrowseTeamsNotices from './BrowseTeamsNotices';
 import ConfirmActionDialog from './ConfirmActionDialog';
@@ -75,7 +77,9 @@ export const BrowseTeamsScreen = () => {
 
   return (
     <PublicPageShell>
-      <Stack gap={{ base: 4, md: 6 }}>
+      <Stack gap={{ base: 4, md: 6 }} align="stretch">
+        {browse.isFundraiser && <BackToMyFundraisingLink />}
+
         <BrowseTeamsHeader
           browse={browse}
           search={search}
@@ -86,7 +90,7 @@ export const BrowseTeamsScreen = () => {
         />
 
         <LeaderboardLink
-          campaignSlug={browse.campaignSlug}
+          to={leaderboardPath(browse.campaignSlug)}
           isReachable={browse.isLeaderboardPublished}
         />
 

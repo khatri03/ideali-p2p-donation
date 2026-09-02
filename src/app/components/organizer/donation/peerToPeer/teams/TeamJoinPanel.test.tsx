@@ -48,7 +48,7 @@ describe('TeamJoinPanel', () => {
 
     expect(
       screen.getByText(
-        'Set up your own fundraising page on this campaign, and you can join this team.',
+        'Set up your fundraising page for this campaign and you can join this team in the same step.',
       ),
     ).toBeInTheDocument();
 

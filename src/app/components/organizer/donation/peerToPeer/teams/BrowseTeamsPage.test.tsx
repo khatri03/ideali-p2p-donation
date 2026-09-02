@@ -21,6 +21,7 @@ const renderBrowse = () =>
       <MemoryRouter initialEntries={['/campaigns/winter-appeal/teams']}>
         <Routes>
           <Route path="/campaigns/:campaignSlug/teams" element={<BrowseTeamsScreen />} />
+          <Route path="/member/my-fundraising" element={<p>Fundraising console</p>} />
           <Route path="/campaigns/:campaignSlug/teams/new" element={<p>Create team screen</p>} />
           <Route path="/campaigns/:campaignSlug/teams/:teamSlug" element={<p>Team page</p>} />
           <Route
@@ -47,6 +48,27 @@ describe('BrowseTeamsPage', () => {
     expect(screen.getByText('$400 raised')).toBeInTheDocument();
     expect(screen.getByText('2 fundraisers')).toBeInTheDocument();
     expect(screen.getByText('Captain: Sarah Khan')).toBeInTheDocument();
+  });
+
+  /** "Join a team" in the console lands here, so the screen owns the way back rather than the browser. */
+  it('Browse_ReaderIsFundraisingOnThisCampaign_OffersTheWayBackToTheirConsole', async () => {
+    getCampaignTeams.mockResolvedValue(buildTeamBrowse({ isFundraiser: true }));
+
+    renderBrowse();
+
+    await userEvent.click(await screen.findByRole('link', { name: 'Back to my fundraising' }));
+
+    expect(await screen.findByText('Fundraising console')).toBeInTheDocument();
+  });
+
+  /** The list is a public address too, and a reader with no page of their own has no console. */
+  it('Browse_ReaderIsNotFundraising_OffersNoRouteToAConsoleTheyDoNotHave', async () => {
+    getCampaignTeams.mockResolvedValue(buildTeamBrowse({ isFundraiser: false }));
+
+    renderBrowse();
+
+    expect(await screen.findByText('The Early Risers')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Back to my fundraising' })).not.toBeInTheDocument();
   });
 
   it('Browse_LoadRefused_ShowsADesignedNoticeWithARetryRatherThanABlankScreen', async () => {

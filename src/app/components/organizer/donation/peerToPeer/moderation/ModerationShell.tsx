@@ -7,6 +7,7 @@ import {
   EMAILS_TAB,
   FUNDRAISERS_TAB,
   INVITATIONS_TAB,
+  LEADERBOARD_TAB,
   OVERSIGHT_HEADING,
   SETTINGS_TAB,
   TEAMS_TAB,
@@ -16,6 +17,7 @@ import {
   invitationsPath,
   moderatedFundraisersPath,
   moderatedTeamsPath,
+  organizerLeaderboardPath,
   peerToPeerSettingsPath,
 } from './moderationPaths';
 
@@ -49,8 +51,8 @@ const TabLink = ({ to, label, isActive }: TabLinkProps) => (
 );
 
 /**
- * The frame every oversight screen sits in: one heading, one campaign name, and the three surfaces a
- * charity moves between. Written once so the tabs cannot disagree about which one is open.
+ * The frame every oversight screen sits in: one heading, one campaign name, and the surfaces a charity
+ * moves between. Written once so the tabs cannot disagree about which one is open.
  */
 export const ModerationShell = ({
   campaignUniqueId,
@@ -65,6 +67,7 @@ export const ModerationShell = ({
   const teamsPath = moderatedTeamsPath(campaignUniqueId);
   const invitesPath = invitationsPath(campaignUniqueId);
   const emailsPath = emailTemplatesPath(campaignUniqueId);
+  const standingsPath = organizerLeaderboardPath(campaignUniqueId);
 
   return (
     <Box
@@ -127,6 +130,11 @@ export const ModerationShell = ({
             isActive={pathname.startsWith(invitesPath)}
           />
           <TabLink to={emailsPath} label={EMAILS_TAB} isActive={pathname.startsWith(emailsPath)} />
+          <TabLink
+            to={standingsPath}
+            label={LEADERBOARD_TAB}
+            isActive={pathname.startsWith(standingsPath)}
+          />
         </Flex>
 
         {children}

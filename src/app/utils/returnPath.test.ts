@@ -81,6 +81,34 @@ describe('campaignFromReturnPath', () => {
   });
 });
 
+describe('a join path that carries a team', () => {
+  /**
+   * The team a supporter arrived from has to survive a sign-in round trip, or the shared team link
+   * still ends on a console screen with the team forgotten - which is the dead end this exists for.
+   */
+  it('JoinPathCarryingATeam_IsAReturnPathThisApplicationWillNavigateBackTo', () => {
+    const path = fundraiserJoinPath(CAMPAIGN_ID, 'night-runners');
+
+    expect(path).toBe(`${JOIN_PATH}?team=night-runners`);
+    expect(sanitiseReturnPath(path)).toBe(path);
+  });
+
+  /**
+   * The slug is caller input and is sent on to the server as the team to join. Anything outside the
+   * set a slug is allocated from is dropped rather than trimmed, so a second parameter cannot be
+   * smuggled past the allow-list on the end of the first.
+   */
+  it('JoinPathCarryingATamperedTeam_CarriesNoTeamAtAll', () => {
+    expect(fundraiserJoinPath(CAMPAIGN_ID, 'night runners')).toBe(JOIN_PATH);
+    expect(fundraiserJoinPath(CAMPAIGN_ID, 'a&returnPath=/evil')).toBe(JOIN_PATH);
+    expect(fundraiserJoinPath(CAMPAIGN_ID, null)).toBe(JOIN_PATH);
+  });
+
+  it('JoinPathWithAnUnknownQueryParameter_IsRefused', () => {
+    expect(sanitiseReturnPath(`${JOIN_PATH}?next=/evil`)).toBeNull();
+  });
+});
+
 describe('verify-email', () => {
   it('VerifyEmail_IsNotAReturnPathThisApplicationWillNavigateBackTo', () => {
     // Confirming an address is a step on the way, never a destination to be sent to after signing

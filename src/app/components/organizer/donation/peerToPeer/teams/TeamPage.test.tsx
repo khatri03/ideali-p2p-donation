@@ -32,6 +32,7 @@ const renderTeam = () =>
             path="/campaigns/:campaignSlug/teams/:teamSlug/members"
             element={<p>Manage team</p>}
           />
+          <Route path="/member/my-fundraising" element={<p>Fundraising console</p>} />
           <Route path="/campaigns/:campaignSlug/:fundraiserSlug" element={<p>Member page</p>} />
           <Route
             path="/campaigns/:campaignSlug/:fundraiserSlug/donate"
@@ -68,6 +69,30 @@ describe('TeamPage', () => {
     expect(screen.getByText('$240 raised')).toBeInTheDocument();
     expect(screen.getByText('Ahmed Khalid')).toBeInTheDocument();
     expect(screen.getByText('$160 raised')).toBeInTheDocument();
+  });
+
+  /**
+   * The console sends a fundraiser here and this screen changes what they are looking at, so the way
+   * back has to live on it. Leaving them the browser's back button is the dead end this closes.
+   */
+  it('Team_ReaderIsFundraisingOnThisCampaign_OffersTheWayBackToTheirConsole', async () => {
+    getCampaignTeamPage.mockResolvedValue(buildTeamPage({ isFundraiser: true }));
+
+    renderTeam();
+
+    await userEvent.click(await screen.findByRole('link', { name: 'Back to my fundraising' }));
+
+    expect(await screen.findByText('Fundraising console')).toBeInTheDocument();
+  });
+
+  /** A team address is shared with the public, and a reader with no page of their own has no console. */
+  it('Team_ReaderIsNotFundraising_OffersNoRouteToAConsoleTheyDoNotHave', async () => {
+    getCampaignTeamPage.mockResolvedValue(buildTeamPage({ isFundraiser: false }));
+
+    renderTeam();
+
+    expect(await screen.findByText('The Early Risers')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Back to my fundraising' })).not.toBeInTheDocument();
   });
 
   it('Team_NoGoalSet_ShowsWhatWasRaisedWithoutABrokenProgressBar', async () => {

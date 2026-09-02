@@ -304,6 +304,43 @@ test.describe('Browsing teams as somebody who could join one', () => {
     await expect(page).toHaveURL(/\/peer-to-peer\/join$/);
   });
 
+  /**
+   * The console sends a fundraiser out to these screens, so each of them owns the way back. Without it
+   * the only route to the console is the browser's own history, which is not a control the screen offers
+   * and is not there at all for somebody who arrived on a shared address.
+   */
+  test('Browse_Fundraising_OffersTheWayBackToTheConsole', async ({ page }) => {
+    insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
+    insertTeam({ captainIsMine: false, memberSlugs: [] });
+
+    await page.goto(browsePath());
+    await page.getByRole('link', { name: 'Back to my fundraising' }).click();
+
+    await expect(page).toHaveURL(/\/member\/my-fundraising$/);
+  });
+
+  /** Same rule one screen deeper, where a member lands from "View team" in the console. */
+  test('Team_Fundraising_OffersTheWayBackToTheConsole', async ({ page }) => {
+    insertFundraiser({ slug: MINE_SLUG, displayName: MINE_NAME, isMine: true });
+    insertTeam({ captainIsMine: true, memberSlugs: [MINE_SLUG] });
+
+    await page.goto(teamPath());
+    await page.getByRole('link', { name: 'Back to my fundraising' }).click();
+
+    await expect(page).toHaveURL(/\/member\/my-fundraising$/);
+  });
+
+  /** These are public addresses. A reader with no page of their own has no console to be sent to. */
+  test('Team_ReaderIsNotFundraising_OffersNoRouteToAConsole', async ({ page }) => {
+    insertFundraiser({ slug: THEIRS_SLUG, displayName: THEIRS_NAME, isMine: false });
+    insertTeam({ captainIsMine: false, memberSlugs: [THEIRS_SLUG] });
+
+    await page.goto(teamPath());
+    await expect(page.getByRole('heading', { name: TEAM_NAME })).toBeVisible();
+
+    await expect(page.getByRole('link', { name: 'Back to my fundraising' })).toHaveCount(0);
+  });
+
   test('Browse_SearchTyped_NarrowsTheListToTheMatch', async ({ page }) => {
     insertFundraiser({ slug: THEIRS_SLUG, displayName: THEIRS_NAME, isMine: false });
     insertTeam({ captainIsMine: false, memberSlugs: [THEIRS_SLUG] });
@@ -416,7 +453,7 @@ test.describe('Starting a team', () => {
     seedFundraiser();
 
     await page.goto(createPath());
-    await page.getByRole('button', { name: 'Create team' }).click();
+    await page.getByRole('button', { name: 'Start a team' }).click();
 
     await expect(page.getByText('Enter a name for your team.')).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaignSlug}/teams/new$`));
@@ -444,7 +481,7 @@ test.describe('Starting a team', () => {
     await page.goto(createPath());
     await page.getByLabel('Team name').fill(CREATED_TEAM_NAME);
     await page.getByLabel('Team goal').fill('0');
-    await page.getByRole('button', { name: 'Create team' }).click();
+    await page.getByRole('button', { name: 'Start a team' }).click();
 
     await expect(page.getByText('Enter a goal greater than zero, or leave it blank.')).toBeVisible();
   });
@@ -468,7 +505,7 @@ test.describe('Starting a team', () => {
 
     await page.goto(createPath());
     await page.getByLabel('Team name').fill(CREATED_TEAM_NAME);
-    await page.getByRole('button', { name: 'Create team' }).click();
+    await page.getByRole('button', { name: 'Start a team' }).click();
 
     await expect(page.getByRole('heading', { level: 1, name: CREATED_TEAM_NAME })).toBeVisible();
     await expect(page.getByText(MINE_NAME).first()).toBeVisible();
@@ -519,7 +556,7 @@ test.describe('Starting a team', () => {
     await page.getByLabel('Team name').fill(CREATED_TEAM_NAME);
 
     await delayOnce(page, '**/api/campaigns/*/teams', 2500);
-    await page.getByRole('button', { name: 'Create team' }).click();
+    await page.getByRole('button', { name: 'Start a team' }).click();
 
     await expect(page.getByText('Creating...')).toBeVisible();
     await expect(page.getByLabel('Team name')).toBeDisabled();
@@ -883,7 +920,7 @@ test.describe('One fundraiser, more than one campaign', () => {
     await openConsoleSection(card);
 
     await expect(card.getByRole('button', { name: `View team ${TEAM_NAME}` })).toBeVisible();
-    await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
+    await expect(card.getByRole('button', { name: 'Join a team' })).toHaveCount(0);
   });
 
   test('Console_InATeam_ShowsAPointerCursorOnTheOneTeamControl', async ({ page }) => {
@@ -979,6 +1016,6 @@ test.describe('How the console states the team a fundraiser belongs to', () => {
     await openConsoleSection(card);
 
     await expect(card.getByText('This campaign is not running teams.')).toBeVisible();
-    await expect(card.getByRole('button', { name: 'Find a team' })).toHaveCount(0);
+    await expect(card.getByRole('button', { name: 'Join a team' })).toHaveCount(0);
   });
 });

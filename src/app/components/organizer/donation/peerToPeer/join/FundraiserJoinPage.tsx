@@ -1,9 +1,9 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Alert, AlertIcon, Box, Button, Heading, Stack, Text, useToast } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
 import { FundraiserJoinRequest } from 'app/interface/donationInter/fundraiserJoinDto';
 import { ensureAuthenticated } from 'utils/auth';
-import { fundraiserJoinPath } from 'app/utils/returnPath';
+import { fundraiserJoinPath, sanitiseTeamSlug } from 'app/utils/returnPath';
 import { signOutAndReturnTo, storedDisplayName } from 'app/utils/session';
 import FundraiseAccessModal from '../access/FundraiseAccessModal';
 import { JOIN_HEADING } from './joinCopy';
@@ -11,7 +11,8 @@ import PublicPageShell from '../page/PublicPageShell';
 import FundraiserJoinForm from './FundraiserJoinForm';
 import FundraiserJoinSkeleton from './FundraiserJoinSkeleton';
 import FundraiserJoinSuccess from './FundraiserJoinSuccess';
-import { myFundraisingPath } from '../console/MyFundraisingPage';
+import { myFundraisingPath } from '../console/consolePaths';
+import { teamPagePath } from '../teams/teamPaths';
 import { useFundraiserJoin } from './useFundraiserJoin';
 
 /**
@@ -20,9 +21,12 @@ import { useFundraiserJoin } from './useFundraiserJoin';
  */
 export const FundraiserJoinPage = () => {
   const { campaignUniqueId } = useParams<{ campaignUniqueId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const returnPath = fundraiserJoinPath(campaignUniqueId ?? '');
+  // Attacker-controlled text: it arrives in the address bar and is sent on as the team to join.
+  const invitedTeamSlug = sanitiseTeamSlug(searchParams.get('team'));
+  const returnPath = fundraiserJoinPath(campaignUniqueId ?? '', invitedTeamSlug);
   const isSignedIn = ensureAuthenticated();
 
   const { context, result, isLoading, isSubmitting, loadError, reload, join } = useFundraiserJoin(
@@ -44,6 +48,9 @@ export const FundraiserJoinPage = () => {
   };
 
   const suggestedDisplayName = storedDisplayName();
+
+  const goToTeam = (campaignSlug: string | null, teamSlug: string) =>
+    navigate(campaignSlug ? teamPagePath(campaignSlug, teamSlug) : myFundraisingPath);
 
   // A visitor who reached this page without a session - from a shared link, or from the button in a
   // confirmation email - is offered both ways in here rather than being bounced to another screen.
@@ -124,9 +131,12 @@ export const FundraiserJoinPage = () => {
               campaignSlug: context.campaignSlug,
               currentStatus: context.currentStatus ?? 'Active',
               alreadyJoined: true,
+              teamSlug: null,
+              teamName: null,
             }}
             onGoToConsole={() => navigate(myFundraisingPath)}
             onSignOutAndBackIn={() => signOutAndReturnTo(returnPath)}
+            onGoToTeam={goToTeam}
           />
         )}
 
@@ -134,6 +144,7 @@ export const FundraiserJoinPage = () => {
           <FundraiserJoinForm
             context={context}
             suggestedDisplayName={suggestedDisplayName}
+            invitedTeamSlug={invitedTeamSlug}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />
@@ -144,6 +155,7 @@ export const FundraiserJoinPage = () => {
             result={result}
             onGoToConsole={() => navigate(myFundraisingPath)}
             onSignOutAndBackIn={() => signOutAndReturnTo(returnPath)}
+            onGoToTeam={goToTeam}
           />
         )}
       </Stack>

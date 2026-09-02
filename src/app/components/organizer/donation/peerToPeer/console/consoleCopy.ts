@@ -19,7 +19,7 @@ export const ALL_FINISHED_GUIDANCE =
 export const VIEW_PUBLIC_PAGE = 'View my page';
 export const OPENS_IN_A_NEW_TAB = '(opens in a new tab)';
 export const EDIT_PAGE = 'Edit my page';
-export const FIND_A_TEAM = 'Find a team';
+export const FIND_A_TEAM = 'Join a team';
 export const fundraisingCardLabel = (displayName: string, campaignName: string) =>
   `${displayName} fundraising for ${campaignName}`;
 

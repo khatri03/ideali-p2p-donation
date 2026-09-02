@@ -8,15 +8,19 @@ import {
   NEXT_SIGN_IN_NOTICE,
   PENDING_ADDRESS_NOTE,
   SIGN_OUT_AND_BACK_IN,
+  TEAM_GO_TO_TEAM,
   pageAddressLabel,
   successHeading,
   successMessage,
+  teamJoinedNotice,
 } from './joinCopy';
 
 interface FundraiserJoinSuccessProps {
   result: FundraiserJoinResult;
   onGoToConsole: () => void;
   onSignOutAndBackIn: () => void;
+  /** Where the team the page was put into lives, so the supporter is never left to go and find it. */
+  onGoToTeam: (campaignSlug: string | null, teamSlug: string) => void;
 }
 
 /** The public address of a fundraiser page, as agreed: /campaigns/{campaign}/{fundraiser}. */
@@ -39,6 +43,7 @@ export const FundraiserJoinSuccess = ({
   result,
   onGoToConsole,
   onSignOutAndBackIn,
+  onGoToTeam,
 }: FundraiserJoinSuccessProps) => {
   const address = fundraiserPageAddress(result.campaignSlug, result.slug);
   const shareUrl = `${window.location.origin}${address}`;
@@ -89,6 +94,28 @@ export const FundraiserJoinSuccess = ({
           </Stack>
         ) : (
           <SharePanel shareUrl={shareUrl} headingLevel="h3" isNested />
+        )}
+
+        {result.teamSlug && result.teamName && (
+          <Stack
+            gap={3}
+            bg="secondaryGray.300"
+            _dark={{ bg: 'whiteAlpha.100' }}
+            borderRadius="14px"
+            p={4}
+          >
+            <Text fontSize="sm">{teamJoinedNotice(result.teamName)}</Text>
+            <Button
+              variant="outline"
+              size="sm"
+              minH="44px"
+              alignSelf={{ base: 'stretch', md: 'flex-start' }}
+              onClick={() => onGoToTeam(result.campaignSlug, result.teamSlug!)}
+              sx={{ cursor: 'pointer' }}
+            >
+              {TEAM_GO_TO_TEAM}
+            </Button>
+          </Stack>
         )}
 
         <Button

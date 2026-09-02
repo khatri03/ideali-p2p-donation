@@ -18,7 +18,6 @@ import {
   SWITCH_OFF_TITLE,
   switchOffMessage,
 } from './peerToPeerCopy';
-import LeaderboardLink from './leaderboard/LeaderboardLink';
 import ModerationShell from './moderation/ModerationShell';
 import PeerToPeerSettingsForm from './PeerToPeerSettingsForm';
 import PeerToPeerSettingsSkeleton from './PeerToPeerSettingsSkeleton';
@@ -97,15 +96,6 @@ export const PeerToPeerSettingsPage = () => {
         )}
 
         {isLoading && <PeerToPeerSettingsSkeleton />}
-
-        {/* The charity's own way into the board, including the one it keeps to itself. Absent while the
-            board is switched off, so the link is never offered when it would refuse. */}
-        {!isLoading && !loadError && settings?.peerToPeerSlug && (
-          <LeaderboardLink
-            campaignSlug={settings.peerToPeerSlug}
-            isReachable={settings.leaderboardVisibility !== 'Hidden'}
-          />
-        )}
 
         {!isLoading && !loadError && settings && (
           <PeerToPeerSettingsForm

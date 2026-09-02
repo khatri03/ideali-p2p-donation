@@ -14,6 +14,8 @@ import {
 
 interface LeaderboardSummaryProps {
   board: PeerToPeerLeaderboard;
+  /** h1 where the board owns the screen, h2 where the frame around it already carries one. */
+  headingLevel?: 'h1' | 'h2';
 }
 
 const Figure = ({ label, value }: { label: string; value: string }) => (
@@ -31,11 +33,14 @@ const Figure = ({ label, value }: { label: string; value: string }) => (
  * The head of the board: whose campaign it is, what it has raised, and the two things a reader has to
  * be told rather than left to infer - that a board is unpublished, and that a race is already over.
  */
-export const LeaderboardSummary = ({ board }: LeaderboardSummaryProps) => (
+export const LeaderboardSummary = ({
+  board,
+  headingLevel = 'h1',
+}: LeaderboardSummaryProps) => (
   <Stack gap={{ base: 3, md: 4 }}>
     <Box>
       <Heading
-        as="h1"
+        as={headingLevel}
         fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
         color="navy.700"
         _dark={{ color: 'white' }}

@@ -215,6 +215,7 @@ describe('FundraiserJoinPage', () => {
         displayName: 'Sarah Khan',
         personalGoal: 250,
         story: 'Running for a reason.',
+        team: { kind: 'None', teamSlug: null, newTeam: null },
       }),
     );
 

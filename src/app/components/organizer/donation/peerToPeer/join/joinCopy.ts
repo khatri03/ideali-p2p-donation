@@ -51,6 +51,53 @@ export const DISPLAY_NAME_TOO_LONG = `Use ${DISPLAY_NAME_MAX_LENGTH} characters 
 export const GOAL_NOT_POSITIVE = 'Enter an amount greater than zero, or leave this blank.';
 export const STORY_TOO_LONG = `Use ${STORY_MAX_LENGTH} characters or fewer.`;
 
+/**
+ * The team question, asked on the join screen itself. The three answers are the whole of what a
+ * supporter can decide here, and "on my own" is one of them rather than the absence of a decision:
+ * an unanswered question is what sends somebody looking for teams afterwards.
+ */
+export const TEAM_CHOICE_LABEL = 'Fundraising with a team?';
+export const TEAM_CHOICE_HINT =
+  'Teams add their members\u2019 totals together. You can leave or change team later.';
+
+export const TEAM_ALONE_LABEL = 'On my own';
+export const TEAM_ALONE_HINT = 'Your total counts towards the campaign directly.';
+export const TEAM_JOIN_LABEL = 'Join a team';
+export const TEAM_JOIN_HINT = 'Your total also counts towards that team.';
+export const TEAM_CREATE_LABEL = 'Start a team';
+export const TEAM_CREATE_HINT = 'You become its captain and can invite others to it.';
+
+export const TEAM_PICKER_LABEL = 'Which team?';
+export const TEAM_PICKER_PLACEHOLDER = 'Choose a team';
+export const TEAM_PICKER_LOADING = 'Loading teams...';
+export const TEAM_PICKER_EMPTY =
+  'No teams have been started on this campaign yet. Choose \u201cStart a team\u201d to open the first one.';
+export const TEAM_PICKER_LOAD_FAILED = 'Could not load the teams on this campaign.';
+export const TEAM_PICKER_RETRY = 'Try again';
+
+export const TEAM_NAME_LABEL = 'Team name';
+export const TEAM_NAME_HINT = 'Supporters see this on the team page. You can change it later.';
+export const TEAM_GOAL_LABEL = 'Team goal';
+export const TEAM_GOAL_HINT =
+  'Shown on the team page as a target for everyone in it. Leave it blank and no target is shown.';
+export const TEAM_GOAL_PLACEHOLDER = 'No target';
+
+export const TEAM_NAME_MAX_LENGTH = 80;
+
+export const TEAM_REQUIRED = 'Choose a team to join.';
+export const TEAM_NAME_REQUIRED = 'Enter a name for your team.';
+export const TEAM_NAME_TOO_LONG = `Use ${TEAM_NAME_MAX_LENGTH} characters or fewer.`;
+export const TEAM_GOAL_NOT_POSITIVE = 'Enter an amount greater than zero, or leave this blank.';
+
+/**
+ * Says which team the new page belongs to and offers the way to it. Without this the supporter is told
+ * their page exists and left to work out whether the team half of what they asked for happened.
+ */
+export const teamJoinedNotice = (teamName: string): string =>
+  `Your page is in ${teamName}. Everything you raise counts towards that team as well as the campaign.`;
+
+export const TEAM_GO_TO_TEAM = 'Go to my team';
+
 export const SIGN_IN_PROMPT = 'Sign in to fundraise for this campaign';
 
 /**

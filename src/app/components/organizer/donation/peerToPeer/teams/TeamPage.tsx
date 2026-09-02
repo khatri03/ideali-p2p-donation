@@ -6,6 +6,7 @@ import {
   leaveCampaignTeam,
 } from 'app/service/organizer/donation/campaignTeamService';
 import { fundraiserJoinPath } from 'app/utils/returnPath';
+import BackToMyFundraisingLink from '../console/BackToMyFundraisingLink';
 import FundraiserPageNotice from '../page/FundraiserPageNotice';
 import PublicPageShell from '../page/PublicPageShell';
 import { fundraiserDonatePath, fundraiserPagePath } from '../page/FundraiserPage';
@@ -108,7 +109,9 @@ export const TeamPageScreen = () => {
 
   return (
     <PublicPageShell>
-      <Stack gap={{ base: 4, md: 6 }}>
+      <Stack gap={{ base: 4, md: 6 }} align="stretch">
+        {team.isFundraiser && <BackToMyFundraisingLink />}
+
         {actionError && <TeamActionError message={actionError} onDismiss={clearActionError} />}
 
         <LiveTeamPage
@@ -120,7 +123,7 @@ export const TeamPageScreen = () => {
           }
           onLeave={isMember ? () => setIsLeaveOpen(true) : undefined}
           onJoin={() => setIsJoinOpen(true)}
-          onSetUpMyPage={() => navigate(fundraiserJoinPath(team.campaignUniqueId))}
+          onSetUpMyPage={() => navigate(fundraiserJoinPath(team.campaignUniqueId, team.slug))}
           onGoToMyTeam={(myTeamSlug) =>
             navigate(teamPagePath(team.campaignSlug, myTeamSlug))
           }

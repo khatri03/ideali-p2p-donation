@@ -42,6 +42,7 @@ export const buildJoinContext = (
   campaignSlug: 'winter-appeal',
   defaultPersonalGoal: null,
   requiresApproval: false,
+  areTeamsAllowed: false,
   canJoin: true,
   blockedReason: null,
   blockedKind: 'None',
@@ -58,6 +59,8 @@ export const buildJoinResult = (
   campaignSlug: 'winter-appeal',
   currentStatus: 'Active',
   alreadyJoined: false,
+  teamSlug: null,
+  teamName: null,
   ...overrides,
 });
 

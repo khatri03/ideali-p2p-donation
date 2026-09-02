@@ -14,13 +14,9 @@ import {
   LOAD_FAILED_MESSAGE,
   RETRY_LABEL,
 } from './consoleCopy';
+import { editMyFundraisingPath } from './consolePaths';
 import { fundraiserShareUrl } from './shareUrl';
 import { useMyFundraising } from './useMyFundraising';
-
-export const myFundraisingPath = '/member/my-fundraising';
-
-export const editMyFundraisingPath = (fundraiserUniqueId: string) =>
-  `${myFundraisingPath}/${fundraiserUniqueId}`;
 
 /**
  * Screen 08. Composition only: the fetch lives in a hook, every panel below is presentational, and

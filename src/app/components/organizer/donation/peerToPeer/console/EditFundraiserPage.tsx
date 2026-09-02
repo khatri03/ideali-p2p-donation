@@ -8,7 +8,7 @@ import EditFundraiserFields from './EditFundraiserFields';
 import FundraiserPhotoField from './FundraiserPhotoField';
 import MyFundraisingSkeleton from './MyFundraisingSkeleton';
 import ViewPublicPageLink from './ViewPublicPageLink';
-import { myFundraisingPath } from './MyFundraisingPage';
+import { myFundraisingPath } from './consolePaths';
 import {
   BACK_TO_CONSOLE,
   EDIT_HEADING,
