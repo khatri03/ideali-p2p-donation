@@ -623,3 +623,93 @@ test.describe('Campaign list approval badge', () => {
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
   });
 });
+
+/**
+ * The marking that tells a charity, on the list it already opens daily, which of its campaigns let
+ * supporters raise money. Without it the answer costs an open of every campaign in turn, and the
+ * database is the only place that can prove the marking follows the setting rather than a guess.
+ */
+test.describe('Campaign list peer-to-peer pill', () => {
+  const campaignsPath = '/organizer/donation/manage-donation-module';
+
+  const campaignCard = (page: Page) =>
+    page.getByText(campaign.name).filter({ visible: true }).first();
+
+  const fundraisingIsOn = (): boolean =>
+    querySingleValue(
+      `SELECT CAST(IsPeerToPeerEnabled AS INT) FROM DonationCampaign WHERE Id = ${campaignIdSql};`,
+    ) === '1';
+
+  const setFundraising = (isOn: boolean): void =>
+    execute(
+      `UPDATE DonationCampaign SET IsPeerToPeerEnabled = ${isOn ? 1 : 0} WHERE Id = ${campaignIdSql};`,
+    );
+
+  let wasFundraisingOn = true;
+
+  test.beforeAll(() => {
+    wasFundraisingOn = fundraisingIsOn();
+  });
+
+  test.afterAll(() => {
+    setFundraising(wasFundraisingOn);
+  });
+
+  /**
+   * A campaign that lets supporters fundraise is marked as one, in text the card itself carries rather
+   * than in a tooltip a phone can never show.
+   */
+  test('CampaignList_CampaignRunsSupporterFundraising_MarksTheCard', async ({ page }) => {
+    setFundraising(true);
+
+    await page.goto(campaignsPath);
+    await expect(campaignCard(page)).toBeVisible();
+
+    await expect(visibleText(page, 'P2P')).toBeVisible();
+  });
+
+  /**
+   * Turning supporter fundraising off takes the marking off the card. A pill that outlives the setting
+   * sends supporters to a screen that refuses them.
+   */
+  test('CampaignList_FundraisingTurnedOff_TakesTheMarkingOffTheCard', async ({ page }) => {
+    setFundraising(false);
+
+    await page.goto(campaignsPath);
+    await expect(campaignCard(page)).toBeVisible();
+
+    await expect(page.getByRole('link', { name: /^P2P\./ })).toHaveCount(0);
+  });
+
+  /**
+   * Following the pill lands on that campaign's own fundraising settings, the screen that says what
+   * the marking means and the one place it can be turned off.
+   */
+  test('CampaignList_PillFollowed_OpensThatCampaignsFundraisingSettings', async ({ page }) => {
+    setFundraising(true);
+
+    await page.goto(campaignsPath);
+    await visibleLink(page, /^P2P\./).click();
+
+    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer$`));
+    await expect(page.getByRole('heading', { name: 'P2P fundraising' })).toBeVisible();
+  });
+
+  /**
+   * The pill is a control a finger has to hit, so it is at least 44px tall however small it draws, and
+   * a card carrying it must not push the page sideways at any supported width.
+   */
+  test('CampaignList_Pill_IsReachableByTouchAndDoesNotScrollThePageSideways', async ({ page }) => {
+    setFundraising(true);
+
+    await page.goto(campaignsPath);
+
+    const pill = visibleLink(page, /^P2P\./);
+    await expect(pill).toBeVisible();
+
+    const box = await pill.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+  });
+});

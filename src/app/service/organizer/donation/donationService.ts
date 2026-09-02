@@ -13,6 +13,8 @@ export interface DonationCampaign {
   invoiceCount: number;
   /** Fundraising pages on this campaign waiting for the charity to approve them. Zero when none are. */
   pendingFundraiserApprovalCount: number;
+  /** Whether supporters may raise money for this campaign on pages of their own. */
+  isPeerToPeerEnabled: boolean;
   startDate: string;
   endDate: string;
   cancellationDateUtc: string | null;

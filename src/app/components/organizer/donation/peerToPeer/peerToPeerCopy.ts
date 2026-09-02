@@ -16,3 +16,12 @@ export const switchOffMessage = (liveFundraiserCount: number): string => {
 export const SWITCH_OFF_TITLE = 'Turn supporter fundraising off?';
 export const SWITCH_OFF_CONFIRM = 'Turn it off';
 export const SWITCH_OFF_CANCEL = 'Keep it on';
+
+/**
+ * The marking a campaign card carries when supporters may raise money on that campaign. The label is
+ * the product's own short name for the feature; the hint spells it out, because a card gives an
+ * abbreviation no room to explain itself.
+ */
+export const PEER_TO_PEER_PILL_LABEL = 'P2P';
+export const PEER_TO_PEER_PILL_HINT =
+  'P2P fundraising is on. Supporters can raise money for this campaign on their own pages. Open its settings.';

@@ -60,6 +60,7 @@ import { AutoSyncModal } from "../../organizer/donation/organizerDonationCompone
 import contactSyncService from "../../../service/organizer/Settings/contactSyncService";
 import { PeerToPeerMenuItem } from './peerToPeer/PeerToPeerMenuItem';
 import { PendingApprovalBadge } from './peerToPeer/moderation/PendingApprovalBadge';
+import { PeerToPeerPill } from './peerToPeer/PeerToPeerPill';
 
 interface DonationListProps {
   currentPage: number;
@@ -944,6 +945,10 @@ const handleAutoSync = (campaignId: string) => {
                   >
                     {campaign.status}
                   </Badge>
+                    <PeerToPeerPill
+                      campaignUniqueId={campaign.uniqueId}
+                      isPeerToPeerEnabled={campaign.isPeerToPeerEnabled === true}
+                    />
                     <PendingApprovalBadge
                       campaignUniqueId={campaign.uniqueId}
                       pendingCount={campaign.pendingFundraiserApprovalCount ?? 0}

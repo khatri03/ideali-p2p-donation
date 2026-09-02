@@ -39,6 +39,7 @@ import Loader from 'app/components/common/Loader';
 import { hasPermission, hasAnyPermission } from 'app/service/organizer/rolesPermissions/permissionsService';
 import { PeerToPeerMenuItem } from '../donation/peerToPeer/PeerToPeerMenuItem';
 import { PendingApprovalBadge } from 'app/components/organizer/donation/peerToPeer/moderation/PendingApprovalBadge';
+import { PeerToPeerPill } from 'app/components/organizer/donation/peerToPeer/PeerToPeerPill';
 
 const recentCampaigns: React.FC = () => {
   // Campaign permissions
@@ -491,6 +492,10 @@ transform="translateY(-2px)"
                 >
                   {campaign.status}
                 </Badge>
+                  <PeerToPeerPill
+                    campaignUniqueId={campaign.uniqueId}
+                    isPeerToPeerEnabled={campaign.isPeerToPeerEnabled === true}
+                  />
                   <PendingApprovalBadge
                     campaignUniqueId={campaign.uniqueId}
                     pendingCount={campaign.pendingFundraiserApprovalCount ?? 0}
