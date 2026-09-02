@@ -4,7 +4,6 @@ import { Box, Button, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
 import {
   BACK_LABEL,
-  EMAILS_TAB,
   FUNDRAISERS_TAB,
   INVITATIONS_TAB,
   LEADERBOARD_TAB,
@@ -13,7 +12,6 @@ import {
   TEAMS_TAB,
 } from './moderationCopy';
 import {
-  emailTemplatesPath,
   invitationsPath,
   moderatedFundraisersPath,
   moderatedTeamsPath,
@@ -53,6 +51,11 @@ const TabLink = ({ to, label, isActive }: TabLinkProps) => (
 /**
  * The frame every oversight screen sits in: one heading, one campaign name, and the surfaces a charity
  * moves between. Written once so the tabs cannot disagree about which one is open.
+ *
+ * The lifecycle emails are deliberately not among them. Six of the eight templates on that screen have
+ * no trigger proven to send them, so offering the tab would invite a charity to write copy and switch a
+ * template on believing supporters receive it. The screen stays reachable by address, and the tab comes
+ * back in the same change that proves the sends - see docs/p2p-lifecycle-emails-next-phase.md.
  */
 export const ModerationShell = ({
   campaignUniqueId,
@@ -66,7 +69,6 @@ export const ModerationShell = ({
   const fundraisersPath = moderatedFundraisersPath(campaignUniqueId);
   const teamsPath = moderatedTeamsPath(campaignUniqueId);
   const invitesPath = invitationsPath(campaignUniqueId);
-  const emailsPath = emailTemplatesPath(campaignUniqueId);
   const standingsPath = organizerLeaderboardPath(campaignUniqueId);
 
   return (
@@ -129,7 +131,6 @@ export const ModerationShell = ({
             label={INVITATIONS_TAB}
             isActive={pathname.startsWith(invitesPath)}
           />
-          <TabLink to={emailsPath} label={EMAILS_TAB} isActive={pathname.startsWith(emailsPath)} />
           <TabLink
             to={standingsPath}
             label={LEADERBOARD_TAB}

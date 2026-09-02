@@ -45,6 +45,19 @@ beforeEach(() => {
 });
 
 describe('ModeratedFundraisersPage', () => {
+  /**
+   * The lifecycle emails are withheld until their sends are proven. A tab would let a charity switch a
+   * template on and believe supporters are receiving it, which is exactly what the deferral prevents.
+   */
+  it('Tabs_LifecycleEmailsNotProvenYet_AreNotOfferedInTheOversightNavigation', async () => {
+    getModeratedFundraisers.mockResolvedValue(buildList([buildFundraiser()]));
+
+    renderList();
+
+    expect(await screen.findByRole('link', { name: 'Invitations' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Emails' })).not.toBeInTheDocument();
+  });
+
   it('List_PagesOnTheCampaign_ShowsEachWithWhatItRaised', async () => {
     getModeratedFundraisers.mockResolvedValue(buildList([buildFundraiser()]));
 

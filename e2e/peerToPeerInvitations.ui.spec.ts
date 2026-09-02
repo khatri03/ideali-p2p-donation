@@ -115,11 +115,16 @@ test.beforeEach(() => removeProbeData());
 test.afterAll(() => removeProbeData());
 
 test.describe('Getting to the invitation screens', () => {
-  test('Tabs_Oversight_OffersInvitationsAndEmailsAlongsideTheRest', async ({ page }) => {
+  /**
+   * The lifecycle emails are held back until their sends are proven. A tab offering them would let a
+   * charity switch a template on and believe supporters are receiving it, which is the one thing the
+   * deferral exists to prevent. The screen itself stays reachable by address.
+   */
+  test('Tabs_Oversight_OffersInvitationsAndHoldsTheLifecycleEmailsBack', async ({ page }) => {
     await page.goto(root);
 
     await expect(page.getByRole('link', { name: 'Invitations', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Emails', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Emails', exact: true })).toHaveCount(0);
   });
 
   test('Tabs_InvitationsOpen_MarksThatTabAsTheCurrentOne', async ({ page }) => {
@@ -134,7 +139,7 @@ test.describe('Getting to the invitation screens', () => {
   test('Tabs_EveryOne_ShowsAPointerCursorOnHover', async ({ page }) => {
     await page.goto(invitationsPath);
 
-    await expect(page.getByRole('link', { name: 'Emails', exact: true })).toHaveCSS(
+    await expect(page.getByRole('link', { name: 'Teams', exact: true })).toHaveCSS(
       'cursor',
       'pointer',
     );
