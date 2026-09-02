@@ -13,11 +13,27 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Where a donor is sent once they close the thank-you, when it is somewhere other than the campaign's
+ * own donation screen. A donation given through somebody's fundraising page belongs back on that page:
+ * it is where the donor's name now appears and where they can pass the page on to somebody else.
+ */
+export interface DonationReturnDestination {
+  /** Route to open when the thank-you is closed. */
+  path: string;
+  /** What the button says it will do, so the donor is never guessing where Close leads. */
+  label: string;
+  /** One sentence naming who the donation was given through. */
+  note: string;
+}
+
 interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   themeColor?: string;
   campaignId?: string;
+  /** Omitted for a donation given straight to a campaign, which returns to that campaign's screen. */
+  returnTo?: DonationReturnDestination;
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
@@ -25,11 +41,19 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   onClose,
   themeColor = "#3182CE", // fallback color
   campaignId,
+  returnTo,
 }) => {
   const navigate = useNavigate();
 
   const handleClose = () => {
     onClose();
+
+    if (returnTo) {
+      // A different route mounts a fresh screen, so the form resets without reloading the browser.
+      navigate(returnTo.path, { replace: true });
+      return;
+    }
+
     if (campaignId) {
       // Navigate back to the campaign donation page and force reload to reset all fields
       navigate(`/donate/${campaignId}`, { replace: true });
@@ -88,8 +112,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
               Thank you for your generous donation
             </Text>
             <Text fontSize="sm" color="gray.500" textAlign="center">
-              Your contribution makes a real difference and helps us achieve our
-              goals.
+              {returnTo
+                ? returnTo.note
+                : "Your contribution makes a real difference and helps us achieve our goals."}
             </Text>
           </VStack>
         </ModalBody>
@@ -108,7 +133,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             }}
             transition="all 0.2s"
           >
-            Close
+            {returnTo ? returnTo.label : "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>

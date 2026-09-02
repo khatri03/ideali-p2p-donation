@@ -43,6 +43,10 @@ import DonationProgressIndicator from './organizerDonationComponents/DonationPro
 import CampaignDetails from './organizerDonationComponents/CampaignDetails';
 import FundraisePanel from './peerToPeer/join/FundraisePanel';
 import SupportingFundraiserBanner from './peerToPeer/page/SupportingFundraiserBanner';
+import {
+  BACK_TO_FUNDRAISER_PAGE,
+  donationCountedFor,
+} from './peerToPeer/page/pageCopy';
 import DonationAmountSelector from './organizerDonationComponents/DonationAmountSelector';
 import DonationStep2Content from './organizerDonationComponents/DonationStep2Content';
 import StripeProvider, { getStripeInstance } from '../../common/StripeProvider';
@@ -1722,6 +1726,15 @@ export default function DonateToCampaign({
         onClose={onSuccessModalClose}
         themeColor={themeColor}
         campaignId={campaignId}
+        returnTo={
+          fundraiser
+            ? {
+                path: fundraiser.pagePath,
+                label: BACK_TO_FUNDRAISER_PAGE,
+                note: donationCountedFor(fundraiser.displayName),
+              }
+            : undefined
+        }
       />
 
       {/* Failure Modal */}

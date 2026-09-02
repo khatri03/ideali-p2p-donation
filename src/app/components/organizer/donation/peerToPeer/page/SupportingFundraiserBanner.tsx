@@ -1,6 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { Avatar, Box, Container, Flex, Link, Stack, Text } from '@chakra-ui/react';
-import { initialsOf, supportingBanner } from './pageCopy';
+import { BACK_TO_FUNDRAISER_PAGE, initialsOf, supportingBanner } from './pageCopy';
 
 interface SupportingFundraiserBannerProps {
   displayName: string;
@@ -55,7 +55,7 @@ export const SupportingFundraiserBanner = ({
           alignItems="center"
           px={2}
         >
-          Back to their page
+          {BACK_TO_FUNDRAISER_PAGE}
         </Link>
       </Flex>
     </Container>

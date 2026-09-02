@@ -49,6 +49,20 @@ export const SHARE_LINK_COPY_FAILED =
 
 export const RETRY_LABEL = 'Try again';
 
+/**
+ * Said on the way in and again on the way out, so the page the donor came from is named the same way
+ * both times rather than being described one way at the card step and another once the money is taken.
+ */
+export const BACK_TO_FUNDRAISER_PAGE = 'Back to their page';
+
+/**
+ * What a donor is told once the donation has gone through. It names the person the money was given
+ * through, because that is the thing a generic thank-you leaves out and the reason they chose that
+ * page over the campaign's own.
+ */
+export const donationCountedFor = (displayName: string) =>
+  `Your donation counts towards ${displayName}'s total.`;
+
 export const supportingBanner = (displayName: string) =>
   `You are supporting ${displayName}`;
 
