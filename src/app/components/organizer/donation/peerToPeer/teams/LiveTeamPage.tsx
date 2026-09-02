@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SimpleGrid, Stack } from '@chakra-ui/react';
 import { CampaignTeamMember, CampaignTeamPage } from 'app/interface/donationInter/campaignTeamDto';
 import LeaderboardLink from '../leaderboard/LeaderboardLink';
+import RecentSupportersPanel from '../page/RecentSupportersPanel';
 import SharePanel from '../page/SharePanel';
 import { useSocialPreview } from '../page/useSocialPreview';
 import ChooseMemberModal from './ChooseMemberModal';
@@ -64,6 +65,11 @@ export const LiveTeamPage = ({
             members={team.members}
             currencySymbol={team.currencySymbol}
             onViewPage={onViewMember}
+          />
+
+          <RecentSupportersPanel
+            supporters={team.recentSupporters}
+            currencySymbol={team.currencySymbol}
           />
         </Stack>
 

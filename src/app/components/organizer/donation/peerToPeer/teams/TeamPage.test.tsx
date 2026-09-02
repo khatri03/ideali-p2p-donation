@@ -7,10 +7,12 @@ import { buildTeamMember, buildTeamPage } from '../peerToPeerTestFactory';
 
 const getCampaignTeamPage = vi.fn();
 const leaveCampaignTeam = vi.fn();
+const joinCampaignTeam = vi.fn();
 
 vi.mock('app/service/organizer/donation/campaignTeamService', () => ({
   getCampaignTeamPage: (...args: unknown[]) => getCampaignTeamPage(...args),
   leaveCampaignTeam: (...args: unknown[]) => leaveCampaignTeam(...args),
+  joinCampaignTeam: (...args: unknown[]) => joinCampaignTeam(...args),
 }));
 
 vi.mock('app/service/organizer/donation/fundraiserConsoleService', () => ({
@@ -43,6 +45,7 @@ const renderTeam = () =>
 beforeEach(() => {
   getCampaignTeamPage.mockReset();
   leaveCampaignTeam.mockReset();
+  joinCampaignTeam.mockReset();
 });
 
 describe('TeamPage', () => {
@@ -94,7 +97,7 @@ describe('TeamPage', () => {
     renderTeam();
 
     expect(await screen.findByText(/campaign has finished/i)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Donate to this team' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Donate to a team member' })).not.toBeInTheDocument();
   });
 
   /** A team is not a payee: every gift belongs to one fundraiser and is counted once. */
@@ -103,7 +106,7 @@ describe('TeamPage', () => {
 
     renderTeam();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Donate to this team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Donate to a team member' }));
 
     expect(await screen.findByText('Choose who to support')).toBeInTheDocument();
     expect(screen.getByText(/counts once towards the team/i)).toBeInTheDocument();
@@ -114,7 +117,7 @@ describe('TeamPage', () => {
 
     renderTeam();
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Donate to this team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Donate to a team member' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Donate to Ahmed Khalid' }));
 
     expect(await screen.findByText('Donate screen')).toBeInTheDocument();
@@ -224,5 +227,70 @@ describe('TeamPage', () => {
 
     expect(await screen.findByText('Team not found.')).toBeInTheDocument();
     expect(screen.queryByText('Browse teams')).not.toBeInTheDocument();
+  });
+
+  /**
+   * A total with nothing behind it reads as a figure somebody typed in. The gifts that make it up are
+   * named the way a fundraiser page names its own, so the team can be believed.
+   */
+  it('Team_GiftsAlreadyGiven_ShowsWhoGaveThemRatherThanATotalAlone', async () => {
+    getCampaignTeamPage.mockResolvedValue(
+      buildTeamPage({
+        recentSupporters: [
+          { donorName: 'Hina R.', amount: 25, givenOnUtc: '2026-03-04T00:00:00Z' },
+          { donorName: 'Anonymous', amount: 40, givenOnUtc: '2026-03-01T00:00:00Z' },
+        ],
+      }),
+    );
+
+    renderTeam();
+
+    expect(await screen.findByText('Recent supporters')).toBeInTheDocument();
+    expect(screen.getByText('Hina R.')).toBeInTheDocument();
+    expect(screen.getByText('Anonymous')).toBeInTheDocument();
+  });
+
+  /** A team nobody has given to yet gets the designed empty state, not a panel with nothing in it. */
+  it('Team_NobodyHasGivenYet_InvitesTheFirstGiftRatherThanShowingAnEmptyPanel', async () => {
+    getCampaignTeamPage.mockResolvedValue(buildTeamPage());
+
+    renderTeam();
+
+    expect(await screen.findByText('No donations yet')).toBeInTheDocument();
+  });
+
+  /**
+   * Leaving takes the reader off the page altogether. Without a word for it the screen simply changes,
+   * which is indistinguishable from a misfire.
+   */
+  it('Leave_Confirmed_SaysWhatHappenedRatherThanJustChangingScreen', async () => {
+    getCampaignTeamPage.mockResolvedValue(buildTeamPage({ viewerRole: 'Member' }));
+    leaveCampaignTeam.mockResolvedValue(undefined);
+
+    renderTeam();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Leave this team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Yes, leave' }));
+
+    expect(await screen.findByText('You have left The Early Risers.')).toBeInTheDocument();
+  });
+
+  /**
+   * Joining rewrites the page under the reader: the offer disappears and they appear in the list. It
+   * says so, so the change reads as the outcome of what they pressed.
+   */
+  it('Join_Confirmed_SaysTheyAreNowFundraisingWithTheTeam', async () => {
+    getCampaignTeamPage.mockResolvedValue(buildTeamPage({ isFundraiser: true, myTeamSlug: null }));
+    joinCampaignTeam.mockResolvedValue(buildTeamPage({ viewerRole: 'Member' }));
+
+    renderTeam();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Join this team' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Yes, join' }));
+
+    expect(joinCampaignTeam).toHaveBeenCalledWith('winter-appeal', 'the-early-risers');
+    expect(
+      await screen.findByText('You are now fundraising with The Early Risers.'),
+    ).toBeInTheDocument();
   });
 });

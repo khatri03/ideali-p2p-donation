@@ -3,6 +3,8 @@
  * screen never has to work it out from a role claim. Hiding a control is presentation only: every
  * captain action is authorised again on the way in.
  */
+import { FundraiserPageSupporter } from './fundraiserPageDto';
+
 export type CampaignTeamViewerRole = 'Visitor' | 'Member' | 'Captain';
 
 /** What a fundraiser may set on a team, creating it or editing it later. */
@@ -75,6 +77,9 @@ export interface CampaignTeamPage {
   /** The team the caller is already in, so the page never offers a second join. Null when in none. */
   myTeamSlug: string | null;
   members: CampaignTeamMember[];
+  /** The team's most recent gifts, across every member page, newest first. Same shape and same
+   * anonymity rules as the ones a fundraiser page publishes. */
+  recentSupporters: FundraiserPageSupporter[];
 }
 
 export interface CampaignTeamBrowseResponse {
