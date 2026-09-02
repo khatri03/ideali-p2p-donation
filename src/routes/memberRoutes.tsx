@@ -46,6 +46,13 @@ const MemberNotificationsDetails = lazy(
   () => import('../app/components/member/notifications/NotificationsDetails'),
 );
 
+/**
+ * A route with no name is registered and reachable but left out of the sidebar. Used for screens that
+ * are opened from somewhere else - a bell, a card, a link in an email - and for screens withdrawn from
+ * the menu while the decision about their future is still open.
+ */
+const HIDDEN_FROM_SIDEBAR = '';
+
 const isMemberRole = localStorage.getItem('currentRole') === 'Member';
 const isDonorRole  = localStorage.getItem('currentRole') === 'Donor';
 
@@ -59,8 +66,11 @@ const hasDonationModule = allowedModules.includes('donation');
 
 const allMemberRoutes = [
   {
-    // Shared dashboard — adapts its own content to the allowed modules.
-    name: 'Dashboard',
+    // Shared dashboard — adapts its own content to the allowed modules. Withdrawn from the sidebar
+    // pending a decision on what a supporter's landing screen should be; the route stays because it is
+    // where sign-in lands and where several in-app links point.
+    name: HIDDEN_FROM_SIDEBAR,
+    navbarTitle: 'Dashboard',
     layout: '/member',
     path: '/dashboard',
     memberOnly: false,
@@ -90,7 +100,7 @@ const allMemberRoutes = [
     component: <MemberDocumentsPage />,
   },
   {
-    name: '',
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Documents',
     layout: '/member',
     path: '/documents/:categoryId',
@@ -100,7 +110,8 @@ const allMemberRoutes = [
     component: <MemberDocumentCategoryPage />,
   },
   {
-    name: 'My Donations',
+    // Withdrawn from the sidebar pending a decision on the screen; the address still resolves.
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Donations',
     layout: '/member',
     path: '/my-donations',
@@ -110,7 +121,8 @@ const allMemberRoutes = [
     component: <MyDonationsPage />,
   },
   {
-    name: 'Discover',
+    // Withdrawn from the sidebar pending a decision on the screen; the dashboard still links to it.
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Discover',
     layout: '/member',
     path: '/discover',
@@ -123,7 +135,7 @@ const allMemberRoutes = [
     // The claim decides whether the item is named, and an unnamed route is left out of the sidebar.
     // The route itself is always registered, so somebody whose token predates their first page can
     // still open the address - the server decides what they may see, not this list.
-    name: isFundraising ? 'My Fundraising' : '',
+    name: isFundraising ? 'My Fundraising' : HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'My Fundraising',
     layout: '/member',
     path: '/my-fundraising',
@@ -132,7 +144,7 @@ const allMemberRoutes = [
     component: <MyFundraisingScreen />,
   },
   {
-    name: '',
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Edit My Fundraising Page',
     layout: '/member',
     path: '/my-fundraising/:fundraiserUniqueId',
@@ -150,7 +162,7 @@ const allMemberRoutes = [
   },
   {
     // Hidden from sidebar nav (empty name) — reachable via the notification bell only.
-    name: '',
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Notifications',
     layout: '/member',
     path: '/notifications/list',
@@ -159,7 +171,7 @@ const allMemberRoutes = [
     component: <MemberNotificationsList />,
   },
   {
-    name: '',
+    name: HIDDEN_FROM_SIDEBAR,
     navbarTitle: 'Notification Detail',
     layout: '/member',
     path: '/notifications/view/:uniqueId',
@@ -179,7 +191,7 @@ export const memberRoutes = (allowedModules.length > 0
       return true;
     })
   : isMemberRole
-  ? allMemberRoutes.filter((r) => r.name === 'Dashboard' || r.memberOnly)
+  ? allMemberRoutes.filter((r) => r.path === '/dashboard' || r.memberOnly)
   : isDonorRole
   ? allMemberRoutes.filter((r) => !(r as any).memberExclusive)
   : allMemberRoutes);
