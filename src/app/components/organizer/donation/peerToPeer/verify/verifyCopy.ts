@@ -4,6 +4,9 @@ export const VERIFY_WORKING = 'One moment while we confirm this link.';
 export const VERIFY_DONE_HEADING = 'Email confirmed';
 export const VERIFY_NEXT_STEP = 'Sign in and set up my page';
 
+/** Shown instead when the account was created to accept an invitation, which is where they go back to. */
+export const VERIFY_NEXT_STEP_INVITED = 'Sign in and accept my invitation';
+
 export const VERIFY_FAILED_HEADING = 'This link did not work';
 
 /** Says nothing about which of expired, spent or unknown it was - that would identify the address. */

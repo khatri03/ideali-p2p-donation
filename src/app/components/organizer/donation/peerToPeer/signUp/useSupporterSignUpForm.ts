@@ -67,9 +67,15 @@ const emailError = (value: string): string | undefined => {
 /**
  * Holds what a supporter types and the rules that reject it. The same rules run on the server; these
  * exist so a field explains itself before a round trip, never as the only check.
+ *
+ * `fixedEmailAddress` seeds the address for someone who arrived by invitation, whose account is only
+ * usable under the address the invitation was sent to.
  */
-export function useSupporterSignUpForm(): SupporterSignUpFormState {
-  const [values, setValues] = useState<SupporterSignUpValues>(EMPTY_VALUES);
+export function useSupporterSignUpForm(fixedEmailAddress = ''): SupporterSignUpFormState {
+  const [values, setValues] = useState<SupporterSignUpValues>({
+    ...EMPTY_VALUES,
+    emailAddress: fixedEmailAddress,
+  });
   const [errors, setErrors] = useState<SupporterSignUpErrors>({});
 
   const setValue = (field: keyof SupporterSignUpValues, value: string) =>

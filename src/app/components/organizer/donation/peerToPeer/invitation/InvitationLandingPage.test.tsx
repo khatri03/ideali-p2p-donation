@@ -7,10 +7,37 @@ import { InvitationLanding } from 'app/interface/donationInter/fundraiserInvitat
 
 const openInvitation = vi.fn();
 const acceptInvitation = vi.fn();
+const signUpAsSupporter = vi.fn();
+const resendConfirmationEmail = vi.fn();
+const getCampaignDonateDetails = vi.fn();
+const post = vi.fn();
+const completeLogin = vi.fn();
+const completeTwoFactorLogin = vi.fn();
 
 vi.mock('app/service/organizer/donation/fundraiserInvitationService', () => ({
   openInvitation: (...args: unknown[]) => openInvitation(...args),
   acceptInvitation: (...args: unknown[]) => acceptInvitation(...args),
+}));
+
+vi.mock('app/service/httpClient/HttpClient', () => ({
+  default: { post: (...args: unknown[]) => post(...args) },
+}));
+
+vi.mock('app/components/auth/completeLogin', () => ({
+  completeLogin: (...args: unknown[]) => completeLogin(...args),
+  completeTwoFactorLogin: (...args: unknown[]) => completeTwoFactorLogin(...args),
+}));
+
+vi.mock('app/service/organizer/donation/supporterSignUpService', () => ({
+  signUpAsSupporter: (...args: unknown[]) => signUpAsSupporter(...args),
+}));
+
+vi.mock('app/service/organizer/donation/emailVerificationService', () => ({
+  resendConfirmationEmail: (...args: unknown[]) => resendConfirmationEmail(...args),
+}));
+
+vi.mock('app/service/organizer/donation/donationService', () => ({
+  default: { getCampaignDonateDetails: (...args: unknown[]) => getCampaignDonateDetails(...args) },
 }));
 
 const { default: InvitationLandingScreen } = await import('./InvitationLandingPage');
@@ -50,6 +77,13 @@ const renderPage = (token: string | null = TOKEN) =>
 beforeEach(() => {
   openInvitation.mockReset();
   acceptInvitation.mockReset();
+  signUpAsSupporter.mockReset();
+  resendConfirmationEmail.mockReset();
+  getCampaignDonateDetails.mockReset();
+  getCampaignDonateDetails.mockResolvedValue({ name: 'Winter appeal' });
+  post.mockReset();
+  completeLogin.mockReset();
+  completeTwoFactorLogin.mockReset();
   localStorage.clear();
 });
 
@@ -98,26 +132,96 @@ describe('InvitationLandingPage', () => {
     expect(screen.queryByLabelText('The name on your page')).not.toBeInTheDocument();
   });
 
-  it('Landing_NotSignedIn_OffersSignInRatherThanAFormThatWouldBeRefused', async () => {
+  /**
+   * Somebody the charity invited by email has no account here by definition. Offering only sign-in
+   * leaves them to work out for themselves that they must create one first, on a different screen.
+   */
+  it('Landing_NotSignedIn_OffersCreatingAnAccountAsWellAsSigningIn', async () => {
     openInvitation.mockResolvedValue(landing);
 
     renderPage();
 
-    expect(await screen.findByRole('link', { name: 'Sign in to accept' })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Create account' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Set up my page' })).not.toBeInTheDocument();
   });
 
-  it('Landing_SignInLink_ComesBackToThisInvitationRatherThanADashboard', async () => {
+  /**
+   * The account has to be created under the invited address: accepting afterwards matches the
+   * signed-in address against the invited one, so any other address builds an account that can never
+   * accept this invitation.
+   */
+  it('Landing_CreatingAnAccount_FixesTheAddressToTheInvitedOne', async () => {
     openInvitation.mockResolvedValue(landing);
 
     renderPage();
 
-    const link = await screen.findByRole('link', { name: 'Sign in to accept' });
+    await userEvent.click(await screen.findByRole('tab', { name: 'Create account' }));
 
-    expect(link.getAttribute('href')).toContain('returnPath=');
-    expect(decodeURIComponent(link.getAttribute('href') ?? '')).toContain(
-      `/donation/campaign/${CAMPAIGN_UNIQUE_ID}/peer-to-peer/invitation?token=${TOKEN}`,
+    const emailField = await screen.findByLabelText(/Email address/i);
+
+    expect(emailField).toHaveValue(landing.emailAddress);
+    expect(emailField).toHaveAttribute('readonly');
+  });
+
+  /**
+   * The invitation travels with the sign-up so the confirmation email leads back here. Without it the
+   * person lands on the open join screen, builds a page there, and the invitation stays recorded as
+   * opened and never accepted.
+   */
+  it('Landing_AccountCreated_SendsTheInvitationCodeWithIt', async () => {
+    openInvitation.mockResolvedValue(landing);
+    signUpAsSupporter.mockResolvedValue('Check your inbox.');
+
+    renderPage();
+
+    await userEvent.click(await screen.findByRole('tab', { name: 'Create account' }));
+    await userEvent.type(await screen.findByLabelText(/First name/i), 'Sara');
+    await userEvent.type(screen.getByLabelText(/Last name/i), 'Ahmed');
+    await userEvent.type(screen.getByLabelText(/^Password/i), 'Fundrais3!');
+    await userEvent.type(screen.getByLabelText(/Confirm password/i), 'Fundrais3!');
+    await userEvent.click(screen.getByRole('button', { name: 'Create my account' }));
+
+    await waitFor(() =>
+      expect(signUpAsSupporter).toHaveBeenCalledWith(
+        CAMPAIGN_UNIQUE_ID,
+        expect.objectContaining({
+          emailAddress: landing.emailAddress,
+          invitationToken: TOKEN,
+        }),
+      ),
     );
+  });
+
+  /**
+   * Someone signed in under another address cannot accept, and the server will refuse them. Saying so
+   * before they fill the form in is the difference between a correction and a wasted attempt.
+   */
+  it('Landing_SignedInAsSomebodyElse_SaysSoInsteadOfShowingTheForm', async () => {
+    localStorage.setItem('AuthToken', 'signed-in');
+    localStorage.setItem('userEmail', 'someone.else@example.test');
+    openInvitation.mockResolvedValue(landing);
+
+    renderPage();
+
+    expect(await screen.findByText(/Signed in as somebody else/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Set up my page' })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Sign in with that address' }),
+    ).toBeInTheDocument();
+  });
+
+  /**
+   * A session whose address the browser never stored is not evidence of a mismatch. The server still
+   * refuses a wrong account; guessing here would block the right person from their own invitation.
+   */
+  it('Landing_SignedInWithNoStoredAddress_StillShowsTheForm', async () => {
+    localStorage.setItem('AuthToken', 'signed-in');
+    openInvitation.mockResolvedValue(landing);
+
+    renderPage();
+
+    expect(await screen.findByRole('button', { name: 'Set up my page' })).toBeInTheDocument();
   });
 
   it('Accept_NoDisplayName_IsRefusedBeforeARequestIsSpent', async () => {

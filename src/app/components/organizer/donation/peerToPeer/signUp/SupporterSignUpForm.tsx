@@ -9,9 +9,16 @@ interface SupporterSignUpFormProps {
   form: SupporterSignUpFormState;
   isSubmitting: boolean;
   onSubmit: (request: SupporterSignUpRequest) => void;
+  /** True when an invitation decided the address, which the fields then show without letting it be typed over. */
+  isEmailFixed?: boolean;
 }
 
-export const SupporterSignUpForm = ({ form, isSubmitting, onSubmit }: SupporterSignUpFormProps) => {
+export const SupporterSignUpForm = ({
+  form,
+  isSubmitting,
+  onSubmit,
+  isEmailFixed = false,
+}: SupporterSignUpFormProps) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -23,7 +30,7 @@ export const SupporterSignUpForm = ({ form, isSubmitting, onSubmit }: SupporterS
   return (
     <form onSubmit={handleSubmit} noValidate>
       <Stack gap={6}>
-        <SupporterSignUpFields form={form} isDisabled={isSubmitting} />
+        <SupporterSignUpFields form={form} isDisabled={isSubmitting} isEmailFixed={isEmailFixed} />
         <Button
           type="submit"
           colorScheme="brand"

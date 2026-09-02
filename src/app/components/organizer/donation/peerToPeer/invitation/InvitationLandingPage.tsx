@@ -26,13 +26,14 @@ import {
 } from 'app/service/organizer/donation/fundraiserInvitationService';
 import { extractApiError } from 'app/utils/apiError';
 import { fundraiserInvitationPath } from 'app/utils/returnPath';
-import { signInRouteFor } from 'app/utils/session';
+import { signOutAndReturnTo, storedEmailAddress } from 'app/utils/session';
 import {
   ACCEPTED_AWAITING_BODY,
   ACCEPTED_AWAITING_HEADING,
   ACCEPTED_HEADING,
   ACCEPTING_LABEL,
   ACCEPT_LABEL,
+  ACCESS_PROMPT,
   DISPLAY_NAME_LABEL,
   DISPLAY_NAME_PLACEHOLDER,
   DISPLAY_NAME_REQUIRED,
@@ -41,14 +42,33 @@ import {
   LANDING_HEADING,
   LINK_MISSING,
   LINK_REFUSED,
-  SIGN_IN_PROMPT,
   STORY_LABEL,
   STORY_PLACEHOLDER,
+  SWITCH_ACCOUNT_ACTION,
   VIEW_PAGE_LABEL,
+  WRONG_ACCOUNT_HEADING,
+  signedInAsWrongAccount,
 } from './invitationLandingCopy';
+import FundraiseAccessPanel from '../access/FundraiseAccessPanel';
 import PublicPageShell from '../page/PublicPageShell';
 
 const isSignedIn = () => Boolean(localStorage.getItem('AuthToken'));
+
+/**
+ * Whether the session belongs to somebody other than the person invited.
+ *
+ * An unknown signed-in address is not treated as a mismatch. The server is what refuses an acceptance
+ * from the wrong account; this only decides whether to say so before the person fills the form in.
+ */
+const isSomebodyElsesInvitation = (invitedAddress: string): boolean => {
+  const signedInAddress = storedEmailAddress();
+
+  return (
+    Boolean(signedInAddress) &&
+    Boolean(invitedAddress) &&
+    signedInAddress !== invitedAddress.trim().toLowerCase()
+  );
+};
 
 /**
  * Where an invitation link lands.
@@ -57,6 +77,10 @@ const isSignedIn = () => Boolean(localStorage.getItem('AuthToken'));
  * Accepting is not: it creates a fundraising page, so it needs an account, and the server checks that
  * account is the one the invitation was addressed to. A forwarded email gets somebody as far as this
  * screen and no further.
+ *
+ * Somebody the charity invited by email has no account here by definition, so this screen offers both
+ * ways in rather than a sign-in form alone, and fixes the new account's address to the invited one -
+ * an account under any other address could never accept the invitation that sent them here.
  */
 export const InvitationLandingPage = () => {
   const { campaignUniqueId = '' } = useParams<{ campaignUniqueId: string }>();
@@ -206,16 +230,44 @@ export const InvitationLandingPage = () => {
             </Stack>
 
             {!isSignedIn() ? (
-              <Button
-                as={RouterLink}
-                to={signInRouteFor(fundraiserInvitationPath(campaignUniqueId, token))}
-                colorScheme="brand"
-                minH="44px"
-                w={{ base: 'full', md: 'auto' }}
-                sx={{ cursor: 'pointer' }}
-              >
-                {SIGN_IN_PROMPT}
-              </Button>
+              <Stack gap={4} minW={0}>
+                <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" _dark={{ color: 'gray.300' }}>
+                  {ACCESS_PROMPT}
+                </Text>
+                <FundraiseAccessPanel
+                  campaignUniqueId={campaignUniqueId}
+                  returnPath={fundraiserInvitationPath(campaignUniqueId, token)}
+                  invitedEmailAddress={landing.emailAddress}
+                  invitationToken={token}
+                  hasCampaignBanner={false}
+                />
+              </Stack>
+            ) : isSomebodyElsesInvitation(landing.emailAddress) ? (
+              <Stack gap={4} minW={0}>
+                <Alert status="warning" borderRadius="12px" alignItems="flex-start" role="alert">
+                  <AlertIcon />
+                  <Box>
+                    <Text fontWeight="700" fontSize="sm">
+                      {WRONG_ACCOUNT_HEADING}
+                    </Text>
+                    <Text fontSize="sm" mt={1}>
+                      {signedInAsWrongAccount(landing.emailAddress)}
+                    </Text>
+                  </Box>
+                </Alert>
+                <Button
+                  colorScheme="brand"
+                  minH="44px"
+                  w={{ base: 'full', md: 'auto' }}
+                  alignSelf={{ base: 'stretch', md: 'flex-start' }}
+                  onClick={() =>
+                    signOutAndReturnTo(fundraiserInvitationPath(campaignUniqueId, token))
+                  }
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {SWITCH_ACCOUNT_ACTION}
+                </Button>
+              </Stack>
             ) : (
               <Stack gap={4}>
                 <FormControl isInvalid={nameError !== null} isRequired>

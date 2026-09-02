@@ -3,13 +3,14 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Alert, AlertIcon, Box, Button, Heading, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { confirmEmailAddress } from 'app/service/organizer/donation/emailVerificationService';
 import { extractApiError } from 'app/utils/apiError';
-import { fundraiserJoinPath } from 'app/utils/returnPath';
+import { fundraiserInvitationPath, fundraiserJoinPath } from 'app/utils/returnPath';
 import {
   VERIFY_DONE_HEADING,
   VERIFY_FAILED_HEADING,
   VERIFY_HEADING,
   VERIFY_LINK_MISSING,
   VERIFY_NEXT_STEP,
+  VERIFY_NEXT_STEP_INVITED,
   VERIFY_REFUSED,
   VERIFY_WORKING,
 } from './verifyCopy';
@@ -28,6 +29,9 @@ export const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
   const token = searchParams.get('token');
+  // Set when the account was created to accept an invitation. Without it a confirmed supporter lands
+  // on the open join screen, builds a page there, and the invitation stays recorded as never accepted.
+  const invitationToken = searchParams.get('invitation') ?? '';
   const [isVerifying, setIsVerifying] = useState(true);
   const [campaignName, setCampaignName] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
@@ -65,7 +69,9 @@ export const VerifyEmailPage = () => {
     };
   }, [campaignUniqueId, token]);
 
-  const joinPath = fundraiserJoinPath(campaignUniqueId ?? '');
+  const nextPath = invitationToken
+    ? fundraiserInvitationPath(campaignUniqueId ?? '', invitationToken)
+    : fundraiserJoinPath(campaignUniqueId ?? '');
 
   return (
     <PublicPageShell maxWidth="640px">
@@ -107,10 +113,10 @@ export const VerifyEmailPage = () => {
               minH="44px"
               w={{ base: 'full', md: 'auto' }}
               alignSelf={{ base: 'stretch', md: 'flex-start' }}
-              onClick={() => navigate(joinPath)}
+              onClick={() => navigate(nextPath)}
               sx={{ cursor: 'pointer' }}
             >
-              {VERIFY_NEXT_STEP}
+              {invitationToken ? VERIFY_NEXT_STEP_INVITED : VERIFY_NEXT_STEP}
             </Button>
           </Stack>
         )}

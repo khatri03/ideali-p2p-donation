@@ -180,7 +180,11 @@ describe('FundraiseAccessModal', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Send it again' }));
 
     await waitFor(() =>
-      expect(resendConfirmationEmail).toHaveBeenCalledWith(CAMPAIGN_ID, 'sarah@example.com'),
+      expect(resendConfirmationEmail).toHaveBeenCalledWith(
+        CAMPAIGN_ID,
+        'sarah@example.com',
+        undefined,
+      ),
     );
     expect(
       await screen.findByText('If that address needs confirming, we have sent a new link to it.'),

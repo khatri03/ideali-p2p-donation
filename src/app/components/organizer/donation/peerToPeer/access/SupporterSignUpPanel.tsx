@@ -21,6 +21,13 @@ import {
 interface SupporterSignUpPanelProps {
   campaignUniqueId: string;
   onSwitchToSignIn: () => void;
+  /**
+   * The address an invitation was sent to. The account has to be created under it, because accepting
+   * the invitation afterwards matches the signed-in address against the invited one.
+   */
+  invitedEmailAddress?: string;
+  /** The invitation being accepted, so the confirmation link leads back to it rather than to join. */
+  invitationToken?: string;
 }
 
 /**
@@ -30,8 +37,10 @@ interface SupporterSignUpPanelProps {
 export const SupporterSignUpPanel = ({
   campaignUniqueId,
   onSwitchToSignIn,
+  invitedEmailAddress,
+  invitationToken,
 }: SupporterSignUpPanelProps) => {
-  const form = useSupporterSignUpForm();
+  const form = useSupporterSignUpForm(invitedEmailAddress ?? '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [completedMessage, setCompletedMessage] = useState<string | null>(null);
@@ -44,7 +53,10 @@ export const SupporterSignUpPanel = ({
     setSubmitError(null);
 
     try {
-      const message = await signUpAsSupporter(campaignUniqueId, request);
+      const message = await signUpAsSupporter(campaignUniqueId, {
+        ...request,
+        invitationToken,
+      });
       setSignedUpAddress(request.emailAddress);
       setCompletedMessage(message);
     } catch (error) {
@@ -59,7 +71,9 @@ export const SupporterSignUpPanel = ({
     setResendMessage(null);
 
     try {
-      setResendMessage(await resendConfirmationEmail(campaignUniqueId, signedUpAddress));
+      setResendMessage(
+        await resendConfirmationEmail(campaignUniqueId, signedUpAddress, invitationToken),
+      );
     } catch (error) {
       setResendMessage(extractApiError(error, RESEND_FAILED));
     } finally {
@@ -127,7 +141,12 @@ export const SupporterSignUpPanel = ({
         </Alert>
       )}
 
-      <SupporterSignUpForm form={form} isSubmitting={isSubmitting} onSubmit={handleSubmit} />
+      <SupporterSignUpForm
+        form={form}
+        isSubmitting={isSubmitting}
+        isEmailFixed={Boolean(invitedEmailAddress)}
+        onSubmit={handleSubmit}
+      />
 
       <PanelSwitchPrompt
         prompt={TO_SIGN_IN_PROMPT}

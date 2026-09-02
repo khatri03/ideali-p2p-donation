@@ -36,10 +36,11 @@ export const confirmEmailAddress = async (
 export const resendConfirmationEmail = async (
   campaignUniqueId: string,
   emailAddress: string,
+  invitationToken?: string,
 ): Promise<string> => {
   const { data } = await HttpClient.post<EmailVerificationResponse>(
     peerToPeerUrl(campaignUniqueId, 'resend-verification'),
-    { emailAddress },
+    { emailAddress, invitationToken },
   );
 
   if (!data?.success) {

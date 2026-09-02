@@ -50,6 +50,22 @@ describe('SignIn account creation prompt', () => {
     );
   });
 
+  /**
+   * The invitation screen is where an invited person creates their account, because only it can fix the
+   * address to the invited one. Dropping them on the open join screen loses the invitation entirely.
+   */
+  it('SignIn_ReachedFromAnInvitation_SendsTheAccountPromptBackToThatInvitation', () => {
+    const invitationPath =
+      `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/invitation?token=live-code`;
+
+    renderSignIn(`?returnPath=${encodeURIComponent(invitationPath)}`);
+
+    expect(screen.getByRole('link', { name: /Create a supporter account/i })).toHaveAttribute(
+      'href',
+      invitationPath,
+    );
+  });
+
   it('SignIn_ReachedDirectly_StillOffersTheOrganiserSignUpForm', () => {
     renderSignIn();
 

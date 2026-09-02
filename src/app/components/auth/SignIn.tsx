@@ -489,7 +489,7 @@ function SignIn() {
               Don't have an account?{' '}
               {returnCampaignUniqueId ? (
                 <Link
-                  to={fundraiserJoinPath(returnCampaignUniqueId)}
+                  to={returnPath ?? fundraiserJoinPath(returnCampaignUniqueId)}
                   style={{ color: '#805AD5', fontWeight: '600' }}
                 >
                   Create a supporter account

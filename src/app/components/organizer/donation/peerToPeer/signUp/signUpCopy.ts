@@ -10,6 +10,10 @@ export const EMAIL_LABEL = 'Email address';
 export const PASSWORD_LABEL = 'Password';
 export const CONFIRM_PASSWORD_LABEL = 'Confirm password';
 
+/** Shown under the address field when an invitation decided the address rather than the person. */
+export const EMAIL_FIXED_BY_INVITATION =
+  'Your invitation was sent to this address, so your account has to use it.';
+
 export const NAME_MAX_LENGTH = 24;
 export const EMAIL_MAX_LENGTH = 80;
 

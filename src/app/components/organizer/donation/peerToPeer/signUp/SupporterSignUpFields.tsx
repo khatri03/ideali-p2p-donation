@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import {
   CONFIRM_PASSWORD_LABEL,
+  EMAIL_FIXED_BY_INVITATION,
   EMAIL_LABEL,
   EMAIL_MAX_LENGTH,
   FIRST_NAME_LABEL,
@@ -22,13 +23,22 @@ import { SupporterSignUpFormState } from './useSupporterSignUpForm';
 interface SupporterSignUpFieldsProps {
   form: SupporterSignUpFormState;
   isDisabled: boolean;
+  /**
+   * True when an invitation decided the address. The field still shows it, because a person should
+   * see which address they are creating an account under, but it cannot be typed over.
+   */
+  isEmailFixed?: boolean;
 }
 
 /**
  * What a supporter types to create an account. Presentational only: every rule that decides whether
  * an answer is acceptable lives in the form hook, and the server checks the same rules again.
  */
-export const SupporterSignUpFields = ({ form, isDisabled }: SupporterSignUpFieldsProps) => {
+export const SupporterSignUpFields = ({
+  form,
+  isDisabled,
+  isEmailFixed = false,
+}: SupporterSignUpFieldsProps) => {
   const cursor = isDisabled ? 'not-allowed' : 'text';
 
   return (
@@ -81,9 +91,13 @@ export const SupporterSignUpFields = ({ form, isDisabled }: SupporterSignUpField
           maxLength={EMAIL_MAX_LENGTH}
           onChange={(event) => form.setValue('emailAddress', event.target.value)}
           isDisabled={isDisabled}
+          isReadOnly={isEmailFixed}
           minH="44px"
-          sx={{ cursor }}
+          sx={{ cursor: isEmailFixed ? 'not-allowed' : cursor }}
         />
+        {isEmailFixed && !form.errors.emailAddress && (
+          <FormHelperText>{EMAIL_FIXED_BY_INVITATION}</FormHelperText>
+        )}
         <FormErrorMessage>{form.errors.emailAddress}</FormErrorMessage>
       </FormControl>
 

@@ -33,3 +33,15 @@ export function storedDisplayName(): string {
 
   return stored === 'undefined' || stored === 'null' ? '' : stored;
 }
+
+/**
+ * The address the current session signs in under, lower-cased, or an empty string when there is none.
+ *
+ * Only ever used to tell somebody they are on the wrong account. It is not a permission check: the
+ * server decides what an account may do, and this value is whatever the browser was last given.
+ */
+export function storedEmailAddress(): string {
+  const stored = localStorage.getItem('userEmail')?.trim() ?? '';
+
+  return stored === 'undefined' || stored === 'null' ? '' : stored.toLowerCase();
+}

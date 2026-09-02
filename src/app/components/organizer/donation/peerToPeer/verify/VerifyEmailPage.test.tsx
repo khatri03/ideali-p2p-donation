@@ -15,6 +15,7 @@ const { default: VerifyEmailPage } = await import('./VerifyEmailPage');
 const CAMPAIGN_ID = '3f2b19c4-0f6e-4a55-9a1d-52f0b7c9e881';
 const VERIFY_PATH = `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/verify-email`;
 const JOIN_PATH = `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/join`;
+const INVITATION_PATH = `/donation/campaign/${CAMPAIGN_ID}/peer-to-peer/invitation`;
 
 const WhereAmI = () => <p>{useLocation().pathname}</p>;
 
@@ -45,6 +46,26 @@ describe('VerifyEmailPage', () => {
 
     expect(await screen.findByText('Email confirmed')).toBeInTheDocument();
     expect(confirmEmailAddress).toHaveBeenCalledWith(CAMPAIGN_ID, 'kA7-token_value');
+  });
+
+  /**
+   * An account created to accept an invitation has to come back to that invitation. Sending the person
+   * to the open join screen builds their page by another route and leaves the invitation recorded as
+   * opened and never accepted.
+   */
+  it('Verify_ConfirmedFromAnInvitation_LeadsBackToThatInvitation', async () => {
+    confirmEmailAddress.mockResolvedValue({
+      campaignUniqueId: CAMPAIGN_ID,
+      campaignName: 'Winter appeal',
+    });
+
+    renderPage('?token=kA7-token_value&invitation=live-code');
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Sign in and accept my invitation' }),
+    );
+
+    expect(await screen.findByText(INVITATION_PATH)).toBeInTheDocument();
   });
 
   it('Verify_Confirmed_NamesTheCampaignAndLeadsOnToTheFundraisingPage', async () => {

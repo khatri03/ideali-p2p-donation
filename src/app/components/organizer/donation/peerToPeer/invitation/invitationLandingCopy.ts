@@ -4,9 +4,12 @@ export const LINK_MISSING =
   'This link is incomplete. Open the invitation from the email you were sent.';
 export const LINK_REFUSED =
   'This invitation is no longer valid. Ask the charity to send you a new one.';
-export const SIGN_IN_PROMPT = 'Sign in to accept';
+export const ACCESS_PROMPT =
+  'Sign in to accept this invitation, or create an account if you do not have one yet.';
+export const WRONG_ACCOUNT_HEADING = 'Signed in as somebody else';
 export const signedInAsWrongAccount = (invitedAddress: string) =>
   `This invitation was sent to ${invitedAddress}. Sign in with that address to accept it.`;
+export const SWITCH_ACCOUNT_ACTION = 'Sign in with that address';
 
 export const DISPLAY_NAME_LABEL = 'The name on your page';
 export const DISPLAY_NAME_PLACEHOLDER = 'How supporters will see you';

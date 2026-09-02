@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Modal,
   ModalBody,
@@ -6,107 +5,42 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
 } from '@chakra-ui/react';
-import { fundraiserJoinPath } from 'app/utils/returnPath';
-import CampaignContextBanner from '../join/CampaignContextBanner';
-import {
-  ACCESS_HEADING,
-  BANNER_SIGN_IN_ACTION,
-  BANNER_SIGN_IN_NOTE,
-  BANNER_SIGN_UP_ACTION,
-  BANNER_SIGN_UP_NOTE,
-  SIGN_IN_TAB,
-  SIGN_UP_TAB,
-} from './accessCopy';
-import SupporterSignInPanel from './SupporterSignInPanel';
-import SupporterSignUpPanel from './SupporterSignUpPanel';
-import { useSupporterSignIn } from './useSupporterSignIn';
+import { ACCESS_HEADING } from './accessCopy';
+import FundraiseAccessPanel, {
+  FundraiseAccessPanelProps,
+  SIGN_IN_TAB_INDEX,
+} from './FundraiseAccessPanel';
 
-const SIGN_IN_TAB_INDEX = 0;
-const SIGN_UP_TAB_INDEX = 1;
-
-interface FundraiseAccessModalProps {
-  campaignUniqueId: string;
+interface FundraiseAccessModalProps extends FundraiseAccessPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Which tab opens first. Someone who has just confirmed an address arrives ready to sign in. */
-  initialTabIndex?: number;
 }
 
 /**
  * What a visitor sees when they ask to fundraise for a campaign without a session.
  *
- * Both ways in are offered side by side rather than as two screens, because a person who does not
- * remember whether they already have an account should not have to guess before they can start.
- * Signing in returns them to the fundraising page they asked for; creating an account does not sign
- * them in, because the address is not proven until the emailed link is followed.
+ * A dialog is the right shape where the person interrupted something to get here — the join screen
+ * sits behind it and is what they return to. Screens that have their own reason to stay visible use
+ * {@link FundraiseAccessPanel} directly instead.
  */
 export const FundraiseAccessModal = ({
-  campaignUniqueId,
   isOpen,
   onClose,
   initialTabIndex = SIGN_IN_TAB_INDEX,
-}: FundraiseAccessModalProps) => {
-  const signIn = useSupporterSignIn(fundraiserJoinPath(campaignUniqueId));
-  const [openTabIndex, setOpenTabIndex] = useState(initialTabIndex);
-  const isSigningIn = openTabIndex === SIGN_IN_TAB_INDEX;
+  ...panel
+}: FundraiseAccessModalProps) => (
+  <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'full', md: 'lg' }} isCentered>
+    <ModalOverlay />
+    <ModalContent borderRadius={{ base: 0, md: '16px' }}>
+      <ModalHeader fontSize={{ base: 'lg', md: 'xl' }}>{ACCESS_HEADING}</ModalHeader>
+      <ModalCloseButton minH="44px" minW="44px" sx={{ cursor: 'pointer' }} />
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'full', md: 'lg' }} isCentered>
-      <ModalOverlay />
-      <ModalContent borderRadius={{ base: 0, md: '16px' }}>
-        <ModalHeader fontSize={{ base: 'lg', md: 'xl' }}>{ACCESS_HEADING}</ModalHeader>
-        <ModalCloseButton minH="44px" minW="44px" sx={{ cursor: 'pointer' }} />
-
-        <ModalBody pb={6}>
-          <CampaignContextBanner
-            campaignUniqueId={campaignUniqueId}
-            action={isSigningIn ? BANNER_SIGN_IN_ACTION : BANNER_SIGN_UP_ACTION}
-            afterwardsNote={isSigningIn ? BANNER_SIGN_IN_NOTE : BANNER_SIGN_UP_NOTE}
-          />
-
-          {/* Only the open tab is mounted. Rendering both would put two email fields in the page at
-              once, which reads as two separate forms to anyone using a screen reader. */}
-          <Tabs
-            colorScheme="brand"
-            index={openTabIndex}
-            onChange={setOpenTabIndex}
-            isFitted
-            isLazy
-          >
-            <TabList mb={5}>
-              <Tab minH="44px" sx={{ cursor: 'pointer' }}>
-                {SIGN_IN_TAB}
-              </Tab>
-              <Tab minH="44px" sx={{ cursor: 'pointer' }}>
-                {SIGN_UP_TAB}
-              </Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel px={0}>
-                <SupporterSignInPanel
-                  signIn={signIn}
-                  onSwitchToSignUp={() => setOpenTabIndex(SIGN_UP_TAB_INDEX)}
-                />
-              </TabPanel>
-              <TabPanel px={0}>
-                <SupporterSignUpPanel
-                  campaignUniqueId={campaignUniqueId}
-                  onSwitchToSignIn={() => setOpenTabIndex(SIGN_IN_TAB_INDEX)}
-                />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-};
+      <ModalBody pb={6}>
+        <FundraiseAccessPanel {...panel} initialTabIndex={initialTabIndex} />
+      </ModalBody>
+    </ModalContent>
+  </Modal>
+);
 
 export default FundraiseAccessModal;
