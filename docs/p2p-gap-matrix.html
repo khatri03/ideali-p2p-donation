@@ -1,0 +1,992 @@
+<title>P2P Gap Matrix — ideali.io</title>
+<meta name="description" content="Capability-by-capability comparison of what the P2P fundraising market offers, what ideali.io has today, and what must be built.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" crossorigin="anonymous">
+
+<style>
+  :root{
+    --ink:#0b1c5c;
+    --brand:#1b4dff;
+    --good:#0f7b53;   --good-bg:#e7f6ef;
+    --warn:#8a5a00;   --warn-bg:#fdf3e0;
+    --bad:#a32020;    --bad-bg:#fdecec;
+    --muted:#5b6478;
+    --line:#e3e7f0;
+    --radius:14px;
+  }
+  html{scroll-behavior:smooth;scroll-padding-top:78px}
+  body{color:#16203a;background:#f7f9fc;font-size:clamp(.95rem,.92rem + .2vw,1.05rem);line-height:1.65}
+  h1,h2,h3,h4{color:var(--ink);font-weight:700;letter-spacing:-.01em}
+  h2{font-size:clamp(1.5rem,1.3rem + .9vw,2.1rem);margin-bottom:.35rem}
+  h3{font-size:clamp(1.15rem,1.05rem + .45vw,1.4rem)}
+  section{scroll-margin-top:78px;padding:2.6rem 0}
+  section + section{border-top:1px solid var(--line)}
+
+  .navbar{background:rgba(11,28,92,.97);backdrop-filter:blur(6px)}
+  .navbar .nav-link{color:#c8d2f5;font-size:.9rem;padding:.35rem .7rem}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:#fff}
+
+  .hero{background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%);color:#fff;padding:3.2rem 0 2.8rem}
+  .hero h1{color:#fff;font-size:clamp(1.8rem,1.4rem + 2vw,3rem)}
+  .hero p{color:#dbe3ff;max-width:62ch}
+  .kpi{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:var(--radius);padding:1rem 1.1rem;height:100%}
+  .kpi .n{font-size:clamp(1.5rem,1.2rem + 1.2vw,2.1rem);font-weight:700;line-height:1.1}
+  .kpi .l{font-size:.82rem;color:#dbe3ff;text-transform:uppercase;letter-spacing:.05em}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1.25rem 1.35rem;height:100%}
+  .plain{border:1px dashed #b9c2da;border-radius:var(--radius);background:#fbfcff;padding:1.1rem 1.25rem}
+  .plain h4{font-size:1rem;margin-bottom:.5rem}
+
+  .callout{border-left:5px solid var(--brand);background:#eef2ff;border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.2rem;margin:1.1rem 0}
+  .callout.good{border-color:var(--good);background:var(--good-bg)}
+  .callout.warn{border-color:var(--warn);background:var(--warn-bg)}
+  .callout.bad{border-color:var(--bad);background:var(--bad-bg)}
+  .callout p:last-child{margin-bottom:0}
+
+  .tag{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:.2rem .55rem;border-radius:999px;white-space:nowrap}
+  .tag-ok{background:var(--good-bg);color:var(--good)}
+  .tag-warn{background:var(--warn-bg);color:var(--warn)}
+  .tag-bad{background:var(--bad-bg);color:var(--bad)}
+  .tag-brand{background:#e6ecff;color:var(--brand)}
+  .tag-neutral{background:#eef0f5;color:var(--muted)}
+
+  .req-id{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;font-weight:700;background:var(--ink);color:#fff;border-radius:6px;padding:.15rem .45rem;margin-right:.4rem}
+
+  table{font-size:.9rem}
+  thead th{background:#eef2ff;color:var(--ink);font-weight:700;vertical-align:middle}
+  .grp th{background:var(--ink);color:#fff;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
+  td{vertical-align:top}
+  .cap{font-weight:600;color:var(--ink)}
+
+  .bar{height:14px;border-radius:999px;background:#e6eaf3;overflow:hidden;display:flex}
+  .bar span{display:block;height:100%}
+
+  .phase{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden;height:100%}
+  .phase header{padding:.85rem 1.1rem;color:#fff;background:var(--ink)}
+  .phase.v15 header{background:#3a5bd9}
+  .phase.v2 header{background:#6b7aa8}
+  .phase header h3{color:#fff;margin:0;font-size:1.1rem}
+  .phase header .sub{font-size:.8rem;color:#d5ddf7}
+  .phase ul{margin:0;padding:1rem 1.1rem 1.1rem 2.1rem}
+  .phase li{margin-bottom:.4rem}
+
+  dl.gloss dt{color:var(--ink)}
+  dl.gloss dd{color:var(--muted);margin-bottom:.85rem}
+
+  a{color:var(--brand)}
+  :focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+  footer{background:var(--ink);color:#c8d2f5;padding:2rem 0;font-size:.88rem}
+  footer a{color:#fff}
+
+  @media print{
+    .navbar,.no-print{display:none !important}
+    body{background:#fff;font-size:10.5pt}
+    .hero{background:#0b1c5c !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .kpi,.panel,.callout,.tag,.phase header,.grp th,thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{page-break-inside:avoid;padding:1.2rem 0}
+    .table-responsive{overflow:visible !important}
+    a[href^="http"]::after{content:" (" attr(href) ")";font-size:8pt;color:#555}
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg sticky-top no-print">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="#top">P2P Gap Matrix</a>
+    <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="bi bi-list fs-3" aria-hidden="true"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#how">How to read</a></li>
+        <li class="nav-item"><a class="nav-link" href="#score">Scorecard</a></li>
+        <li class="nav-item"><a class="nav-link" href="#matrix">Matrix</a></li>
+        <li class="nav-item"><a class="nav-link" href="#core">The core gap</a></li>
+        <li class="nav-item"><a class="nav-link" href="#strengths">Where we lead</a></li>
+        <li class="nav-item"><a class="nav-link" href="#plan">Build plan</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reuse">Reuse</a></li>
+        <li class="nav-item"><a class="nav-link" href="#risk">Risks</a></li>
+        <li class="nav-item"><a class="nav-link" href="#caveats">Caveats</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container">
+    <span class="tag tag-brand mb-3">Internal · Product strategy</span>
+    <h1 class="mb-3">Peer-to-Peer Gap Matrix</h1>
+    <p class="lead mb-4">
+      One table that answers three questions at once: what the P2P market sells, what
+      ideali.io already runs in production, and exactly what is missing. Every row is a
+      decision point, not a wish.
+    </p>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3">
+        <div class="kpi"><div class="n">56</div><div class="l">Capabilities scored</div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi"><div class="n">27</div><div class="l">Already shipped</div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi"><div class="n">5</div><div class="l">Partial or unverified</div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi"><div class="n">24</div><div class="l">Not built</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="how">
+    <h2>1 · How to read this document</h2>
+    <p class="text-muted">Three sources, one table.</p>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-binoculars me-2" aria-hidden="true"></i>Market column</h3>
+          <p class="mb-0">What competitors offer, drawn from the 12-platform competitive
+          spec. These are vendor claims as captured in that research — not independently
+          re-verified here.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-code-square me-2" aria-hidden="true"></i>ideali.io column</h3>
+          <p class="mb-0">What the donation module actually does, read directly from the
+          frontend source. This column is evidence-based, not aspirational.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-flag me-2" aria-hidden="true"></i>Verdict column</h3>
+          <p class="mb-0">The call, plus which requirement (R1–R6) or release phase it
+          belongs to, so a row can go straight into the backlog.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="plain mt-4">
+      <h4>The four verdicts</h4>
+      <ul class="mb-0">
+        <li><span class="tag tag-ok">Have</span> &nbsp;Working in production today. No build needed for parity.</li>
+        <li><span class="tag tag-warn">Partial</span> &nbsp;Exists but incomplete, limited in scope, or lives in another module — needs work before it counts.</li>
+        <li><span class="tag tag-bad">Missing</span> &nbsp;No implementation. Must be built.</li>
+        <li><span class="tag tag-neutral">Unverified</span> &nbsp;May exist in the backend API; the frontend shows no evidence either way. Confirm before scheduling.</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <p class="mb-0"><strong>Scope of the evidence.</strong> The ideali.io column reflects the
+      <em>frontend</em> repository only. The backend is a separate service. Where a capability could
+      plausibly exist server-side without any UI, it is marked Unverified rather than Missing — those
+      rows need a backend check before anyone commits an estimate.</p>
+    </div>
+  </section>
+
+  <section id="score">
+    <h2>2 · The scorecard at a glance</h2>
+    <p class="text-muted">Where the 56 capabilities land.</p>
+
+    <div class="bar my-4" role="img" aria-label="27 capabilities shipped, 5 partial or unverified, 24 missing">
+      <span style="width:48.2%;background:#0f7b53"></span>
+      <span style="width:8.9%;background:#d99b18"></span>
+      <span style="width:42.9%;background:#a32020"></span>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5 text-success">Payments and campaign building are strong</h3>
+          <p class="mb-0">Nearly every "have" sits in two clusters: taking money and building a
+          campaign page. These are the expensive, compliance-heavy parts of a fundraising
+          platform, and they are done.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5" style="color:var(--bad)">The gap is one shaped hole, not scatter</h3>
+          <p class="mb-0">Twelve of the 24 missing capabilities are a single feature family:
+          the fundraiser and team layer. They are missing together because none of them
+          exists without the others.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel">
+          <h3 class="h5" style="color:var(--warn)">Automation is the second cluster</h3>
+          <p class="mb-0">Milestone emails, stalled-progress nudges and an AI coach are how
+          competitors keep fundraisers active. We send transactional email only.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <p class="mb-0"><strong>The headline.</strong> ideali.io has built the hard half. What
+      remains is a layer that sits <em>on top of</em> the existing campaign — it does not
+      replace or rework the donation engine that already runs.</p>
+    </div>
+  </section>
+
+  <section id="matrix">
+    <h2>3 · Capability gap matrix</h2>
+    <p class="text-muted">Scroll sideways on smaller screens. Grouped by area.</p>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle bg-white">
+        <thead>
+          <tr>
+            <th scope="col" style="min-width:210px">Capability</th>
+            <th scope="col" style="min-width:260px">What the market offers</th>
+            <th scope="col" style="min-width:260px">ideali.io today</th>
+            <th scope="col" style="min-width:110px">Verdict</th>
+            <th scope="col" style="min-width:110px">Phase</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr class="grp"><th colspan="5" scope="colgroup">A · Taking money</th></tr>
+          <tr>
+            <td class="cap">Card donations</td>
+            <td>Universal. Every platform, roughly 2.9% + 30¢ processing.</td>
+            <td>Stripe Elements in the public checkout. Card data never reaches our API.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Apple Pay / Google Pay</td>
+            <td>Standard on the modern platforms; a measurable conversion lift on mobile.</td>
+            <td>Payment Request sheet wired end to end, submitted as a wallet payment.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Bank debit — ACH (US) and PAD (Canada)</td>
+            <td>Not universal. Several mid-market platforms are card-only.</td>
+            <td>Both, full three-stage flow: intent, bank collection, confirmation.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Offline / cheque gifts</td>
+            <td>Expected wherever a CRM is involved, so totals reconcile.</td>
+            <td>Cheque is a first-class payment method with its own capture path.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Recurring giving</td>
+            <td>Universal. Monthly is the retention lever every vendor markets.</td>
+            <td>One-time, monthly and yearly, each independently enabled per campaign.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Donor-covered fees / tip model</td>
+            <td>The Zeffy and Givebutter business model. Also Donorbox's supporter-pays option.</td>
+            <td>Preset tip percentages served from the API, default pre-selected, shown as a
+            separate line so the charity still receives the full gift.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Multi-currency</td>
+            <td>Enterprise platforms handle several; most mid-market are single-currency.</td>
+            <td>Currency follows the connected payment account. USD and CAD paths are proven;
+            no in-product currency switcher for the donor.</td>
+            <td><span class="tag tag-warn">Partial</span></td>
+            <td>v2</td>
+          </tr>
+          <tr>
+            <td class="cap">Crypto, stock, DAF gifts</td>
+            <td>Fundraise Up markets crypto at a 5% rate. Otherwise niche.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>Later</td>
+          </tr>
+          <tr>
+            <td class="cap">Text-to-give</td>
+            <td>Common at event-led vendors (GiveSmart, Bloomerang).</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>Later</td>
+          </tr>
+          <tr>
+            <td class="cap">Matching gifts</td>
+            <td>Offered by the enterprise tier; a frequent RFP line item.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>Later</td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">B · Building a campaign</th></tr>
+          <tr>
+            <td class="cap">Guided campaign builder</td>
+            <td>Every platform has one; depth varies widely.</td>
+            <td>Nine-step wizard, each step saved independently, resumable, with live mobile
+            and desktop preview alongside.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Rich story editor</td>
+            <td>Universal.</td>
+            <td>Full rich-text editor with formatting, links, media and images.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">AI writing assistance</td>
+            <td>Fundraise Up's 2026 launch feature. DonorDrive has none.</td>
+            <td>An AI panel inside the story editor drafts and rewrites copy, then inserts it.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength · <span class="req-id">R4</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Stock and AI imagery</td>
+            <td>Rare. Most vendors offer upload only.</td>
+            <td>Stock photo search, AI image generation, upload with a size cap, and a crop editor.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Per-campaign branding</td>
+            <td>Universal at the campaign level; white-label is enterprise.</td>
+            <td>Theme colour and banner per campaign, reflected in the live preview.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Preset amounts with impact labels</td>
+            <td>Universal.</td>
+            <td>Preset blocks per frequency, each amount carrying its own impact sentence.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Campaign goal and progress thermometer</td>
+            <td>Universal.</td>
+            <td>Goal with an optional donor-visible progress bar.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Embeddable donate form</td>
+            <td>Standard.</td>
+            <td>Inline embed and popup embed, both copy-paste.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">QR code for print and events</td>
+            <td>Common at event-led vendors.</td>
+            <td>Generated per campaign, downloadable.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Custom donation form questions</td>
+            <td>Standard — dedications, employer, opt-ins.</td>
+            <td>The checkout takes contact fields and a free-text note. A custom form builder
+            exists elsewhere in the product but is not wired to donation checkout.</td>
+            <td><span class="tag tag-warn">Partial</span></td>
+            <td>v1.5</td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">C · Peer-to-peer core — the R3 feature floor</th></tr>
+          <tr>
+            <td class="cap">Individual fundraiser pages</td>
+            <td>Present in every native competitive offering. Its absence is disqualifying.</td>
+            <td>None. A campaign has exactly one public page, owned by the organiser.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Team pages</td>
+            <td>Universal among native P2P vendors; Givebutter supports multi-team.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Team captains and roles</td>
+            <td>Standard at GiveSmart, Bloomerang, Classy, Funraise, DonorDrive.</td>
+            <td>None. Roles today are admin, organizer and member only.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Participant self-signup</td>
+            <td>The entry point of the whole model — a supporter joins and gets a page.</td>
+            <td>None. Campaigns are created by organisers only.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Participant dashboard</td>
+            <td>Standard — my total, my donors, my share tools.</td>
+            <td>None. The member portal shows a person's own giving history, not their fundraising.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Fundraiser and team goals</td>
+            <td>Universal — three goal levels: individual, team, campaign.</td>
+            <td>Goal exists at campaign level only.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Fundraiser page customisation</td>
+            <td>Photo, personal story and custom thank-you message — the reason P2P converts.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Gift attribution and soft credit</td>
+            <td>The data backbone: a gift credits the fundraiser, the team and the campaign at once.</td>
+            <td>None. A donation belongs to a campaign, full stop.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R2</span> <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Leaderboards</td>
+            <td>Universal. Givebutter weights by dollars <em>and</em> donor count so small
+            fundraisers can still place.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Badges, contests, gamification</td>
+            <td>Bloomerang milestone badges and contests; DonorDrive incentives.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5</td>
+          </tr>
+          <tr>
+            <td class="cap">Supporter / donor wall</td>
+            <td>Zeffy, Donorbox and Givebutter all show one.</td>
+            <td>None. Donors are visible to the organiser, not publicly.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5</td>
+          </tr>
+          <tr>
+            <td class="cap">Countdown timers and urgency widgets</td>
+            <td>Givebutter markets these explicitly.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5</td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">D · Communication and automation</th></tr>
+          <tr>
+            <td class="cap">Custom thank-you email</td>
+            <td>Universal.</td>
+            <td>Per-campaign template with merge placeholders and reusable content snippets.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Tax receipts</td>
+            <td>Universal; a legal requirement in most markets.</td>
+            <td>Generated and downloadable by the donor from their own portal.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Campaign social sharing</td>
+            <td>Universal.</td>
+            <td>Direct link, QR, embed, Facebook and Messenger.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Automated milestone emails</td>
+            <td>Funraise and DonorDrive both ship this. Named in the R3 floor.</td>
+            <td>None. Email today is transactional only.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Stalled-progress nudges</td>
+            <td>Funraise and DonorDrive. Named in the R3 floor.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1 · <span class="req-id">R3</span></td>
+          </tr>
+          <tr>
+            <td class="cap">AI coach for fundraisers</td>
+            <td>Fundraise Up's flagship 2026 feature. DonorDrive has none — an open window.</td>
+            <td>None as a coach, but the AI writing engine the campaign editor uses already exists.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5 · <span class="req-id">R4</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Fundraiser toolkit</td>
+            <td>Standard — ready-made ask emails, social copy and images for participants.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5</td>
+          </tr>
+          <tr>
+            <td class="cap">Facebook Fundraiser sync / in-feed donate</td>
+            <td>Funraise syncs Facebook fundraisers; DonorDrive has the Meta in-feed pattern.</td>
+            <td>Share links only — no sync of gifts raised on the social platform.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v2 · <span class="req-id">R4</span></td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">E · Data, CRM and back office</th></tr>
+          <tr>
+            <td class="cap">Donor records</td>
+            <td>Universal.</td>
+            <td>Donor list per campaign with search, filtering and detail.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">CRM integration and sync</td>
+            <td>The market's loudest complaint is reconciliation friction between P2P and CRM.</td>
+            <td>Contact sync to an external CRM, with both queue-once and automatic modes.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength · <span class="req-id">R2</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Duplicate matching logic</td>
+            <td>Bloomerang and Fundraise Up market this as the differentiator.</td>
+            <td>No frontend evidence either way — this would live in the sync service.</td>
+            <td><span class="tag tag-neutral">Unverified</span></td>
+            <td>Confirm first</td>
+          </tr>
+          <tr>
+            <td class="cap">Engagement scoring</td>
+            <td>Bloomerang's signature feature.</td>
+            <td>No frontend evidence.</td>
+            <td><span class="tag tag-neutral">Unverified</span></td>
+            <td>Confirm first</td>
+          </tr>
+          <tr>
+            <td class="cap">Invoices and reconciliation</td>
+            <td>Varies; usually thinner than a finance team wants.</td>
+            <td>Full invoice model with six statuses, resend, and partial-payment handling.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Data export</td>
+            <td>Universal.</td>
+            <td>Excel, PDF and CSV export across campaign, donor and invoice views.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Recurring management and donor self-service cancel</td>
+            <td>Uneven — several vendors still require the charity to cancel on the donor's behalf.</td>
+            <td>Recurring list with statuses, plus donor-initiated cancellation from the portal.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Campaign lifecycle operations</td>
+            <td>Standard.</td>
+            <td>Publish, archive, duplicate and delete, each gated by campaign status.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">F · Events</th></tr>
+          <tr>
+            <td class="cap">Ticketed event registration</td>
+            <td>Zeffy, Givebutter, Bloomerang, Classy, Funraise, GiveSmart and DonorDrive all have it.</td>
+            <td>Event work lives in a separate ideali product, not in this module.</td>
+            <td><span class="tag tag-warn">Partial</span></td>
+            <td>Cross-product</td>
+          </tr>
+          <tr>
+            <td class="cap">"Register to fundraise" campaign type</td>
+            <td>The expected standard — one flow that registers a participant <em>and</em> opens
+            their fundraising page. Classy and Funraise both name it.</td>
+            <td>None. Registration and donation are unconnected today.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5 · <span class="req-id">R5</span></td>
+          </tr>
+          <tr>
+            <td class="cap">Early-bird and date-based pricing</td>
+            <td>Bloomerang shipped this in July 2026; now an expected line item.</td>
+            <td>None in this module.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>v1.5 · <span class="req-id">R5</span></td>
+          </tr>
+
+          <tr class="grp"><th colspan="5" scope="colgroup">G · Platform, trust and reach</th></tr>
+          <tr>
+            <td class="cap">Bot and fraud protection on the donate form</td>
+            <td>Rarely marketed, universally needed — card-testing attacks target donate forms.</td>
+            <td>A managed bot challenge guards every public donation submission.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Payment-data posture</td>
+            <td>All reputable vendors keep card data out of their own systems.</td>
+            <td>Card and bank details go straight to the payment processor; only opaque
+            references reach our API.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="cap">Per-charity payouts</td>
+            <td>Required for any multi-tenant platform.</td>
+            <td>Each organiser connects their own processor account; funds settle directly to them.</td>
+            <td><span class="tag tag-ok">Have</span></td>
+            <td>Strength</td>
+          </tr>
+          <tr>
+            <td class="cap">Native mobile app for participants</td>
+            <td>DonorDrive only, at the enterprise endurance-event tier.</td>
+            <td>None. The web experience is responsive.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>Out of scope</td>
+          </tr>
+          <tr>
+            <td class="cap">Livestream fundraising</td>
+            <td>DonorDrive only.</td>
+            <td>None.</td>
+            <td><span class="tag tag-bad">Missing</span></td>
+            <td>Out of scope</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p class="mb-0"><strong>Reading the phase column.</strong> "v1" means it is part of the
+      disqualifying floor — shipping P2P without it is not shipping P2P. "v1.5" is the
+      credibility layer that follows quickly. "v2" and "Later" are competitive extras.
+      "Out of scope" means only one enterprise vendor has it and our target segment does not ask for it.</p>
+    </div>
+  </section>
+
+  <section id="core">
+    <h2>4 · The core gap, explained plainly</h2>
+    <p class="text-muted">Twelve missing rows are really one missing idea.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">What we have today</h3>
+          <p>A campaign is a page the charity owns. The charity writes the story, sets the
+          goal, shares the link, and donors give. One page, one goal, one story, one
+          audience — the charity's own.</p>
+          <p class="mb-0">This is <strong>crowdfunding</strong>. It works, and it is finished.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">What peer-to-peer adds</h3>
+          <p>Supporters raise <em>on behalf of</em> the charity. Sara joins the campaign,
+          gets her own page with her own photo, her own reason and her own goal, and asks
+          her own network. Her friends give to <em>her</em> — the money reaches the charity,
+          the credit reaches Sara, and her total rolls up into her team and the campaign.</p>
+          <p class="mb-0">One campaign becomes a hundred pages and a hundred networks. That
+          multiplication is the entire value of the model.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="plain mt-4">
+      <h4>Why the twelve rows cannot be split up</h4>
+      <p>A fundraiser page with no attribution raises money that lands nowhere. Attribution
+      with no leaderboard removes the reason people compete. A leaderboard with no team
+      layer flattens the social structure that recruits new fundraisers. Each piece is
+      load-bearing for the others.</p>
+      <p class="mb-0">This is why the competitive research calls their absence
+      <strong>disqualifying</strong> rather than merely a weakness: a buyer comparing us
+      against Givebutter or Bloomerang would not score us lower on P2P — they would score us
+      as not having it.</p>
+    </div>
+
+    <div class="callout bad">
+      <p class="mb-0"><strong>The honest position.</strong> ideali.io today is a capable
+      donation platform. It is not a peer-to-peer platform, and no combination of existing
+      screens adds up to one. The fundraiser layer must be built.</p>
+    </div>
+  </section>
+
+  <section id="strengths">
+    <h2>5 · Where we already lead or match</h2>
+    <p class="text-muted">The gap analysis is only useful next to the credit column.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Ahead</span> Payment breadth</h3>
+          <p class="mb-0">Card, wallets, US bank debit, Canadian bank debit and cheque, with
+          per-charity payouts. Several mid-market competitors do not offer bank debit at all.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Ahead</span> AI inside the editor</h3>
+          <p class="mb-0">Story drafting, plus AI and stock imagery. Fundraise Up launched AI
+          assistance in 2026 and DonorDrive still has none — we are early, not late, on the
+          <span class="req-id">R4</span> vector.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Ahead</span> Tip-based revenue model</h3>
+          <p class="mb-0">The donor-covered model that made Zeffy and Givebutter the goodwill
+          leaders is already live here — the mechanism <span class="req-id">R6</span>
+          recommends is not a build, it is a pricing decision.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Match</span> Campaign builder depth</h3>
+          <p class="mb-0">A nine-step guided builder with resumable saves and live preview is
+          at or above the mid-market standard.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Match</span> Back office</h3>
+          <p class="mb-0">Invoices with partial payments, recurring management, donor
+          self-service cancellation and three export formats.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-ok">Foundation</span> CRM sync</h3>
+          <p class="mb-0">Contact sync already runs. <span class="req-id">R2</span> asks us to
+          make CRM-native data flow the flagship differentiator — the pipe exists, it needs
+          fundraiser attribution flowing through it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="plan">
+    <h2>6 · What to build, in order</h2>
+    <p class="text-muted">The missing rows, sequenced against the R1–R6 recommendations.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="phase">
+          <header>
+            <h3>v1 — the floor</h3>
+            <div class="sub">Without all of it, we cannot say we have P2P</div>
+          </header>
+          <ul>
+            <li>Fundraiser entity and public fundraiser page</li>
+            <li>Team entity, team page, captain role</li>
+            <li>Participant self-signup and join-a-team flow</li>
+            <li>Participant dashboard — my total, my donors, my share tools</li>
+            <li>Goals and thermometers at fundraiser and team level</li>
+            <li>Page customisation: photo, story, personal thank-you</li>
+            <li>Gift attribution and roll-up to team and campaign</li>
+            <li>Leaderboards weighted by dollars <em>and</em> donor count</li>
+            <li>Automated milestone and stalled-progress emails</li>
+            <li>Fundraiser and donor records reaching the CRM with soft credit</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="phase v15">
+          <header>
+            <h3>v1.5 — credibility</h3>
+            <div class="sub">What buyers ask about in the second meeting</div>
+          </header>
+          <ul>
+            <li>"Register to fundraise" campaign type <span class="req-id">R5</span></li>
+            <li>Early-bird and date-based registration pricing</li>
+            <li>AI coach — story drafting and nudges for fundraisers <span class="req-id">R4</span></li>
+            <li>Fundraiser toolkit: ready-made ask emails and social copy</li>
+            <li>Badges, contests and incentives</li>
+            <li>Public supporter wall and countdown widgets</li>
+            <li>Custom questions on the donation form</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="phase v2">
+          <header>
+            <h3>v2 and later</h3>
+            <div class="sub">Competitive extras, not entry requirements</div>
+          </header>
+          <ul>
+            <li>Facebook fundraiser sync and in-feed donate <span class="req-id">R4</span></li>
+            <li>Donor-facing multi-currency</li>
+            <li>Matching gifts</li>
+            <li>Text-to-give</li>
+            <li>Crypto, stock and DAF gifts</li>
+          </ul>
+          <div class="px-3 pb-3">
+            <p class="mb-0 small text-muted">Native mobile app and livestreaming stay out of
+            scope while the target is the mid-market. Revisit only if the base turns out to be
+            enterprise endurance-event organisations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <p class="mb-0"><strong>Sequencing logic.</strong> <span class="req-id">R1</span> puts us
+      in the mid-market, where Bloomerang, Funraise and GiveSmart compete. Every v1 item above is
+      something all three already ship. Nothing in v1 is differentiation — it is the price of
+      being compared at all. Differentiation lives in v1.5 and in the CRM data flow that
+      <span class="req-id">R2</span> calls the wedge.</p>
+    </div>
+  </section>
+
+  <section id="reuse">
+    <h2>7 · What the build gets for free</h2>
+    <p class="text-muted">The v1 list is long, but it starts from a running platform, not a blank page.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6">Reusable as-is</h3>
+          <ul class="mb-0">
+            <li>The entire checkout — a gift to a fundraiser is the same transaction with one extra reference</li>
+            <li>All five payment methods, wallets and bank debit included</li>
+            <li>Per-charity payout accounts</li>
+            <li>The tip model and its revenue mechanics</li>
+            <li>Recurring giving and its management screens</li>
+            <li>Receipts, invoices and exports</li>
+            <li>Bot protection on public forms</li>
+            <li>Share links, QR codes and embeds</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6">Reusable with extension</h3>
+          <ul class="mb-0">
+            <li>The campaign builder — a fundraiser page is a much shorter version of the same idea</li>
+            <li>The AI writing engine — repoint it at fundraiser stories to become the AI coach</li>
+            <li>The image pipeline — stock, AI and crop, reused for fundraiser photos</li>
+            <li>The email template system — extend from thank-you into milestone and nudge templates</li>
+            <li>The progress bar component — reuse at fundraiser and team level</li>
+            <li>The CRM sync pipe — add fundraiser identity and soft credit to what it already sends</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p class="mb-0"><strong>What this means for estimates.</strong> The heavy, regulated,
+      slow-to-build parts — money movement, payouts, compliance posture, receipting — are done.
+      The v1 work is mostly new entities, new pages and new roll-up logic on top of infrastructure
+      that already carries real transactions.</p>
+    </div>
+  </section>
+
+  <section id="risk">
+    <h2>8 · Risks to price in before committing dates</h2>
+    <p class="text-muted">Four things that will slow the build if they are ignored.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-bad">Risk</span> No automated test coverage</h3>
+          <p class="mb-0">There is no test runner in this repository and no tests exist. Adding a
+          fundraiser layer that touches money attribution without tests is how silent
+          miscrediting ships. Test infrastructure should land before, not after, the P2P work.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-bad">Risk</span> Debug output in the donation path</h3>
+          <p class="mb-0">The donation module writes extensive debug output in the browser,
+          including donation payloads and payment references. This must be removed before any
+          new public-facing surface multiplies the exposure.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-warn">Risk</span> Oversized components</h3>
+          <p class="mb-0">The two central donation screens are roughly 1,700 and 2,000 lines
+          against a house target of about 150. Extending them rather than splitting them first
+          will compound the cost of every subsequent change.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="h6"><span class="tag tag-warn">Risk</span> Backend scope unknown</h3>
+          <p class="mb-0">Everything above is read from the frontend. How much of the fundraiser,
+          team and attribution model the API can already express is the single largest unknown
+          in any estimate. Confirm it before committing a date.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <p class="mb-0"><strong>Recommended first step.</strong> A short backend capability review
+      against the v1 list. It converts the two Unverified rows into decisions and turns this
+      matrix into a schedule instead of a scope.</p>
+    </div>
+  </section>
+
+  <section id="caveats">
+    <h2>9 · Caveats — read before quoting this externally</h2>
+
+    <div class="plain">
+      <ul class="mb-0">
+        <li><strong>Competitor claims are vendor-reported.</strong> The market column reproduces
+        the competitive research as captured. Pricing that is not public is an outside estimate,
+        and vendor feature claims were not independently retested here.</li>
+        <li><strong>Our column is frontend-only.</strong> A capability with no user interface is
+        recorded as missing or unverified even if the backend could support it.</li>
+        <li><strong>Verdicts are capability-level, not quality-level.</strong> "Have" means it
+        exists and works, not that it matches the best implementation in the market.</li>
+        <li><strong>The 56 capabilities are a chosen frame.</strong> A different cut of the same
+        market would produce a different count. The proportions matter; the exact numbers do not.</li>
+        <li><strong>This is a point-in-time reading.</strong> Both the market and our codebase
+        move. Re-check before any external commitment.</li>
+      </ul>
+    </div>
+
+    <h3 class="h5 mt-4">Glossary</h3>
+    <dl class="gloss row">
+      <dt class="col-sm-3">Peer-to-peer (P2P)</dt>
+      <dd class="col-sm-9">Supporters fundraise on the charity's behalf through their own pages and networks.</dd>
+      <dt class="col-sm-3">Fundraiser page</dt>
+      <dd class="col-sm-9">An individual supporter's own page inside a campaign, with their photo, story and goal.</dd>
+      <dt class="col-sm-3">Team captain</dt>
+      <dd class="col-sm-9">The supporter who creates a team, recruits members and sees the team's combined total.</dd>
+      <dt class="col-sm-3">Soft credit</dt>
+      <dd class="col-sm-9">Recording that a gift was influenced by a fundraiser, without changing who legally gave it.</dd>
+      <dt class="col-sm-3">Roll-up</dt>
+      <dd class="col-sm-9">A gift counting toward the fundraiser, their team and the campaign at the same time.</dd>
+      <dt class="col-sm-3">Thermometer</dt>
+      <dd class="col-sm-9">The progress bar showing amount raised against a goal.</dd>
+      <dt class="col-sm-3">Tip model</dt>
+      <dd class="col-sm-9">The donor optionally covers the platform's cost so the charity keeps the whole gift.</dd>
+      <dt class="col-sm-3">Register to fundraise</dt>
+      <dd class="col-sm-9">One flow that signs a participant up for an event and opens their fundraising page.</dd>
+    </dl>
+
+    <div class="callout good">
+      <p class="mb-0"><strong>One sentence for the board.</strong> ideali.io has built the
+      expensive half of a peer-to-peer platform — money movement, payouts, campaign creation and
+      back office — and none of the visible half; the v1 list is the shortest honest path from
+      donation platform to P2P platform.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p class="mb-1">Internal strategy document · ideali.io peer-to-peer fundraising</p>
+    <p class="mb-0">Companion documents: the P2P concept explainer, the twelve-platform
+    competitive spec, and the donation module deep dive. This matrix depends on all three and
+    should be revised whenever any of them is.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

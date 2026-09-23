@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peer-to-Peer Fundraising — Release Note</title>
+<meta name="description" content="What peer-to-peer fundraising does, what it deliberately does not do, and what a charity needs to know before switching it on.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1b3e; --muted:#5b6784; --line:#e3e8f2; --bg:#f6f8fc;
+    --brand:#2b50ec; --brand-soft:#eef2ff;
+    --ok:#0f8a5f; --ok-soft:#e8f7f0;
+    --warn:#a8730a; --warn-soft:#fff8e8;
+  }
+  body{background:var(--bg); color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       font-size:15.5px; line-height:1.62}
+  .wrap{max-width:1000px}
+  h1,h2,h3{font-weight:700; letter-spacing:-.02em}
+  h2{font-size:1.45rem; margin-top:2rem}
+  h3{font-size:1.08rem; margin-top:1.4rem}
+  a{color:var(--brand)}
+  .hero{background:linear-gradient(150deg,#0d1b3e 0%,#1b2f6d 55%,#2b50ec 100%); color:#fff}
+  .hero .eyebrow{letter-spacing:.16em; font-size:.7rem; color:#9fb4ff; font-weight:600}
+  .hero p{color:#cfdaff; margin-bottom:0}
+  .panel{background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem}
+  .panel + .panel{margin-top:1rem}
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft);
+           border-radius:0 10px 10px 0; padding:.9rem 1.1rem}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft)}
+  .callout.ok{border-left-color:var(--ok); background:var(--ok-soft)}
+  table{width:100%}
+  th,td{padding:.55rem .7rem; border-bottom:1px solid var(--line); vertical-align:top}
+  th{text-align:left; font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+  code{background:#eef2ff; color:#2b50ec; padding:.08rem .3rem; border-radius:5px; font-size:.9em}
+  .table-scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<header class="hero py-5">
+  <div class="wrap mx-auto px-3">
+    <div class="eyebrow">IDEALI &middot; DONATION</div>
+    <h1 class="mt-2">Peer-to-peer fundraising</h1>
+    <p>Supporters raise money on a charity's behalf, on their own page, under the charity's control.</p>
+  </div>
+</header>
+
+<main class="wrap mx-auto px-3 py-4">
+
+  <section class="panel">
+    <h2 class="mt-0">What it does</h2>
+    <p>A charity switches peer-to-peer fundraising on for a single donation campaign. From that moment a
+      supporter can set up their own fundraising page for that campaign, share its address, and take
+      donations that are credited both to them and to the campaign. The money goes to the charity exactly
+      as it did before; the page only changes who asked for it.</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Who</th><th>What they can do</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A supporter</td>
+            <td>Set up a page, write why it matters to them, add a photo and a goal, share the link, watch
+              what it raises, join or start a team, and see where they stand on the leaderboard.</td>
+          </tr>
+          <tr>
+            <td>A donor</td>
+            <td>Give through a supporter's page without holding an account, using exactly the payment
+              methods the campaign already offered.</td>
+          </tr>
+          <tr>
+            <td>The charity</td>
+            <td>Switch the feature on or off per campaign, require approval before a page goes live,
+              allow or forbid teams, choose who may see the leaderboard, review and moderate every page
+              and team, invite supporters by email, and edit the six emails supporters receive.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="mt-0">What a charity should know before switching it on</h2>
+
+    <h3>The fundraiser menu appears at the supporter's next sign-in</h3>
+    <p>When somebody sets up their first fundraising page, the menu item that takes them to it does not
+      appear immediately. It appears the next time they sign in. This is deliberate for now: the menu is
+      built from the signed-in session, and refreshing that session mid-journey touches the sign-in path
+      every existing supporter already uses. Until that is changed as its own piece of work, the screen
+      that confirms a page has been created gives the supporter the address of their page directly, so
+      they are never left without a way to reach it.</p>
+
+    <h3>Approval is a setting, not a default</h3>
+    <p>A campaign can require the charity to approve each page before it is public. With approval off, a
+      page is live the moment it is created. With it on, the page is reachable by whoever holds the link
+      but says it is waiting for approval, publishes neither the story nor a total, and takes no money.
+      The charity is notified when a page is waiting.</p>
+
+    <h3>Switching the feature off does not delete anything</h3>
+    <p>Turning peer-to-peer off stops new pages and new teams. Pages that already exist stay readable, so
+      a link a supporter has already shared does not break. The same is true of teams: the switch stops
+      new ones forming, it does not disband the ones that exist.</p>
+
+    <h3>The leaderboard has three settings, and one of them refuses everyone</h3>
+    <p><strong>Public</strong> shows the standings to anyone with the address. <strong>Only my
+      charity</strong> shows them to the charity alone and says so on the screen. <strong>Hidden</strong>
+      switches the board off entirely, including for the charity. A board that is not public is never
+      linked from a public page, so nobody is offered a link that then refuses them.</p>
+
+    <h3>What counts as money raised</h3>
+    <p>One definition, used by every screen that reports a figure: settled payments only, tips excluded
+      because a tip is platform revenue rather than money for the cause, processing fees not deducted
+      because the donor gave that amount, refunds and chargebacks subtracted so a total can go down, and
+      a recurring donation counted per settled instalment. A team's total is its current members' totals
+      added up, so a member who leaves takes their money out of the team but keeps it on their own page.</p>
+  </section>
+
+  <section class="panel">
+    <h2 class="mt-0">Privacy decisions worth stating plainly</h2>
+    <ul class="mb-0">
+      <li>A donor who asked to stay anonymous is shown as anonymous on a supporter's page, and is left
+        off the leaderboard's biggest-gifts list entirely rather than ranked as "Anonymous".</li>
+      <li>A donor who did not ask to stay anonymous is shown as a first name and a last initial. No
+        surname, email address or postal address reaches a public screen.</li>
+      <li>Pages the charity has not approved, has paused or has turned down never appear on the
+        leaderboard, whatever they have raised.</li>
+      <li>An invitation email can be unsubscribed from, and an address that hard-bounces or complains is
+        suppressed for that charity so it is not written to again.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="mt-0">How this was tested</h2>
+    <div class="callout ok">
+      <strong>This corrects an earlier statement in the build plan.</strong> That plan was written when
+      this repository had no test runner, and said the frontend would ship without automated tests. That
+      is no longer true, and the release note says what is actually true instead.
+    </div>
+    <ul class="mt-3 mb-0">
+      <li><strong>Frontend unit tests.</strong> Vitest on happy-dom with Testing Library, covering the
+        services, the hooks, the pure helpers and the behaviour of every screen this feature added,
+        failure paths as thoroughly as success paths.</li>
+      <li><strong>Backend service tests.</strong> xUnit against an isolated in-memory database, covering
+        every peer-to-peer service including the money definition, the authorisation rules and the
+        enumeration answers.</li>
+      <li><strong>End-to-end tests.</strong> Playwright against the running application and the real API,
+        at 1280px, 768px and 375px, plus a sweep at 320, 1024, 1440 and 1920 that also checks headings,
+        control names, alternative text, focus rings, contrast and browser storage. Endpoint suites prove
+        each endpoint refuses a caller with no token, a caller from another charity, and a record that is
+        not theirs, with the same sentence each time. Database suites prove the constraints that only
+        exist in the schema.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="mt-0">Known limitations at this release</h2>
+    <div class="callout warn">
+      Each of these is a decision or an untested edge, written down rather than discovered later.
+    </div>
+    <ul class="mt-3 mb-0">
+      <li>The fundraiser menu appears at the next sign-in, as described above.</li>
+      <li>An email address holds one account tied to one charity. Fundraising for two charities with one
+        address is platform-wide work and is not part of this.</li>
+      <li>The invitation email carries no <code>List-Unsubscribe</code> header. The visible unsubscribe
+        link works and is honoured; the header is a change to the shared sender and has not been made.</li>
+      <li>The lifecycle emails have not been rendered in a real Outlook or Gmail client; they have been
+        proved as sanitised, substituted HTML and previewed in the product.</li>
+      <li>The bounce and complaint feed is wired to the mail provider's webhook and has been exercised
+        with synthetic events, not with a real message to a dead mailbox.</li>
+      <li>No screen-reader pass has been run. Names, alternative text, headings, focus rings and contrast
+        are asserted automatically, which is most of the accessibility rule and not all of it.</li>
+      <li>Offline and cash donations, fundraiser-to-fundraiser messaging, matched giving, and fundraiser
+        pages for events and memberships are deliberately out of scope.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="mt-0">For whoever deploys this</h2>
+    <p class="mb-2">Six database migrations exist on the development machine and have not been applied
+      anywhere else:</p>
+    <ul class="mb-0">
+      <li><code>20260821200357_AddCampaignPeerToPeerSlug</code></li>
+      <li><code>20260822131810_AddSupporterEmailVerification</code></li>
+      <li><code>20260822223642_AddDonationFundraiserAttribution</code></li>
+      <li><code>20260823175204_AddFundraiserPhoto</code></li>
+      <li><code>20260824232726_AddPeerToPeerModeration</code></li>
+      <li><code>20260825114444_AddPeerToPeerInvitationsAndEmails</code></li>
+    </ul>
+    <p class="mt-3 mb-0">The hourly background job <code>peer-to-peer-lifecycle-job</code> sends the six
+      supporter emails. On its first run against an environment that already has fundraising pages, every
+      email those pages are due is claimed without being sent, so switching this on cannot post a backlog
+      to people who have been fundraising for weeks.</p>
+  </section>
+
+</main>
+
+<footer class="text-center py-4" style="color:var(--muted); font-size:.86rem">
+  Peer-to-peer fundraising release note &middot; ideali.io &middot; 25 August 2026
+</footer>
+
+</body>
+</html>

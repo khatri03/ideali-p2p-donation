@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 880" width="1280" height="880" role="img" aria-label="Personalised fundraiser landing page"><defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#0b1c5c" flood-opacity="0.07"/></filter></defs><rect width="1280" height="880" fill="#dfe4ef"/><rect x="0" y="0" width="1280" height="880" rx="0" fill="#dfe4ef"/>
+<rect x="20" y="20" width="1240" height="840" rx="16" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<rect x="21" y="21" width="1238" height="46" rx="16" fill="#eef1f6"/>
+<rect x="21" y="50" width="1238" height="17" rx="0" fill="#eef1f6"/>
+<circle cx="48" cy="44" r="6" fill="#ff5f57"/>
+<circle cx="68" cy="44" r="6" fill="#febc2e"/>
+<circle cx="88" cy="44" r="6" fill="#28c840"/>
+<rect x="120" y="32" width="1080" height="24" rx="12" fill="#ffffff" stroke="#dbe0ea" stroke-width="1"/>
+<text x="134" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">🔒</text>
+<text x="150" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">hopefoundation.ideali.io/donate/clean-water-2026/f/sara-malik</text>
+<line x1="21" y1="67" x2="1259" y2="67" stroke="#dbe0ea" stroke-width="1"/>
+<rect x="21" y="68" width="1238" height="60" rx="0" fill="#ffffff"/>
+<line x1="21" y1="128" x2="1259" y2="128" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="21" y="128" width="1238" height="731" rx="0" fill="#fbfcff"/>
+<circle cx="66" cy="98" r="16" fill="#0f7b53" opacity="0.15"/>
+<text x="66" y="103" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0f7b53" font-weight="400" text-anchor="middle">♥</text>
+<text x="92" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="17" fill="#0b1c5c" font-weight="800" text-anchor="start">Hope Foundation</text>
+<text x="430" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Our work</text>
+<text x="540" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Campaigns</text>
+<text x="650" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Events</text>
+<text x="760" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Contact</text>
+<rect x="1090" y="84" width="148" height="32" rx="16" fill="#1b4dff"/>
+<text x="1164.0" y="104.55" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle">Donate now</text>
+<defs><linearGradient id="g23" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#123a8f"/><stop offset="100%" stop-color="#3f7bff"/></linearGradient></defs>
+<rect x="21" y="128" width="1238" height="210" rx="12" fill="url(#g23)"/>
+<circle cx="912.36" cy="191.0" r="37.8" fill="#ffffff" opacity="0.18"/>
+<circle cx="330.5" cy="291.8" r="58.800000000000004" fill="#ffffff" opacity="0.12"/>
+<text x="72" y="206" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" font-weight="600" text-anchor="start" opacity="0.85">Clean Water 2026</text>
+<text x="72" y="244" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="32" fill="#ffffff" font-weight="800" text-anchor="start">Sara is fundraising for Hope Foundation</text>
+<rect x="72" y="268" width="117.38" height="26" rx="13" fill="#ffffff2e"/>
+<text x="130.69" y="285.025" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#ffffff" font-weight="600" text-anchor="middle">Team Northside</text>
+<rect x="216" y="268" width="230.76999999999998" height="26" rx="13" fill="#ffffff2e"/>
+<text x="331.385" y="285.025" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#ffffff" font-weight="600" text-anchor="middle">86 fundraisers on this campaign</text>
+<rect x="72" y="300" width="730" height="470" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<circle cx="142.0" cy="366.0" r="42.0" fill="#1b4dff"/>
+<text x="142.0" y="377.76" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="31.92" fill="#ffffff" font-weight="700" text-anchor="middle">SM</text>
+<text x="204" y="356" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="24" fill="#0b1c5c" font-weight="800" text-anchor="start">Sara Malik</text>
+<text x="204" y="380" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b7280" font-weight="400" text-anchor="start">Fundraising since 4 March 2026</text>
+<line x1="100" y1="424" x2="774" y2="424" stroke="#e5e7eb" stroke-width="1"/>
+<text x="100" y="456" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16" fill="#0b1c5c" font-weight="800" text-anchor="start">Why I am doing this</text>
+<text x="100" y="484" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start">My uncle walks four kilometres every morning to fetch water that still</text>
+<text x="100" y="508" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start">is not safe to drink. Hope Foundation can put a clean well in his village</text>
+<text x="100" y="532" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start">for £500 — that is one well, and my whole family stops getting sick.</text>
+<text x="100" y="556" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start"></text>
+<text x="100" y="580" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start">Every pound here goes straight to Hope Foundation. I never touch the</text>
+<text x="100" y="604" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#3c4457" font-weight="400" text-anchor="start">money. If 20 people give £25, we are done. Please be one of them.</text>
+<defs><linearGradient id="g46" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f7b53"/><stop offset="100%" stop-color="#4bbf90"/></linearGradient></defs>
+<rect x="100" y="636" width="320" height="110" rx="12" fill="url(#g46)"/>
+<circle cx="330.4" cy="669.0" r="19.8" fill="#ffffff" opacity="0.18"/>
+<circle cx="180.0" cy="721.8" r="30.800000000000004" fill="#ffffff" opacity="0.12"/>
+<text x="260.0" y="697.0" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#ffffff" font-weight="600" text-anchor="middle" opacity="0.9">Photo Sara uploaded</text>
+<text x="444" y="664" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#0b1c5c" font-weight="800" text-anchor="start">Recent supporters</text>
+<circle cx="452" cy="680" r="8" fill="#eef2ff"/>
+<text x="452" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="8" fill="#1b4dff" font-weight="400" text-anchor="middle">♥</text>
+<text x="470" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0b1c5c" font-weight="600" text-anchor="start">Ahmed K.</text>
+<text x="548" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0f7b53" font-weight="700" text-anchor="start">£50</text>
+<text x="600" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">“Proud of you.”</text>
+<circle cx="452" cy="710" r="8" fill="#eef2ff"/>
+<text x="452" y="714" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="8" fill="#1b4dff" font-weight="400" text-anchor="middle">♥</text>
+<text x="470" y="714" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0b1c5c" font-weight="600" text-anchor="start">Anonymous</text>
+<text x="548" y="714" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0f7b53" font-weight="700" text-anchor="start">£25</text>
+<text x="600" y="714" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">“Good luck!”</text>
+<circle cx="452" cy="740" r="8" fill="#eef2ff"/>
+<text x="452" y="744" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="8" fill="#1b4dff" font-weight="400" text-anchor="middle">♥</text>
+<text x="470" y="744" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0b1c5c" font-weight="600" text-anchor="start">Fiona R.</text>
+<text x="548" y="744" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#0f7b53" font-weight="700" text-anchor="start">£100</text>
+<text x="600" y="744" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">“From the whole office.”</text>
+<rect x="826" y="300" width="382" height="300" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<text x="854" y="342" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="34" fill="#0b1c5c" font-weight="800" text-anchor="start">£ 310</text>
+<text x="946" y="342" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#6b7280" font-weight="400" text-anchor="start">of £500</text>
+<rect x="854" y="362" width="326" height="12" rx="6" fill="#e8ecf6"/>
+<rect x="854" y="362" width="202.12" height="12" rx="6" fill="#1b4dff"/>
+<text x="854" y="396" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#1b4dff" font-weight="700" text-anchor="start">62% there</text>
+<text x="1180" y="396" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b7280" font-weight="400" text-anchor="end">22 donors</text>
+<rect x="854" y="416" width="326" height="50" rx="25" fill="#1b4dff"/>
+<text x="1017.0" y="446.6" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16" fill="#ffffff" font-weight="600" text-anchor="middle">Donate to Sara</text>
+<text x="1017" y="486" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="middle">Goes straight to Hope Foundation</text>
+<line x1="854" y1="504" x2="1180" y2="504" stroke="#e5e7eb" stroke-width="1"/>
+<text x="854" y="528" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="700" text-anchor="start">Share Sara&#x27;s page</text>
+<rect x="854" y="540" width="76" height="42" rx="10" fill="#f5f7fc" stroke="#e5e7eb" stroke-width="1"/>
+<text x="892" y="560" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#1b4dff" font-weight="700" text-anchor="middle">f</text>
+<text x="892" y="576" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="9" fill="#6b7280" font-weight="400" text-anchor="middle">Facebook</text>
+<rect x="938" y="540" width="76" height="42" rx="10" fill="#f5f7fc" stroke="#e5e7eb" stroke-width="1"/>
+<text x="976" y="560" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#1b4dff" font-weight="700" text-anchor="middle">✉</text>
+<text x="976" y="576" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="9" fill="#6b7280" font-weight="400" text-anchor="middle">Email</text>
+<rect x="1022" y="540" width="76" height="42" rx="10" fill="#f5f7fc" stroke="#e5e7eb" stroke-width="1"/>
+<text x="1060" y="560" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#1b4dff" font-weight="700" text-anchor="middle">↻</text>
+<text x="1060" y="576" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="9" fill="#6b7280" font-weight="400" text-anchor="middle">WhatsApp</text>
+<rect x="1106" y="540" width="76" height="42" rx="10" fill="#f5f7fc" stroke="#e5e7eb" stroke-width="1"/>
+<text x="1144" y="560" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#1b4dff" font-weight="700" text-anchor="middle">⚭</text>
+<text x="1144" y="576" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="9" fill="#6b7280" font-weight="400" text-anchor="middle">Copy link</text>
+<rect x="826" y="614" width="382" height="156" rx="14" fill="#f7faff" stroke="#d7e2ff" stroke-width="1" filter="url(#sh)"/>
+<text x="854" y="650" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#0b1c5c" font-weight="800" text-anchor="start">Part of Team Northside</text>
+<rect x="854" y="666" width="326" height="8" rx="4" fill="#e8ecf6"/>
+<rect x="854" y="666" width="114.1" height="8" rx="4" fill="#0f7b53"/>
+<text x="854" y="696" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">£1,750 of £5,000 as a team</text>
+<rect x="854" y="712" width="180" height="36" rx="18" fill="#ffffff" stroke="#1b4dff" stroke-width="1"/>
+<text x="944.0" y="734.375" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#1b4dff" font-weight="600" text-anchor="middle">See the team</text>
+<rect x="72" y="784" width="730" height="30" rx="8" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<circle cx="90" cy="799" r="10" fill="#8a5a00"/>
+<text x="90" y="804" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">1</text>
+<text x="108" y="804" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b4a00" font-weight="600" text-anchor="start">New screen — the personalised fundraiser page</text></svg>

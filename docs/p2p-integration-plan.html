@@ -1,0 +1,910 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P2P Integration Plan — ideali.io</title>
+<meta name="description" content="Concrete plan to add peer-to-peer fundraising to the existing ideali.io donation module: data model, API contract, frontend build, delivery milestones and risks.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" crossorigin="anonymous">
+<style>
+  :root{
+    --ink:#0b1c5c; --brand:#1b4dff; --muted:#5a6584;
+    --good:#0f7b53; --good-bg:#e8f6f0;
+    --warn:#8a5a00; --warn-bg:#fdf4e3;
+    --bad:#a32020;  --bad-bg:#fdecec;
+    --line:#e3e7f2; --radius:14px;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:5rem;}
+  body{color:#1b2340; background:#f7f8fc; font-size:clamp(.95rem,.35vw + .88rem,1.03rem); line-height:1.65;}
+  h1,h2,h3,h4{color:var(--ink); font-weight:700; letter-spacing:-.01em;}
+  h1{font-size:clamp(1.8rem,3vw + 1rem,3rem);}
+  h2{font-size:clamp(1.35rem,1.4vw + .95rem,2rem); margin-top:0;}
+  h3{font-size:clamp(1.08rem,.6vw + .92rem,1.35rem);}
+  h4{font-size:1rem;}
+  .navbar{background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  .navbar .nav-link{color:var(--muted); font-weight:600; font-size:.87rem;}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--brand);}
+  .hero{background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%); color:#fff;}
+  .hero h1,.hero h2{color:#fff;}
+  .hero .lead{color:#d7e0ff;}
+  .kpi{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:var(--radius); padding:1rem 1.1rem; height:100%;}
+  .kpi .n{font-size:clamp(1.5rem,2vw + 1rem,2.2rem); font-weight:800; line-height:1.1;}
+  .kpi .l{font-size:.8rem; color:#cbd7ff; text-transform:uppercase; letter-spacing:.05em;}
+  section{padding:clamp(2.2rem,4vw,3.6rem) 0; border-bottom:1px solid var(--line);}
+  .panel{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:1.15rem 1.25rem; height:100%;}
+  .plain{background:#fff; border:1px dashed var(--line); border-radius:var(--radius); padding:1.1rem 1.2rem;}
+  .callout{border-left:4px solid var(--brand); background:#eef2ff; border-radius:8px; padding:1rem 1.15rem;}
+  .callout.good{border-color:var(--good); background:var(--good-bg);}
+  .callout.warn{border-color:var(--warn); background:var(--warn-bg);}
+  .callout.bad{border-color:var(--bad);  background:var(--bad-bg);}
+  .tag{display:inline-block; font-size:.73rem; font-weight:700; padding:.16rem .5rem; border-radius:999px; white-space:nowrap;}
+  .tag-ok{background:var(--good-bg); color:var(--good);}
+  .tag-warn{background:var(--warn-bg); color:var(--warn);}
+  .tag-bad{background:var(--bad-bg); color:var(--bad);}
+  .tag-brand{background:#e7ecff; color:var(--brand);}
+  .tag-neutral{background:#eef0f6; color:var(--muted);}
+  .num{display:inline-flex; align-items:center; justify-content:center; width:1.9rem; height:1.9rem; border-radius:50%; background:var(--brand); color:#fff; font-weight:700; font-size:.9rem; flex:0 0 auto;}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace; font-size:.86em;}
+  code{background:#eef0f6; color:#243; padding:.1rem .35rem; border-radius:5px;}
+  table{font-size:.9rem;}
+  th{background:#f0f3fb; color:var(--ink); white-space:nowrap;}
+  .grp th{background:var(--ink); color:#fff; font-size:.82rem; letter-spacing:.05em; text-transform:uppercase;}
+  .ms{border:1px solid var(--line); border-radius:var(--radius); background:#fff; overflow:hidden; height:100%;}
+  .ms .hd{padding:.85rem 1.1rem; background:#f0f3fb; border-bottom:1px solid var(--line);}
+  .ms .bd{padding:1rem 1.1rem;}
+  .ms.m1 .hd{background:#e7ecff;} .ms.m5 .hd{background:var(--good-bg);}
+  dl.gloss dt{color:var(--ink); font-weight:700; margin-top:.7rem;}
+  dl.gloss dd{color:var(--muted); margin-bottom:0;}
+  ul.tight li{margin-bottom:.3rem;}
+  a{color:var(--brand);}
+  :focus-visible{outline:3px solid var(--brand); outline-offset:2px;}
+  footer{background:var(--ink); color:#c7d0ea;}
+  footer a{color:#fff;}
+  @media print{
+    .navbar,.d-print-none{display:none !important;}
+    body{background:#fff; font-size:10.5pt;}
+    .hero{background:#0b1c5c !important;}
+    *{print-color-adjust:exact; -webkit-print-color-adjust:exact;}
+    section{page-break-inside:auto; border-bottom:none;}
+    .panel,.ms,.callout,tr{page-break-inside:avoid;}
+    .table-responsive{overflow:visible !important;}
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg sticky-top d-print-none">
+  <div class="container">
+    <span class="navbar-brand fw-bold" style="color:var(--ink)"><i class="bi bi-diagram-3-fill me-2" aria-hidden="true"></i>P2P Integration Plan</span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#what">What</a></li>
+        <li class="nav-item"><a class="nav-link" href="#scope">Scope</a></li>
+        <li class="nav-item"><a class="nav-link" href="#idea">Core idea</a></li>
+        <li class="nav-item"><a class="nav-link" href="#model">Data model</a></li>
+        <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
+        <li class="nav-item"><a class="nav-link" href="#frontend">Frontend</a></li>
+        <li class="nav-item"><a class="nav-link" href="#journeys">Journeys</a></li>
+        <li class="nav-item"><a class="nav-link" href="#changes">Changes</a></li>
+        <li class="nav-item"><a class="nav-link" href="#delivery">Delivery</a></li>
+        <li class="nav-item"><a class="nav-link" href="#quality">Quality</a></li>
+        <li class="nav-item"><a class="nav-link" href="#risks">Risks</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container py-5">
+    <p class="text-uppercase fw-bold mb-2" style="color:#a9bcff; letter-spacing:.12em; font-size:.8rem">ideali.io &middot; Donation module</p>
+    <h1 class="mb-3">Adding peer-to-peer fundraising</h1>
+    <p class="lead mb-4" style="max-width:62rem">
+      A build plan for turning our donation module into a peer-to-peer platform. It says exactly what gets
+      created, where each piece lives, what the backend must provide, and in what order the work ships.
+      Written to be read by anyone &mdash; no prior knowledge of the codebase assumed.
+    </p>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">1</div><div class="l">New idea to grasp</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">2</div><div class="l">New database entities</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">5</div><div class="l">Delivery milestones</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">0</div><div class="l">New dependencies</div></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 1 WHAT ============ -->
+<section id="what">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">1</span>What we are building, in plain words</h2>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">Today</h3>
+          <p class="mb-2">A charity creates a campaign. That campaign has <strong>one public page</strong>. Everybody who
+            gives, gives on that page. The charity does all the asking.</p>
+          <p class="mb-0 text-muted">This is <em>crowdfunding</em>. We already do it well.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">After this work</h3>
+          <p class="mb-2">Supporters can <strong>join a campaign</strong>. Each one gets their own page, with their own
+            photo, their own reason for caring, and their own goal. They ask their own friends and family.</p>
+          <p class="mb-0 text-muted">This is <em>peer-to-peer</em>. The charity stops being the only fundraiser.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="plain">
+      <h3 class="h5">The example we will keep using</h3>
+      <p class="mb-2">The charity runs <strong>&ldquo;Clean Water 2026&rdquo;</strong>, goal &pound;50,000.</p>
+      <ul class="tight mb-2">
+        <li><strong>Sara</strong> joins the campaign. She gets her own page: her photo, a sentence about why she
+          cares, her own goal of &pound;500.</li>
+        <li>Sara shares her page link on WhatsApp. Her uncle gives &pound;50 <em>on Sara's page</em>.</li>
+        <li>That &pound;50 goes to the charity like any other gift &mdash; same checkout, same payout, same receipt.</li>
+        <li>But it also shows on <strong>Sara's</strong> total (&pound;50 of &pound;500), on her <strong>team's</strong>
+          total, and on the <strong>campaign's</strong> total.</li>
+        <li>Sara appears on a leaderboard. She gets an email when she hits half her goal.</li>
+      </ul>
+      <p class="mb-0">That is the whole feature. Everything below exists to make those five lines work reliably.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 SCOPE ============ -->
+<section id="scope">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">2</span>What is in this plan, and what is deliberately not</h2>
+    <p class="mb-4" style="max-width:62rem">The gap matrix scored 56 capabilities and found twelve missing ones that
+      form a single feature family. Those twelve are the version 1 scope below. Nothing here is
+      &ldquo;nice to have&rdquo; &mdash; competitors treat every one of them as the minimum, so shipping eleven of twelve
+      still reads as an incomplete product.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="panel">
+          <h3 class="h5 mb-3"><span class="tag tag-ok">In scope &mdash; version 1</span></h3>
+          <ol class="tight mb-0">
+            <li>Turn peer-to-peer on or off per campaign</li>
+            <li>Fundraiser (a person) with their own public page</li>
+            <li>Team, with a captain, holding several fundraisers</li>
+            <li>Self sign-up: anyone can join a campaign or a team</li>
+            <li>Participant dashboard: my total, my donors, my link</li>
+            <li>Personal and team goals, each with a progress bar</li>
+            <li>Page personalisation: photo, story, goal</li>
+            <li><strong>Attribution</strong> &mdash; a gift credits fundraiser, team and campaign at once</li>
+            <li>Leaderboards, ranked by money raised <em>and</em> number of donors</li>
+            <li>Milestone and stalled-progress emails to fundraisers</li>
+            <li>Fundraiser and donor records reaching the CRM with soft credit</li>
+            <li>Share tools: link, QR, social buttons, on every fundraiser page</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="panel mb-4">
+          <h3 class="h5 mb-3"><span class="tag tag-neutral">Next &mdash; version 1.5</span></h3>
+          <ul class="tight mb-0">
+            <li>Register to fundraise (event ticket creates a fundraiser page)</li>
+            <li>AI coach that writes each fundraiser's appeal</li>
+            <li>Fundraiser toolkit: ready-made posts and images</li>
+            <li>Badges and contests</li>
+            <li>Supporter wall and countdown timers</li>
+            <li>Custom form questions on the donation checkout</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3 class="h5 mb-3"><span class="tag tag-bad">Not in this plan</span></h3>
+          <ul class="tight mb-0">
+            <li>Facebook fundraiser sync and in-feed giving</li>
+            <li>Donor-facing currency switching</li>
+            <li>Matching gifts, text-to-give, crypto and stock giving</li>
+            <li>Native mobile app, livestream fundraising</li>
+            <li>Any change to how money is taken, held or paid out</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <strong>One rule for the whole build:</strong> the payment path is not touched. Cards, Apple Pay, Google Pay,
+      bank debit, cheque, recurring gifts, tips, receipts and payouts stay exactly as they are today. Peer-to-peer
+      adds a <em>reference</em> to the gift; it does not change the gift.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 CORE IDEA ============ -->
+<section id="idea">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">3</span>The one idea everything hangs on: attribution</h2>
+    <p style="max-width:62rem">If only one paragraph of this document is read, make it this one. Every other feature
+      is decoration on top of it.</p>
+
+    <div class="plain mb-4">
+      <p class="mb-2"><strong>Attribution means a donation remembers who asked for it.</strong></p>
+      <p class="mb-2">Today a donation record answers: which campaign, how much, from whom. After this change it also
+        answers: <em>through which fundraiser</em>, and <em>on which team</em>. Two extra optional fields. That is the
+        entire technical heart of peer-to-peer.</p>
+      <p class="mb-0">The money still belongs to the charity. Only the <em>credit</em> is shared &mdash; the industry
+        calls this a <strong>soft credit</strong>.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">How the &pound;50 is counted</h3>
+          <table class="table table-sm mb-0">
+            <tbody>
+              <tr><td>Charity bank account</td><td class="text-end"><span class="tag tag-ok">+&pound;50 real money</span></td></tr>
+              <tr><td>Campaign total</td><td class="text-end">+&pound;50</td></tr>
+              <tr><td>Sara's team total</td><td class="text-end">+&pound;50 credit</td></tr>
+              <tr><td>Sara's personal total</td><td class="text-end">+&pound;50 credit</td></tr>
+            </tbody>
+          </table>
+          <p class="small text-muted mt-2 mb-0">The money is counted once. The credit is counted at three levels. Nothing
+            is double-banked.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5">Why it must be built first</h3>
+          <ul class="tight mb-0">
+            <li>A leaderboard is just attribution, sorted.</li>
+            <li>A personal progress bar is attribution, summed.</li>
+            <li>A milestone email is attribution, watched.</li>
+            <li>A CRM soft credit is attribution, exported.</li>
+          </ul>
+          <p class="small text-muted mt-2 mb-0">Build attribution wrong and all four are wrong together. Build it right
+            and the rest becomes ordinary screen work.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout bad mt-4">
+      <strong>Correctness bar for attribution.</strong> A gift may never be credited twice, never be silently lost when
+      a fundraiser is removed, and never be moved without an audit trail. Refunds and failed payments must reverse the
+      credit as well as the money. This is money-adjacent logic and is treated as such.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 DATA MODEL ============ -->
+<section id="model">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">4</span>The data model &mdash; two new things, one small addition</h2>
+    <p style="max-width:62rem">Deliberately small. Two new entities and two new optional fields on the record we
+      already have. Everything else is derived by counting.</p>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead>
+          <tr class="grp"><th colspan="3" scope="colgroup">New entity &mdash; Fundraiser (a person raising money inside a campaign)</th></tr>
+          <tr><th scope="col" style="width:24%">Field</th><th scope="col" style="width:26%">Type</th><th scope="col">Why it exists</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>uniqueId</code></td><td>GUID</td><td>Matches how campaigns are already identified in our URLs and APIs</td></tr>
+          <tr><td><code>campaignUniqueId</code></td><td>GUID</td><td>Which campaign this person is raising for</td></tr>
+          <tr><td><code>teamUniqueId</code></td><td>GUID, optional</td><td>Empty means an individual fundraiser with no team</td></tr>
+          <tr><td><code>slug</code></td><td>text, unique per campaign</td><td>Gives a readable link such as <code>/donate/clean-water/f/sara-k</code></td></tr>
+          <tr><td><code>displayName</code></td><td>text</td><td>What donors see. Not necessarily the legal name on the account</td></tr>
+          <tr><td><code>story</code></td><td>rich text</td><td>Why this person cares. Sanitised before it is ever rendered</td></tr>
+          <tr><td><code>photoId</code></td><td>image reference</td><td>Reuses the banner image pipeline the campaign builder already uses</td></tr>
+          <tr><td><code>goalAmount</code></td><td>decimal, optional</td><td>Personal target. Optional, because not every charity wants them</td></tr>
+          <tr><td><code>status</code></td><td>Draft / Active / Suspended / Removed</td><td>Lets an organiser take down an abusive page without deleting gift history</td></tr>
+          <tr><td><code>ownerUserId</code></td><td>user reference</td><td>Who may edit this page. Checked server-side on every write</td></tr>
+        </tbody>
+
+        <thead>
+          <tr class="grp"><th colspan="3" scope="colgroup">New entity &mdash; Team (a group of fundraisers)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>uniqueId</code></td><td>GUID</td><td>Same identity convention as everything else</td></tr>
+          <tr><td><code>campaignUniqueId</code></td><td>GUID</td><td>Teams never span campaigns</td></tr>
+          <tr><td><code>name</code>, <code>slug</code>, <code>story</code>, <code>photoId</code>, <code>goalAmount</code></td><td>as above</td><td>A team page is a fundraiser page with members added</td></tr>
+          <tr><td><code>captainFundraiserId</code></td><td>GUID</td><td>The captain is a fundraiser with extra rights, not a separate kind of user</td></tr>
+          <tr><td><code>joinPolicy</code></td><td>Open / ApprovalRequired</td><td>Some charities want to vet who represents them publicly</td></tr>
+          <tr><td><code>status</code></td><td>Active / Suspended / Removed</td><td>Same reasoning as fundraiser status</td></tr>
+        </tbody>
+
+        <thead>
+          <tr class="grp"><th colspan="3" scope="colgroup">Added to the existing donation record</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>fundraiserUniqueId</code></td><td>GUID, optional</td><td><strong>The attribution.</strong> Empty for a normal campaign gift &mdash; which is why nothing existing breaks</td></tr>
+          <tr><td><code>teamUniqueId</code></td><td>GUID, optional</td><td>Stored at the time of the gift, not looked up later, so a member changing teams never rewrites history</td></tr>
+        </tbody>
+
+        <thead>
+          <tr class="grp"><th colspan="3" scope="colgroup">Added to the existing campaign record</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>isPeerToPeerEnabled</code></td><td>true / false</td><td>Off by default. Existing campaigns are untouched until an organiser opts in</td></tr>
+          <tr><td><code>allowTeams</code>, <code>allowIndividuals</code></td><td>true / false</td><td>Some campaigns are teams-only, some are individuals-only</td></tr>
+          <tr><td><code>defaultFundraiserGoal</code></td><td>decimal, optional</td><td>Pre-fills the goal so a new fundraiser is not staring at an empty box</td></tr>
+          <tr><td><code>fundraiserApprovalRequired</code></td><td>true / false</td><td>Controls whether a new page is live immediately or waits for review</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="callout good">
+          <strong>Why totals are not stored.</strong> A fundraiser's raised amount is calculated by summing their
+          attributed gifts, not kept in a column. A stored total drifts the first time a refund is processed outside the
+          normal path; a calculated one cannot. If reading becomes slow, the fix is a cached view that can be rebuilt from
+          the gifts &mdash; never a hand-maintained number.
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="callout warn">
+          <strong>Two decisions needed before build starts.</strong> First: does a fundraiser need a full user account,
+          or is an email plus a magic link enough? Full accounts are safer, magic links convert far better. Second: are
+          teams allowed to nest (team inside team)? Recommendation: <em>account required</em>, and <em>no nesting in
+          version 1</em>.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 API ============ -->
+<section id="api">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">5</span>What the backend must provide</h2>
+    <p style="max-width:62rem">The frontend cannot build any of this alone. Below is the contract to hand to the API
+      team. Paths follow the shape the donation module already uses &mdash; for example
+      <code>/api/donation/campaign/{campaignId}/get-goal</code> &mdash; so nothing new has to be learned.</p>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead>
+          <tr class="grp"><th colspan="4" scope="colgroup">Organiser &mdash; setting up and moderating</th></tr>
+          <tr><th scope="col" style="width:8%">Method</th><th scope="col" style="width:42%">Path</th><th scope="col" style="width:14%">Who</th><th scope="col">Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/donation/campaign/{id}/get-p2p-settings</code></td><td>Organiser</td><td>Read the peer-to-peer switches for the campaign builder</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/campaign/{id}/set-p2p-settings</code></td><td>Organiser</td><td>Save them. Mirrors the existing <code>set-goal</code> / <code>set-presets</code> pattern</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/campaign/{id}/fundraiser/list</code></td><td>Organiser</td><td>Manage participants. Paged with <code>?page=&amp;pageSize=</code> like every other list</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/campaign/{id}/fundraiser/{fid}/approve</code></td><td>Organiser</td><td>Approve a page when approval is required</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/campaign/{id}/fundraiser/{fid}/suspend</code></td><td>Organiser</td><td>Take a page down without losing its gift history</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/campaign/{id}/fundraiser/list/{format}/export</code></td><td>Organiser</td><td>CSV / Excel export, same shape as the donor list export we already ship</td></tr>
+        </tbody>
+
+        <thead>
+          <tr class="grp"><th colspan="4" scope="colgroup">Participant &mdash; joining and running my page</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>POST</td><td><code>/api/donation/campaign/{id}/fundraiser/join</code></td><td>Signed-in supporter</td><td>Create my fundraiser page, optionally joining a team</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/fundraiser/{fid}</code></td><td>Owner</td><td>Load my page for editing</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/fundraiser/{fid}/update</code></td><td>Owner</td><td>Save name, story, goal</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/fundraiser/{fid}/set-photo</code></td><td>Owner</td><td>Upload the photo. Reuses the campaign banner upload pipeline</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/fundraiser/{fid}/dashboard</code></td><td>Owner</td><td>My raised total, donor count, goal progress, share links</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/fundraiser/{fid}/donor-list</code></td><td>Owner</td><td>Who gave through me, so I can thank them</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/campaign/{id}/team/create</code></td><td>Signed-in supporter</td><td>Start a team and become its captain</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/team/{tid}/dashboard</code></td><td>Captain</td><td>Team total, member list, member progress</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/team/{tid}/member/{fid}/remove</code></td><td>Captain</td><td>Remove a member. Their past gifts keep their original attribution</td></tr>
+        </tbody>
+
+        <thead>
+          <tr class="grp"><th colspan="4" scope="colgroup">Public &mdash; what a donor's browser calls</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/donation/{campaignId}/fundraiser/{slug}/donate</code></td><td>Anonymous</td><td>Everything the fundraiser page renders. Deliberately shaped like the existing <code>/api/donation/{campaignId}/donate</code> so one component can render both</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/{campaignId}/team/{slug}/donate</code></td><td>Anonymous</td><td>Same, for a team page</td></tr>
+          <tr><td>GET</td><td><code>/api/donation/{campaignId}/leaderboard</code></td><td>Anonymous</td><td><code>?scope=fundraiser|team&amp;sort=amount|donors</code>, paged</td></tr>
+          <tr><td>POST</td><td><code>/api/donation/{campaignId}/donate</code></td><td>Anonymous</td><td><strong>Existing endpoint.</strong> Adds two optional fields to the body &mdash; nothing else changes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h4 class="mb-2">The only change to the checkout call</h4>
+          <p class="small text-muted mb-2">Our existing request type <code>DonationSubmitRequest</code> gains two
+            optional fields. Empty means an ordinary campaign gift, exactly as today.</p>
+<pre class="mb-0"><code>{
+  donationAmount, frequency, paymentMethod,
+  paymentMethodDetail, contact, Notes,
+
+  fundraiserUniqueId?: string,   // new
+  teamUniqueId?: string          // new
+}</code></pre>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="callout bad">
+          <strong>Server-side rules the API must enforce.</strong> The frontend can send anything, so the API decides:
+          the fundraiser must belong to the named campaign; the fundraiser must be Active; the team must match the
+          fundraiser's team at that moment; a suspended page accepts no gifts. A bad reference is rejected, never
+          quietly dropped &mdash; a silently un-credited gift is worse than a failed one, because nobody notices.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <strong>Unknown to close first.</strong> Our reading of the system is frontend-only. Some of this may already
+      exist server-side. Before any estimate is committed, walk this table with the API team and mark each row
+      <em>exists</em>, <em>partly exists</em>, or <em>new</em>. That single meeting is the highest-value hour in the
+      whole plan.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 FRONTEND ============ -->
+<section id="frontend">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">6</span>The frontend build</h2>
+    <p style="max-width:62rem">New code sits beside the donation module and follows the folder rules the repository
+      already sets: screens under a role folder, HTTP calls in a service file, types in an interface folder.</p>
+
+    <h3 class="h5 mt-4">New files</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead><tr><th scope="col" style="width:44%">Path</th><th scope="col">What it is</th></tr></thead>
+        <tbody>
+          <tr class="grp"><th colspan="2" scope="colgroup">Public pages &mdash; what a donor sees</th></tr>
+          <tr><td><code>app/components/organizer/donation/p2p/FundraiserPage.tsx</code></td><td>A person's public page: photo, story, personal progress bar, donate button, supporter list, share buttons</td></tr>
+          <tr><td><code>app/components/organizer/donation/p2p/TeamPage.tsx</code></td><td>Team version, with a member list and each member's progress</td></tr>
+          <tr><td><code>app/components/organizer/donation/p2p/LeaderboardPanel.tsx</code></td><td>Ranked list, switchable between money raised and number of donors</td></tr>
+          <tr><td><code>app/components/organizer/donation/p2p/JoinCampaignPage.tsx</code></td><td>Sign-up: join as an individual, start a team, or join an existing team</td></tr>
+
+          <tr class="grp"><th colspan="2" scope="colgroup">Participant area &mdash; what a fundraiser sees</th></tr>
+          <tr><td><code>app/components/member/fundraising/MyFundraisingPage.tsx</code></td><td>Dashboard: raised, goal, donor count, my link, my QR code</td></tr>
+          <tr><td><code>app/components/member/fundraising/EditFundraiserPage.tsx</code></td><td>Edit photo, story and goal, with a live preview</td></tr>
+          <tr><td><code>app/components/member/fundraising/MyDonorsTable.tsx</code></td><td>Who gave through me, and when</td></tr>
+          <tr><td><code>app/components/member/fundraising/TeamCaptainPanel.tsx</code></td><td>Captain-only: members, their progress, remove a member</td></tr>
+
+          <tr class="grp"><th colspan="2" scope="colgroup">Organiser area &mdash; managing participants</th></tr>
+          <tr><td><code>app/components/organizer/donation/p2p/FundraiserListPage.tsx</code></td><td>All participants in a campaign: search, approve, suspend, export</td></tr>
+          <tr><td><code>app/components/organizer/donation/createDonationSteps/Step10PeerToPeer.tsx</code></td><td>New step in the existing campaign builder: switch peer-to-peer on, choose teams or individuals, set a default goal</td></tr>
+
+          <tr class="grp"><th colspan="2" scope="colgroup">Shared building blocks</th></tr>
+          <tr><td><code>app/components/common/FundraiserProgressCard.tsx</code></td><td>Avatar, name, raised-of-goal bar. Used on team pages, leaderboards and the captain panel &mdash; written once</td></tr>
+          <tr><td><code>app/components/common/ShareLinkBar.tsx</code></td><td>Copy link, QR, social buttons. Reuses the existing QR service</td></tr>
+
+          <tr class="grp"><th colspan="2" scope="colgroup">Data layer</th></tr>
+          <tr><td><code>app/service/organizer/donation/fundraiserService.ts</code></td><td>Every fundraiser and team HTTP call, through <code>HttpClient</code> like all others</td></tr>
+          <tr><td><code>app/service/organizer/donation/leaderboardService.ts</code></td><td>Leaderboard reads, kept separate because they are public and cache differently</td></tr>
+          <tr><td><code>app/interface/donationInter/fundraiserDto.ts</code></td><td>Typed request and response shapes. No <code>any</code> on these boundaries</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h5 mt-4">New routes</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead><tr><th scope="col" style="width:44%">Route</th><th scope="col" style="width:16%">Table</th><th scope="col">Page</th></tr></thead>
+        <tbody>
+          <tr><td><code>/donate/:campaignId/f/:fundraiserSlug</code></td><td>public</td><td>Fundraiser page &mdash; the link Sara shares</td></tr>
+          <tr><td><code>/donate/:campaignId/t/:teamSlug</code></td><td>public</td><td>Team page</td></tr>
+          <tr><td><code>/donate/:campaignId/leaderboard</code></td><td>public</td><td>Full leaderboard</td></tr>
+          <tr><td><code>/donate/:campaignId/join</code></td><td>public</td><td>Join the campaign</td></tr>
+          <tr><td><code>/member/fundraising</code></td><td>member</td><td>My fundraising dashboard</td></tr>
+          <tr><td><code>/member/fundraising/:fundraiserId/edit</code></td><td>member</td><td>Edit my page</td></tr>
+          <tr><td><code>/donation/campaign/:campaignId/fundraisers</code></td><td>organizer</td><td>Participant management</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small text-muted">Public routes extend the existing <code>/donate/:campaignId</code> pattern rather than
+      inventing a new one, so old links keep working and new ones read naturally. Every route is lazy-loaded behind the
+      shared suspense loader, like all current routes.</p>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h4 class="mb-2">State handling</h4>
+          <p class="small mb-2">No new global store slice. Fundraiser and team data is fetched per page and held in local
+            state, with the same loading / empty / error triple every screen in this repository uses.</p>
+          <p class="small text-muted mb-0">The one exception: when a donor arrives via a fundraiser link, the fundraiser
+            reference is carried through checkout in the existing donation slice, so a page refresh mid-payment cannot
+            lose the credit.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h4 class="mb-2">No new dependencies</h4>
+          <p class="small mb-2">Everything needed is already installed: Chakra for UI, the existing QR service for share
+            codes, the existing image pipeline for photos, the existing rich text editor for stories, the existing table
+            library for lists.</p>
+          <p class="small text-muted mb-0">Nothing in this plan requires approval to add a package.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 JOURNEYS ============ -->
+<section id="journeys">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">7</span>The four journeys, step by step</h2>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-gear-fill me-2" aria-hidden="true"></i>Organiser turns it on</h3>
+          <ol class="tight mb-0">
+            <li>Opens the campaign builder, reaches the new peer-to-peer step</li>
+            <li>Switches it on; chooses individuals, teams, or both</li>
+            <li>Sets a suggested personal goal and whether new pages need approval</li>
+            <li>Publishes. The campaign page now shows a <strong>Fundraise for us</strong> button</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-person-plus-fill me-2" aria-hidden="true"></i>Sara joins</h3>
+          <ol class="tight mb-0">
+            <li>Clicks <strong>Fundraise for us</strong>, signs in or creates an account</li>
+            <li>Chooses: on my own, start a team, or join a team</li>
+            <li>Adds a photo, a few sentences, and her goal &mdash; the goal is pre-filled</li>
+            <li>Gets her link and QR code straight away, with share buttons</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-heart-fill me-2" aria-hidden="true"></i>Her uncle gives</h3>
+          <ol class="tight mb-0">
+            <li>Opens Sara's link, sees her photo, her story, her progress</li>
+            <li>Presses Donate &mdash; the <em>existing</em> checkout opens, with a line saying
+              &ldquo;Supporting Sara&rdquo;</li>
+            <li>Pays exactly as any donor does today. Same methods, same receipt</li>
+            <li>Sara's bar moves, the team bar moves, the campaign bar moves. Sara is emailed
+              &ldquo;Your uncle just gave &pound;50&rdquo;</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5"><i class="bi bi-graph-up-arrow me-2" aria-hidden="true"></i>Sara keeps going</h3>
+          <ol class="tight mb-0">
+            <li>Her dashboard shows raised, goal, donor count, and every supporter</li>
+            <li>She thanks people from that list</li>
+            <li>At half her goal, an automatic congratulations email arrives</li>
+            <li>If nothing comes in for a week, a gentle nudge arrives with her link ready to share</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-4">
+      <strong>Note the third journey.</strong> The donor's experience is the checkout we already ship &mdash; the only
+      visible difference is a line naming who they are supporting. That is why the expensive, regulated,
+      slow-to-get-right half of this feature is already finished.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 CHANGES TO EXISTING ============ -->
+<section id="changes">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">8</span>What changes in code we already have</h2>
+    <p style="max-width:62rem">Short list, on purpose. A plan that rewrites the donation module to add peer-to-peer is
+      a bad plan.</p>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead><tr><th scope="col" style="width:34%">File</th><th scope="col" style="width:14%">Size of change</th><th scope="col">What changes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>donateToCampaign.tsx</code></td>
+            <td><span class="tag tag-warn">Moderate</span></td>
+            <td>Reads the fundraiser from the URL, shows a &ldquo;Supporting Sara&rdquo; line, and passes two extra
+              fields to the submit call. <strong>This file is already about 1,700 lines</strong> &mdash; it gets split
+              before it is extended, not after</td>
+          </tr>
+          <tr>
+            <td><code>donationService.ts</code></td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Two optional fields added to the submit request type and passed through</td>
+          </tr>
+          <tr>
+            <td><code>createDonationPage.tsx</code></td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Registers the new peer-to-peer step in the existing wizard</td>
+          </tr>
+          <tr>
+            <td><code>Step9ReviewConfirm.tsx</code></td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Shows the peer-to-peer settings in the review summary before publishing</td>
+          </tr>
+          <tr>
+            <td><code>CampaignProgressBar.tsx</code></td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Accepts a label and a scope so the same bar serves campaign, team and personal totals</td>
+          </tr>
+          <tr>
+            <td>Campaign public page</td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Adds the <strong>Fundraise for us</strong> button and a top-fundraisers panel when peer-to-peer is on</td>
+          </tr>
+          <tr>
+            <td><code>memberRoutes.tsx</code>, <code>organizerRoutes.tsx</code>, <code>App.tsx</code></td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>Register the new routes, lazily, as every existing route is registered</td>
+          </tr>
+          <tr>
+            <td>Sidebar menu</td>
+            <td><span class="tag tag-ok">Small</span></td>
+            <td>New entries, hidden when the role or the campaign does not have peer-to-peer</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout good mt-3">
+      <strong>Everything else is reused untouched:</strong> the whole checkout and its five payment methods, per-charity
+      payouts, tips, recurring gifts, receipts, invoices, exports, bot protection, QR generation, the image upload
+      pipeline, the rich text editor and the email template engine.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 DELIVERY ============ -->
+<section id="delivery">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">9</span>Delivery &mdash; five milestones, in this order</h2>
+    <p style="max-width:62rem">The order is not negotiable. Each milestone is only useful once the one before it is
+      finished, because every later feature reads the data the earlier one writes.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-6 col-xl-4">
+        <div class="ms m1">
+          <div class="hd"><span class="tag tag-brand">Milestone 1</span><h3 class="h6 mt-2 mb-0">Attribution works end to end</h3></div>
+          <div class="bd">
+            <p class="small mb-2"><strong>Build:</strong> the two entities, the two donation fields, the campaign
+              switches, and a fundraiser page that can be reached and donated to. No styling polish, no leaderboard.</p>
+            <p class="small mb-2"><strong>Done when:</strong> a gift made on a fundraiser link appears on that
+              fundraiser's total, that team's total and the campaign total &mdash; and a refund reverses all three.</p>
+            <p class="small text-muted mb-0">This milestone carries almost all of the technical risk. Nothing after it
+              is conceptually hard.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-xl-4">
+        <div class="ms">
+          <div class="hd"><span class="tag tag-neutral">Milestone 2</span><h3 class="h6 mt-2 mb-0">People can join and run a page</h3></div>
+          <div class="bd">
+            <p class="small mb-2"><strong>Build:</strong> join flow, team creation, page personalisation with photo and
+              story, participant dashboard, share bar with link and QR.</p>
+            <p class="small mb-0"><strong>Done when:</strong> a supporter can go from campaign page to a live, personal,
+              shareable fundraising page without any staff involvement.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-xl-4">
+        <div class="ms">
+          <div class="hd"><span class="tag tag-neutral">Milestone 3</span><h3 class="h6 mt-2 mb-0">It becomes competitive</h3></div>
+          <div class="bd">
+            <p class="small mb-2"><strong>Build:</strong> leaderboards ranked by money and by donor count, team pages
+              with member progress, captain controls, top-fundraiser panel on the campaign page.</p>
+            <p class="small mb-0"><strong>Done when:</strong> a campaign with fifty fundraisers is readable, ranked and
+              fast on a phone.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-xl-4">
+        <div class="ms">
+          <div class="hd"><span class="tag tag-neutral">Milestone 4</span><h3 class="h6 mt-2 mb-0">It keeps people going</h3></div>
+          <div class="bd">
+            <p class="small mb-2"><strong>Build:</strong> milestone emails, stalled-progress nudges, new-donation alerts
+              to the fundraiser, and organiser participant management with approve, suspend and export.</p>
+            <p class="small mb-0"><strong>Done when:</strong> a fundraiser who stops for a week is contacted
+              automatically, and an organiser can take down a bad page in one click.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-xl-4">
+        <div class="ms m5">
+          <div class="hd"><span class="tag tag-ok">Milestone 5</span><h3 class="h6 mt-2 mb-0">The data reaches the CRM</h3></div>
+          <div class="bd">
+            <p class="small mb-2"><strong>Build:</strong> fundraisers and their donors flow into donor records with the
+              soft credit attached, through the sync pipe we already have.</p>
+            <p class="small mb-0"><strong>Done when:</strong> a charity can see, in the CRM, that this donor came in
+              through this fundraiser &mdash; the thing the competitive brief calls our main differentiator.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-xl-4">
+        <div class="panel">
+          <h3 class="h6">What ships to customers, and when</h3>
+          <p class="small mb-2">Milestones 1 and 2 together are the first thing worth showing anyone. Milestone 3 is
+            the point at which we survive a side-by-side comparison. Milestones 4 and 5 are what make renewals stick.</p>
+          <p class="small text-muted mb-0">Suggest a small closed pilot with two or three friendly charities after
+            milestone 3, before general release.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <strong>No dates in this document, deliberately.</strong> Sizing depends on how much already exists in the
+      backend, and we have not read the backend. Estimates come after the API contract walkthrough in section 5,
+      not before &mdash; a number invented now would be a guess wearing a suit.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 QUALITY ============ -->
+<section id="quality">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">10</span>How we keep it correct</h2>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="callout bad">
+          <h3 class="h5 mb-2">Test tooling is a prerequisite, not a follow-up</h3>
+          <p class="mb-2">This repository has <strong>no test runner and no tests at all</strong>. Attribution decides
+            who is credited with money. Building it with no automated tests means a miscredit can ship and stay
+            invisible until a charity complains.</p>
+          <p class="mb-0"><strong>Recommendation:</strong> add the test setup as the first task of milestone 1, before
+            the feature code. It is a small, one-time, approved-dependency change and it protects everything that
+            follows.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5 mb-2">What gets tested</h3>
+          <ul class="tight mb-0">
+            <li>A gift with a fundraiser reference credits exactly three totals, once each</li>
+            <li>A gift with no reference behaves exactly as it does today</li>
+            <li>A refunded gift removes the credit everywhere it was added</li>
+            <li>A gift to a suspended fundraiser is rejected with a clear message</li>
+            <li>Moving a fundraiser between teams does not rewrite past gifts</li>
+            <li>Leaderboard order is correct for ties, by money and by donor count</li>
+            <li>Only the page owner can edit a page; only the captain can remove a member</li>
+            <li>The join flow, page edit and donate flow work by keyboard alone</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5 mb-2">Screen quality bar</h3>
+          <ul class="tight mb-0">
+            <li>Every screen has a designed loading, empty and error state &mdash; a fundraiser page with no gifts yet
+              is a common, and important, first impression</li>
+            <li>Mobile first, checked at 375, 768 and 1280 pixels wide. Most fundraiser links are opened on a phone
+              from a messaging app</li>
+            <li>Long lists scroll inside their own container; the page itself never scrolls sideways</li>
+            <li>Colours, spacing and type come from the shared theme, never hand-picked values</li>
+            <li>Touch targets at least 44 pixels; labelled controls; visible focus rings</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="h5 mb-2">Security points specific to this feature</h3>
+          <ul class="tight mb-0">
+            <li>Fundraiser stories are user-written and appear on public pages &mdash; they must be sanitised before
+              rendering, or the page becomes an attack surface</li>
+            <li>Photos are user-uploaded: type, size and dimension limits enforced server-side</li>
+            <li>Ownership is checked on the server for every edit; hiding a button is not access control</li>
+            <li>Public pages must not leak donor email addresses or amounts marked private</li>
+            <li>Self sign-up is open to the internet, so the join endpoint needs the same bot protection the donate
+              endpoint already has</li>
+            <li>Debug output currently written to the browser console in the donation path must be removed before
+              these new public pages multiply how often it is exposed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 RISKS ============ -->
+<section id="risks">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">11</span>Risks, and what we do about each</h2>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead><tr><th scope="col" style="width:28%">Risk</th><th scope="col" style="width:12%">Severity</th><th scope="col">Response</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Backend scope is unknown</td>
+            <td><span class="tag tag-bad">High</span></td>
+            <td>Walk the section 5 table with the API team before estimating. This is the single largest unknown in the plan</td>
+          </tr>
+          <tr>
+            <td>No automated tests exist</td>
+            <td><span class="tag tag-bad">High</span></td>
+            <td>Add the test setup as the first task of milestone 1. Attribution is money logic and cannot ship unverified</td>
+          </tr>
+          <tr>
+            <td>Attribution errors are silent</td>
+            <td><span class="tag tag-bad">High</span></td>
+            <td>Never store totals; always calculate. Reject bad references loudly. Log every credit change with who and when</td>
+          </tr>
+          <tr>
+            <td>The donate screen is already very large</td>
+            <td><span class="tag tag-warn">Medium</span></td>
+            <td>Split it into smaller parts as the first step of milestone 1, before adding anything to it</td>
+          </tr>
+          <tr>
+            <td>Public pages written by the public</td>
+            <td><span class="tag tag-warn">Medium</span></td>
+            <td>Sanitise stories, limit uploads, give organisers a one-click suspend, and support approval-before-live</td>
+          </tr>
+          <tr>
+            <td>Leaderboards get slow at scale</td>
+            <td><span class="tag tag-warn">Medium</span></td>
+            <td>Page them from day one; add a rebuildable cached view only if measurement shows it is needed</td>
+          </tr>
+          <tr>
+            <td>Feature is switched on for campaigns that do not want it</td>
+            <td><span class="tag tag-ok">Low</span></td>
+            <td>Off by default. Existing campaigns see no change until an organiser opts in</td>
+          </tr>
+          <tr>
+            <td>Scope grows mid-build</td>
+            <td><span class="tag tag-ok">Low</span></td>
+            <td>The version 1 list in section 2 is fixed. Anything else goes to version 1.5, in writing</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout mt-4">
+      <h3 class="h5 mb-2">Decisions needed before work starts</h3>
+      <ol class="tight mb-0">
+        <li>Does a fundraiser need a full account, or is email plus a magic link acceptable? <em>Recommend: account.</em></li>
+        <li>Can teams contain other teams? <em>Recommend: no, not in version 1.</em></li>
+        <li>Are personal goals compulsory or optional per campaign? <em>Recommend: optional, with a suggested default.</em></li>
+        <li>Do fundraiser pages need approval before going live? <em>Recommend: a per-campaign switch, off by default.</em></li>
+        <li>Is the test setup approved as part of milestone 1? <em>Recommend: yes.</em></li>
+      </ol>
+    </div>
+
+    <div class="callout good mt-4">
+      <strong>The honest summary.</strong> The hard, regulated, slow half of peer-to-peer &mdash; taking money safely,
+      paying it out, receipting it, protecting it from bots &mdash; is already built and running. What is missing is a
+      layer of pages, links and counting on top of it. That is a well-understood body of work with one genuinely
+      delicate part: making sure every pound is credited to exactly the right person, exactly once.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 GLOSSARY ============ -->
+<section id="glossary" style="border-bottom:none">
+  <div class="container">
+    <h2 class="mb-3"><span class="num me-2">12</span>Words used in this document</h2>
+    <div class="row">
+      <div class="col-lg-8">
+        <dl class="gloss mb-0">
+          <dt>Peer-to-peer</dt><dd>Supporters raise money on the charity's behalf, each with their own page.</dd>
+          <dt>Fundraiser</dt><dd>A person raising money inside a campaign. Also the name of their public page.</dd>
+          <dt>Team</dt><dd>A group of fundraisers whose totals add up together.</dd>
+          <dt>Captain</dt><dd>A team member with the extra right to manage the team page and its members.</dd>
+          <dt>Attribution</dt><dd>The record of which fundraiser a gift came through.</dd>
+          <dt>Soft credit</dt><dd>Credit for a gift given to someone who did not pay it &mdash; the person who asked.</dd>
+          <dt>Roll-up</dt><dd>Totals adding upward: fundraiser into team, team into campaign.</dd>
+          <dt>Leaderboard</dt><dd>Ranked list of fundraisers or teams, by money raised or by number of donors.</dd>
+          <dt>Slug</dt><dd>The readable part of a web address, such as <code>sara-k</code>.</dd>
+          <dt>Milestone email</dt><dd>An automatic message sent when a fundraiser passes a share of their goal.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="py-4">
+  <div class="container">
+    <p class="mb-1 small">Companion documents: <em>How peer-to-peer fundraising works</em>, <em>Competitive
+      specification</em>, <em>Donation module deep dive</em>, <em>P2P gap matrix</em>.</p>
+    <p class="mb-0 small" style="color:#8fa0c8">Scope and sizing depend on a backend capability review that has not yet
+      taken place. Frontend detail in this plan was read from source; backend detail is proposed, not confirmed.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

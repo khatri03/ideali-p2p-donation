@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P2P Fundraising Competitive Feature Spec — ideali.io</title>
+<meta name="description" content="Competitive feature spec covering 12 nonprofit SaaS platforms and the recommended peer-to-peer build scope for ideali.io.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" crossorigin="anonymous">
+<style>
+  :root{
+    --ink:#0b1c5c;
+    --ink-soft:#3d4a75;
+    --brand:#1b4dff;
+    --brand-soft:#eef2ff;
+    --line:#e2e7f3;
+    --paper:#f7f9fc;
+    --good:#0f7b53;
+    --good-soft:#e7f6ef;
+    --warn:#8a5a00;
+    --warn-soft:#fff6e0;
+    --bad:#a32020;
+    --bad-soft:#fdeceb;
+    --radius:14px;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:5rem;}
+  body{
+    background:var(--paper);
+    color:#1e2438;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;
+  }
+  h1,h2,h3,h4{color:var(--ink); font-weight:700; letter-spacing:-.01em;}
+  h1{font-size:clamp(1.75rem,4.5vw,3rem); line-height:1.15;}
+  h2{font-size:clamp(1.35rem,3vw,2rem); margin-bottom:.35rem;}
+  h3{font-size:clamp(1.1rem,2.2vw,1.4rem);}
+  h4{font-size:1.02rem;}
+  .lead-sub{color:var(--ink-soft); font-size:clamp(1rem,2vw,1.15rem);}
+
+  .navbar{background:#fff; border-bottom:1px solid var(--line);}
+  .navbar .nav-link{color:var(--ink-soft); font-weight:600; font-size:.92rem;}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--brand);}
+  .brand-dot{width:.65rem;height:.65rem;border-radius:50%;background:var(--brand);display:inline-block;}
+
+  .hero{
+    background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%);
+    color:#fff; border-radius:var(--radius);
+  }
+  .hero h1{color:#fff;}
+  .hero .lead-sub{color:#d5ddff;}
+  .kpi{
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+    border-radius:12px; height:100%;
+  }
+  .kpi .kpi-value{font-size:clamp(1.5rem,4vw,2.1rem); font-weight:700; line-height:1.1;}
+  .kpi .kpi-label{color:#d5ddff; font-size:.88rem;}
+
+  section{scroll-margin-top:5rem;}
+  .section-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:2rem; height:2rem; border-radius:8px;
+    background:var(--brand-soft); color:var(--brand);
+    font-weight:700; font-size:.95rem; flex:0 0 auto;
+  }
+  .panel{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    height:100%;
+  }
+  .panel-head{
+    border-bottom:1px solid var(--line); font-weight:700; color:var(--ink);
+  }
+
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft); border-radius:10px;}
+  .callout.good{border-left-color:var(--good); background:var(--good-soft);}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft);}
+  .callout.bad{border-left-color:var(--bad); background:var(--bad-soft);}
+  .callout h4{margin-bottom:.35rem;}
+
+  .plain{
+    background:#fff; border:1px dashed var(--line); border-radius:10px;
+    color:var(--ink-soft); font-size:.95rem;
+  }
+  .plain strong{color:var(--ink);}
+
+  .tag{
+    display:inline-block; padding:.18rem .6rem; border-radius:999px;
+    font-size:.76rem; font-weight:700; letter-spacing:.01em; white-space:nowrap;
+  }
+  .tag-free{background:var(--good-soft); color:var(--good);}
+  .tag-gated{background:var(--warn-soft); color:var(--warn);}
+  .tag-ent{background:var(--brand-soft); color:var(--brand);}
+  .tag-none{background:var(--bad-soft); color:var(--bad);}
+  .tag-early{background:#f0e9ff; color:#5b2bd6;}
+
+  table{font-size:.9rem;}
+  .table thead th{
+    background:var(--ink); color:#fff; font-weight:600; font-size:.82rem;
+    vertical-align:middle; white-space:nowrap;
+  }
+  .table td{vertical-align:top;}
+  .table-responsive{border:1px solid var(--line); border-radius:var(--radius); background:#fff;}
+
+  .platform-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); height:100%;}
+  .platform-card .card-title{margin-bottom:.15rem;}
+  .platform-card .segment{color:var(--ink-soft); font-size:.85rem;}
+  .pros li::marker{color:var(--good);}
+  .cons li::marker{color:var(--bad);}
+
+  .flow{list-style:none; counter-reset:flow; padding-left:0;}
+  .flow li{
+    counter-increment:flow; position:relative; padding-left:3rem; margin-bottom:1rem;
+  }
+  .flow li::before{
+    content:counter(flow); position:absolute; left:0; top:0;
+    width:2.1rem; height:2.1rem; border-radius:50%;
+    background:var(--brand); color:#fff; font-weight:700;
+    display:flex; align-items:center; justify-content:center; font-size:.95rem;
+  }
+
+  .req-id{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.78rem; font-weight:700; color:var(--brand);
+    background:var(--brand-soft); border-radius:6px; padding:.1rem .45rem;
+  }
+
+  .accordion-button{font-weight:600; color:var(--ink);}
+  .accordion-button:not(.collapsed){background:var(--brand-soft); color:var(--brand);}
+  .accordion-button:focus{box-shadow:none;}
+
+  dl.glossary dt{color:var(--ink); font-weight:700;}
+  dl.glossary dd{color:var(--ink-soft);}
+
+  a{color:var(--brand);}
+  :focus-visible{outline:3px solid var(--brand); outline-offset:2px;}
+  footer{border-top:1px solid var(--line); color:var(--ink-soft); font-size:.88rem;}
+
+  @media print{
+    .navbar,.no-print{display:none !important;}
+    body{background:#fff;}
+    section{page-break-inside:avoid;}
+    .hero{background:#0b1c5c !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .accordion-collapse{display:block !important;}
+    .table-responsive{overflow:visible !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top no-print">
+  <div class="container">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#top">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span>ideali.io — P2P Spec</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#summary">Summary</a></li>
+        <li class="nav-item"><a class="nav-link" href="#models">Models</a></li>
+        <li class="nav-item"><a class="nav-link" href="#crm">CRM flow</a></li>
+        <li class="nav-item"><a class="nav-link" href="#updates">2026 updates</a></li>
+        <li class="nav-item"><a class="nav-link" href="#sentiment">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link" href="#matrix">Matrix</a></li>
+        <li class="nav-item"><a class="nav-link" href="#profiles">Profiles</a></li>
+        <li class="nav-item"><a class="nav-link" href="#requirements">Requirements</a></li>
+        <li class="nav-item"><a class="nav-link" href="#caveats">Caveats</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container my-4 my-lg-5" id="top">
+
+  <!-- HERO -->
+  <header class="hero p-4 p-md-5 mb-5">
+    <p class="text-uppercase fw-bold mb-2" style="letter-spacing:.12em; font-size:.8rem; color:#a9bcff;">Competitive Feature Spec · August 2026</p>
+    <h1 class="mb-3">Peer-to-Peer Fundraising:<br>What the Market Ships, and What ideali.io Must Build</h1>
+    <p class="lead-sub mb-4" style="max-width:60rem;">
+      A review of 12 nonprofit SaaS platforms — what each one offers for peer-to-peer (P2P) fundraising,
+      what it costs, what customers praise and complain about, and the exact feature scope
+      ideali.io needs in order to compete.
+    </p>
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-3">
+        <div class="kpi p-3">
+          <div class="kpi-value">12</div>
+          <div class="kpi-label">platforms reviewed</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="kpi p-3">
+          <div class="kpi-value">11</div>
+          <div class="kpi-label">offer P2P in some form — only DonorSnap has none</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="kpi p-3">
+          <div class="kpi-value">3</div>
+          <div class="kpi-label">delivery models: free, gated, enterprise</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="kpi p-3">
+          <div class="kpi-value">$250k–$10M</div>
+          <div class="kpi-label">recommended target segment (mid-market)</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. SUMMARY -->
+  <section id="summary" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">1</span>
+      <h2 class="mb-0">The short version</h2>
+    </div>
+
+    <div class="plain p-3 p-md-4 mb-4">
+      <strong>Read this first.</strong> Peer-to-peer fundraising means the charity does not ask for money directly.
+      Instead, supporters each get their own page and ask their own friends and family. The charity supplies the
+      platform; the supporters supply the network. Every serious competitor now ships this. It is no longer a
+      differentiator — it is the price of entry.
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="panel p-3 p-md-4">
+          <h3 class="h5">P2P is table stakes</h3>
+          <p class="mb-2">Every credible competitor offers it, but they deliver it in three different ways —
+          free and bundled, locked behind a paid tier, or built as a heavyweight enterprise product.</p>
+          <p class="mb-0">Two platforms stand apart:
+            <strong>DonorSnap has no P2P at all</strong>, and
+            <strong>Fundraise Up's P2P ("Fundraisers") is only in Early Access</strong> as of mid-2026.</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel p-3 p-md-4">
+          <h3 class="h5">The gap ideali.io should target</h3>
+          <p class="mb-2">The mid-market. Build native individual and team pages, team captains, leaderboards,
+          gamification and event tie-in.</p>
+          <p class="mb-0">Most important of all: <strong>automatic sync of fundraiser records AND donor records
+          into the core CRM</strong>, with no separate reconciliation step. Across every review set, this
+          CRM-native data flow is the single most valued and the single most complained-about dimension.</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel p-3 p-md-4">
+          <h3 class="h5">Who to benchmark against</h3>
+          <ul class="mb-2 ps-3">
+            <li><strong>Bonterra DonorDrive</strong> — enterprise depth, mobile app, gamification</li>
+            <li><strong>Classy / GoFundMe Pro</strong> — team hierarchies, branding, event registration</li>
+            <li><strong>Givebutter</strong> — frictionless free UX, auto-enabled P2P</li>
+          </ul>
+          <p class="mb-0">Clearest 2026 innovation vectors: <strong>AI</strong> (Fundraise Up's AI Coach,
+          Bloomerang AI) and <strong>native social sharing</strong> (the DonorDrive–Meta integration).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. THREE DELIVERY MODELS -->
+  <section id="models" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">2</span>
+      <h2 class="mb-0">The three delivery models</h2>
+    </div>
+    <p class="lead-sub mb-4">Every platform in the set packages P2P in one of these ways. The packaging choice
+    drives price, target customer, and how much of the product a buyer must purchase to get P2P at all.</p>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="panel p-3 p-md-4">
+          <span class="tag tag-free mb-2 d-inline-block">Model A</span>
+          <h3 class="h5">Native + free (donor-tip funded)</h3>
+          <p class="mb-2"><strong>Zeffy, Givebutter.</strong></p>
+          <p class="mb-0">P2P included with individual and team pages, leaderboards and CRM — no platform fee.
+          Revenue comes from an optional tip the donor adds at checkout.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel p-3 p-md-4">
+          <span class="tag tag-gated mb-2 d-inline-block">Model B</span>
+          <h3 class="h5">Native but gated / add-on / sister-product</h3>
+          <p class="mb-0">
+            <strong>Donorbox</strong> (Pro tier),
+            <strong>DonorPerfect</strong> ("Crowdfunding" module + partner integrations),
+            <strong>Bloomerang Fundraising</strong> (P2P module inside the former Qgiv product; syncs to Bloomerang CRM),
+            <strong>Keela</strong> (no native P2P — delivered through sibling product Raisely under Aplos),
+            <strong>GiveSmart</strong> (included in a flat-fee contract),
+            <strong>Funraise</strong> (Premium plan).
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel p-3 p-md-4">
+          <span class="tag tag-ent mb-2 d-inline-block">Model C</span>
+          <h3 class="h5">Enterprise P2P specialists</h3>
+          <p class="mb-2"><strong>Bonterra DonorDrive, Classy / GoFundMe Pro, Funraise.</strong></p>
+          <p class="mb-0">Built for large walk / run / ride programs. <strong>Fundraise Up</strong> is entering
+          this space with an AI-first Early Access product.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel p-3 p-md-4">
+          <span class="tag tag-none mb-2 d-inline-block">Model D</span>
+          <h3 class="h5">No P2P</h3>
+          <p class="mb-2"><strong>DonorSnap.</strong></p>
+          <p class="mb-0">Competes on CRM depth and price instead. Useful to ideali.io as the
+          "what happens when you don't build P2P" reference point.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CRM DATA FLOW -->
+  <section id="crm" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">3</span>
+      <h2 class="mb-0">CRM data flow — the most decision-critical dimension</h2>
+    </div>
+
+    <div class="plain p-3 p-md-4 mb-4">
+      <strong>Why this matters in plain terms.</strong> When a supporter raises money through their own page,
+      two kinds of record are created: the <em>fundraiser</em> (the supporter running the page) and the
+      <em>donors</em> (the friends who gave). If those records do not land in the charity's main donor database
+      automatically, someone has to export spreadsheets and merge them by hand every campaign. That manual
+      merge is the number one complaint in this market.
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5">Truly native — one system</h3>
+          <p class="mb-2">Donors and fundraisers land directly in the same platform's CRM.</p>
+          <p class="mb-0"><strong>Zeffy, Givebutter, GiveSmart, Funraise, Fundraise Up, DonorPerfect, Donorbox.</strong></p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5">Native sync between sibling products</h3>
+          <p class="mb-2"><strong>Bloomerang Fundraising to Bloomerang CRM</strong> — uses Bloomerang matching
+          logic, creates soft credits for P2P donations, avoids duplicate constituents.</p>
+          <p class="mb-0"><strong>Keela ↔ Raisely ↔ Aplos.</strong></p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5">API / integration to an external CRM</h3>
+          <p class="mb-2"><strong>Classy / GoFundMe Pro</strong> — Salesforce, DonorPerfect.</p>
+          <p class="mb-0"><strong>Bonterra DonorDrive</strong> — connects to an organisation's existing stack.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good p-3 p-md-4 mt-4">
+      <h4><i class="bi bi-lightbulb-fill me-2" aria-hidden="true"></i>Strategic read</h4>
+      <p class="mb-0">ideali.io already owns the CRM. Shipping P2P that writes into it natively — matched,
+      de-duplicated, soft-credited — turns the market's biggest complaint into ideali.io's headline feature.
+      No competitor in the gated or enterprise camp does this cleanly for the mid-market.</p>
+    </div>
+  </section>
+
+  <!-- 4. 2026 UPDATES -->
+  <section id="updates" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">4</span>
+      <h2 class="mb-0">2026 (and recent) product updates affecting P2P</h2>
+    </div>
+    <p class="lead-sub mb-4">What competitors shipped recently. These set the expectation buyers now arrive with.</p>
+
+    <ul class="flow mt-4">
+      <li>
+        <h4>Bonterra DonorDrive × Meta <span class="text-muted fw-normal fs-6">— Business Wire, 29 July 2025</span></h4>
+        <p class="mb-1">A native integration that posts personal, team or event fundraising pages
+        "natively to Instagram and Facebook Feeds, Stories, and Profiles", with built-in donate buttons and
+        real-time tracking.</p>
+        <p class="mb-0 text-muted"><em>Bonterra press release: "With Bonterra DonorDrive, nonprofits already see a
+        154% increase in funds raised per campaign." Vendor-reported.</em></p>
+      </li>
+      <li>
+        <h4>Fundraise Up — Tap to Donate + P2P <span class="text-muted fw-normal fs-6">— PR Newswire, 29 July 2026</span></h4>
+        <p class="mb-1">"Fundraise Up today announced Tap to Donate and Peer-to-Peer Fundraising, now in early access,
+        extending the same checkout technology that has driven an average 30% lift in conversion."</p>
+        <p class="mb-1">The P2P module ("Fundraisers") pairs an <strong>AI Coach</strong> with the platform's
+        conversion-optimised checkout, runs natively on the nonprofit's own website, and produces a unified donor record.</p>
+        <p class="mb-0">Named early reference customers: <strong>UNICEF USA</strong> and the
+        <strong>Canadian Red Cross</strong>. Fundraise Up reports that in early access "the share of fundraisers
+        raising at least one gift nearly doubled" — targeting the <strong>"zero-dollar fundraiser" problem</strong>.
+        Events (walk / run / ride) are "next" on the roadmap, <strong>not yet released</strong>.</p>
+      </li>
+      <li>
+        <h4>Bloomerang Fundraising app <span class="text-muted fw-normal fs-6">— July 2026</span></h4>
+        <p class="mb-0">P2P events now support <strong>date-based registration fees</strong> — for example,
+        early-bird pricing.</p>
+      </li>
+      <li>
+        <h4>Bloomerang CRM / Fundraising</h4>
+        <p class="mb-0">AI-powered insights and <strong>Smart Amounts</strong>.</p>
+      </li>
+      <li>
+        <h4>GoFundMe Pro</h4>
+        <p class="mb-0">Ongoing Classy to GoFundMe Pro rebrand. Reviewers note innovation
+        <strong>"slowed to a crawl"</strong> post-merger.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- 5. REVIEW SENTIMENT -->
+  <section id="sentiment" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">5</span>
+      <h2 class="mb-0">Independent review sentiment, specific to P2P</h2>
+    </div>
+    <p class="lead-sub mb-4">What real customers say. Praise shows the bar to match; complaints show the opening to exploit.</p>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">Classy / GoFundMe Pro</h3>
+          <p class="mb-2"><span class="tag tag-ent">P2P feature scored 9.2 / 10 on G2</span></p>
+          <p class="mb-2">Highest dedicated P2P-feature score in the whole set. Praised for team hierarchies and branded pages.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Complaints:</strong> expensive, complex, innovation slowdown
+          and support-rep churn after the GoFundMe merger, and auto-renewal surprises.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">Bonterra DonorDrive</h3>
+          <p class="mb-2">Described by a verified Capterra reviewer as <em>"the best in-class software for peer to
+          peer fundraising"</em>. Praise for responsiveness, the mobile app, and event / story features.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Complaints:</strong> reporting gaps and clunkiness,
+          a post-acquisition roadmap slowdown, no AI upgrades yet, and reduced chat support.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">Givebutter</h3>
+          <p class="mb-2">#1 on G2 across multiple nonprofit categories. Praised for free P2P, ease of use,
+          and its weighted leaderboards.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Complaint:</strong> the donor tip prompt can feel off-brand.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">Bloomerang Fundraising (Qgiv)</h3>
+          <p class="mb-2">Praised for personalised P2P pages, Facebook integration, and ease of use.</p>
+          <p class="mb-0">The <strong>Lauren McCluskey Foundation nearly tripled its donor count</strong>
+          on its first Qgiv P2P campaign.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">GiveSmart</h3>
+          <p class="mb-2">Praised for its all-features-included flat fee and P2P ease of use.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Recurring complaint:</strong> cost.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="panel h-100 p-3 p-md-4">
+          <h3 class="h5 mb-1">Funraise</h3>
+          <p class="mb-2">Praised for well-designed P2P and donation-form layouts.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Complaints:</strong> occasional bugs, and fee transparency
+          as needs grow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. COMPARISON MATRIX -->
+  <section id="matrix" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">6</span>
+      <h2 class="mb-0">Comparison matrix — all 12 platforms</h2>
+    </div>
+    <p class="lead-sub mb-3">Scroll the table sideways on smaller screens. All pricing is as cited in the source
+    research — see <a href="#caveats">Caveats</a> before quoting any figure externally.</p>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Platform</th>
+            <th scope="col">P2P availability</th>
+            <th scope="col">P2P-specific pricing</th>
+            <th scope="col">Individual / Team / Captains</th>
+            <th scope="col">Leaderboards &amp; gamification</th>
+            <th scope="col">CRM data flow</th>
+            <th scope="col">Event tie-in</th>
+            <th scope="col">Independent rating</th>
+            <th scope="col">Best-fit segment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Zeffy</th>
+            <td><span class="tag tag-free">Native, free</span></td>
+            <td>$0 platform / transaction fee; donor optional tip (up to 17%)</td>
+            <td>Yes / Yes / via team creation</td>
+            <td>Leaderboard; milestone goals; real-time tracking</td>
+            <td>Native free CRM; donors auto-captured</td>
+            <td>Yes — can link a ticketing / registration form (no group registration via P2P)</td>
+            <td>High (G2 / Capterra strong; exact P2P-module score not disclosed)</td>
+            <td>Small / all-volunteer</td>
+          </tr>
+          <tr>
+            <th scope="row">Donorbox</th>
+            <td><span class="tag tag-gated">Native, requires Pro tier</span></td>
+            <td>Pro ~$139–150/mo; platform fee 1.75–2% (Pro) or 2.95% org / 3.95% supporter (Standard)</td>
+            <td>Yes / Yes / limited</td>
+            <td>Progress updates, donor wall; limited gamification</td>
+            <td>Native (Donorbox CRM; add-on at Premium)</td>
+            <td>Event ticketing separate module</td>
+            <td>G2 4.6 (1,378)</td>
+            <td>Small–mid</td>
+          </tr>
+          <tr>
+            <th scope="row">DonorPerfect</th>
+            <td><span class="tag tag-gated">Native "Crowdfunding" module + partner integrations</span></td>
+            <td>Platform from $125+/mo; 1.5% transaction fee</td>
+            <td>Basic personal pages / limited / no</td>
+            <td>Progress bar; minimal gamification</td>
+            <td>Native — gift &amp; donor data auto-syncs to DonorPerfect CRM</td>
+            <td>Via integrations / event module</td>
+            <td>Capterra ~4.5 (3,000+ reviews); P2P not the strength</td>
+            <td>Mid CRM-first</td>
+          </tr>
+          <tr>
+            <th scope="row">DonorSnap</th>
+            <td><span class="tag tag-none">None</span></td>
+            <td>N/A</td>
+            <td>No</td>
+            <td>No</td>
+            <td>N/A (full CRM otherwise)</td>
+            <td>Native event registration, but no P2P</td>
+            <td>Capterra positive; no P2P</td>
+            <td>Small–mid CRM-only</td>
+          </tr>
+          <tr>
+            <th scope="row">Keela</th>
+            <td><span class="tag tag-gated">No native P2P; via sister product Raisely (Aplos)</span></td>
+            <td>Keela from ~$99/mo; P2P priced via Raisely</td>
+            <td>Via Raisely / Via Raisely / Via Raisely</td>
+            <td>Via Raisely (leaderboards, badges)</td>
+            <td>Raisely → Keela / Aplos sync</td>
+            <td>Via Raisely (ticketing)</td>
+            <td>G2 P2P feature reviewed by 40 users</td>
+            <td>Mid</td>
+          </tr>
+          <tr>
+            <th scope="row">GiveSmart</th>
+            <td><span class="tag tag-gated">Native, included in all plans</span></td>
+            <td>Flat-fee contract (from ~$1,195/mo per third-party; ~$3,000/yr entry cited); 3.5% card fee</td>
+            <td>Yes / Yes / yes</td>
+            <td>Leaderboards; multi-campaign; message center; community chat</td>
+            <td>Native within GiveSmart suite</td>
+            <td>Yes — item / event management tie-in</td>
+            <td>G2 4.5 (157)</td>
+            <td>Mid–large events</td>
+          </tr>
+          <tr>
+            <th scope="row">Bloomerang Fundraising (Qgiv)</th>
+            <td><span class="tag tag-gated">Native P2P module (within former Qgiv, now sold as Bloomerang Fundraising)</span></td>
+            <td>Qgiv entry ~$25/mo historically; P2P as add-on module</td>
+            <td>Yes / Yes / team captains</td>
+            <td>Milestone badges, leaderboards, contests</td>
+            <td>Syncs to Bloomerang CRM (matching logic, soft credits)</td>
+            <td>Yes — event registration, walk-a-thons, early-bird date-based fees</td>
+            <td>G2 (Bloomerang Fundraising) positive</td>
+            <td>Mid ($250k–$10M+)</td>
+          </tr>
+          <tr>
+            <th scope="row">Givebutter</th>
+            <td><span class="tag tag-free">Native, free; auto-enabled on Page / Event campaigns</span></td>
+            <td>$0 platform fee (tip model) or up to 5% if tips disabled; Plus from $29/mo</td>
+            <td>Yes / Yes (+ multi-team) / yes</td>
+            <td>Leaderboards (weighted by dollars AND donors), countdown timers, goal thermometers, supporter wall</td>
+            <td>Native free CRM</td>
+            <td>Yes — registration fundraising on Event campaigns</td>
+            <td>G2 4.7 (1,984); Capterra 4.8</td>
+            <td>Small–mid (&lt;$5M)</td>
+          </tr>
+          <tr>
+            <th scope="row">Classy / GoFundMe Pro</th>
+            <td><span class="tag tag-ent">Native, enterprise</span></td>
+            <td>Non-public; ~$300+/mo, annual contracts; ~2.9% + $0.30 processing</td>
+            <td>Yes / Yes / team captains + pre-built teams</td>
+            <td>Leaderboards; Classy Live event leaderboards</td>
+            <td>Native; Salesforce + DonorPerfect integrations</td>
+            <td>Yes — "Registration with fundraising" campaign type; Classy Live</td>
+            <td>G2 4.4 (146); P2P feature scored 9.2/10 on G2</td>
+            <td>Large / enterprise</td>
+          </tr>
+          <tr>
+            <th scope="row">Funraise</th>
+            <td><span class="tag tag-gated">Native, Premium plan</span></td>
+            <td>Premium from $99/mo; up to 5% platform fee (donor-covered) + 60¢/transaction</td>
+            <td>Yes / Yes / yes</td>
+            <td>Progress bars; milestone &amp; stalled-progress automated emails; Facebook Fundraiser sync</td>
+            <td>Native CRM</td>
+            <td>Yes — endurance events; "Register to Fundraise" (RTF); Commitments</td>
+            <td>G2 positive (Capterra "affordable")</td>
+            <td>Mid / growing</td>
+          </tr>
+          <tr>
+            <th scope="row">Fundraise Up</th>
+            <td><span class="tag tag-early">Early Access only (P2P "Fundraisers" launched 29 July 2026)</span></td>
+            <td>4% flat transaction fee (5% crypto); no separate P2P fee disclosed; Early Access "no fee"</td>
+            <td>Yes / Yes / —</td>
+            <td>AI Coach + milestone nudges; leaderboards not confirmed</td>
+            <td>Native — unified donor record, CRM sync</td>
+            <td>Events "next" on roadmap (not yet released)</td>
+            <td>G2 4.8 (~86)</td>
+            <td>Mid–large, digital-first</td>
+          </tr>
+          <tr>
+            <th scope="row">Bonterra DonorDrive</th>
+            <td><span class="tag tag-ent">Native, enterprise (P2P specialist)</span></td>
+            <td>Non-public; lite version for Fundraising Essentials, full for Pro / Enterprise</td>
+            <td>Yes / Yes / yes</td>
+            <td>Gamification incentives, activity tracking, livestreaming, native mobile app</td>
+            <td>Award-winning CRM integration (connects to existing stack)</td>
+            <td>Yes — clicks-not-code event builder, walkathons, DIY, livestream</td>
+            <td>G2 4.7 (265); Capterra ~4.2–4.7 (36)</td>
+            <td>Large / enterprise endurance events</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. PLATFORM PROFILES -->
+  <section id="profiles" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">7</span>
+      <h2 class="mb-0">Platform-by-platform detail</h2>
+    </div>
+    <p class="lead-sub mb-4">The full picture on each of the 12, in the order the source spec presents them.</p>
+
+    <div class="row g-4">
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Zeffy <span class="tag tag-free ms-1">Native, free</span></h3>
+          <p class="segment mb-3">Best for: small and all-volunteer nonprofits</p>
+          <p>The only genuinely <strong>$0-fee P2P option</strong> — no platform fee, no transaction fee, no card fee.
+          Funded by optional donor tips (up to 17%, <strong>default-on</strong>, which some report causes donor confusion).</p>
+          <p>Native P2P campaign type with individual and team pages, solo / team / captain toggles, a public
+          leaderboard ranked by amount raised, donor recognition and anonymity options, and per-fundraiser page
+          customisation: title, goal, story, profile photo, banner, colour, custom thank-you message.</p>
+          <p class="mb-0">Donors auto-flow into Zeffy's free CRM. Event tie-in exists — you can link a
+          ticketing / registration form and require a registration fee (walk-a-thon) — but
+          <strong>group registration is not supported through P2P</strong>.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Donorbox <span class="tag tag-gated ms-1">Pro tier</span></h3>
+          <p class="segment mb-3">Best for: small–mid orgs already embedding Donorbox forms</p>
+          <p>P2P is native but <strong>gated to the Pro tier</strong> (~$139–150/mo). Platform fees: 2.95% on
+          organisation P2P and 3.95% on supporter P2P at Standard; reduced to 1.75–2% at Pro / Premium.</p>
+          <p>Features: customisable individual pages, team fundraising, individual goals, donor wall,
+          social sharing buttons, and 22+ payment methods via OmniGive.</p>
+          <p class="mb-0">Donations from all child campaigns flow to the parent org account. Native Donorbox CRM
+          (add-on at Premium). Event ticketing is a separate module. G2 4.6 (1,378 reviews).</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">DonorPerfect <span class="tag tag-gated ms-1">Crowdfunding module</span></h3>
+          <p class="segment mb-3">Best for: mid-size orgs prioritising donor management with light P2P</p>
+          <p>A CRM-first platform. P2P is delivered as a <strong>"Crowdfunding"</strong> capability on its online
+          forms — supporters create personal pages straight from the donation form — plus partner integrations.</p>
+          <p>Gift and donor data sync seamlessly and automatically into the DonorPerfect CRM — its core strength.</p>
+          <p class="mb-0">P2P feature depth (team hierarchies, captains, gamification) is <strong>thin relative to
+          specialists</strong>. Platform from $125+/mo with a 1.5% transaction fee.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">DonorSnap <span class="tag tag-none ms-1">No P2P</span></h3>
+          <p class="segment mb-3">Best for: small–mid CRM-only</p>
+          <p><strong>No P2P and no raffle tools</strong> — the vendor states this directly in its own comparison pages.</p>
+          <p>It is a full CRM: custom fields, segmentation, batch entry, pledge tracking,
+          QuickBooks / Constant Contact integration, native event registration, and AuctionSnap.
+          Pricing by contact count: $50/mo (up to 1,000) to $250/mo (30,000).</p>
+          <p class="mb-0"><strong>Relevance to ideali.io:</strong> a "what happens when you don't build P2P"
+          reference. It competes on CRM depth and price, not fundraising breadth.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Keela <span class="tag tag-gated ms-1">Via Raisely</span></h3>
+          <p class="segment mb-3">Best for: mid orgs wanting CRM + fundraising via the Aplos / Keela / Raisely stack</p>
+          <p><strong>No native P2P.</strong> Now owned by Aplos, which also acquired Raisely. P2P, appeal pages
+          and ticketing are delivered by Raisely and synced into Keela's CRM and Aplos accounting.</p>
+          <p class="mb-0">G2 lists a P2P feature reviewed by 40 users (social / shareable fundraising pages),
+          but this reflects the <strong>combined offering</strong>, not Keela alone. Keela from ~$99/mo.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">GiveSmart <span class="tag tag-gated ms-1">Included in all plans</span></h3>
+          <p class="segment mb-3">Best for: mid–large orgs running galas, walks / runs / rides, tournaments</p>
+          <p>(Momentive Software.) P2P is included in every contract at <strong>no add-on cost</strong> — a deliberate
+          anti-"nickel-and-dime" positioning.</p>
+          <p>Unlimited P2P campaigns, customisable team and individual pages, leaderboards, per-user
+          text-to-donate, social sharing, an in-app message center, and community chat.</p>
+          <p>Over <strong>41,000 P2P pages</strong> created on the platform. GiveSmart's own blog cites
+          <strong>"$126 as the average donation to a GiveSmart-powered P2P campaign."</strong></p>
+          <p class="mb-0">Pricing is a flat-fee subscription (third-party sources cite from ~$1,195/mo, or
+          ~$3,000/yr entry) plus a 3.5% card fee (3.95% Amex). Native within the GiveSmart suite;
+          P2P can tie to events with item / event management. G2 4.5 (157).</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Bloomerang Fundraising (formerly Qgiv) <span class="tag tag-gated ms-1">Native module</span></h3>
+          <p class="segment mb-3">Best for: mid orgs ($250k–$10M+) wanting P2P + CRM in one family</p>
+          <p>Qgiv was acquired by Bloomerang (Jan 2024) and rebranded. P2P is a native module within the
+          fundraising product.</p>
+          <p>Rich P2P: milestone badges, competitive leaderboards, contests, team fundraising, team captains,
+          branded event pages with custom themes, Facebook integration, and an online store with P2P registrations.</p>
+          <p>Data syncs to Bloomerang CRM using <strong>matching logic (no duplicate constituents)</strong>,
+          with <strong>soft credits</strong> for P2P donations.</p>
+          <p class="mb-0">Strong event tie-in: registration, walk-a-thons, and (July 2026) date-based / early-bird
+          registration fees. <strong>This is the closest functional analog to what ideali.io would build.</strong></p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Givebutter <span class="tag tag-free ms-1">Native, free</span></h3>
+          <p class="segment mb-3">Best for: small–mid orgs (typically &lt;$5M) replacing 5–7 tools</p>
+          <p>Native and free — 0% platform fee with donor tips; up to 5% if tips disabled; Plus from $29/mo.
+          P2P is <strong>automatically enabled</strong> on Page and Event campaigns.</p>
+          <p>Individual, team and multi-team fundraising; team captains; countdown timers; goal thermometers;
+          a social-style supporter wall; automated fundraiser emails; social and email sharing.</p>
+          <p><strong>Leaderboards weighted by both dollars raised and number of donors</strong> — a notable fairness
+          mechanic: <em>"A team member who raises $1,000 from 2 donors is ranked the same as someone who raises
+          $200 from 10 donors."</em></p>
+          <p class="mb-0">Native free CRM. Event campaigns support "registration fundraising".
+          G2 4.7 (1,984); Capterra 4.8. #1 on G2 across four nonprofit categories.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Classy / GoFundMe Pro <span class="tag tag-ent ms-1">Enterprise</span></h3>
+          <p class="segment mb-3">Best for: large / enterprise multi-channel programs</p>
+          <p>Enterprise-grade. P2P is a core native pillar with the <strong>highest dedicated G2 P2P-feature score
+          (9.2/10)</strong>.</p>
+          <p>Supports "Classic peer-to-peer" and "Registration with fundraising" campaign types, team fundraising,
+          admin-created and pre-built teams, team captains, leaderboards, deep branding (hex codes, custom
+          domains / domain masking), and <strong>Classy Live</strong> for virtual and hybrid events with synced leaderboards.</p>
+          <p>Native Salesforce and DonorPerfect integrations. Pricing is non-public: ~$300+/mo, annual contracts
+          (commonly $3,000+/yr), plus ~2.9% + $0.30 processing. G2 4.4 (146).</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Complaints</strong> centre on cost, complexity, and
+          post-GoFundMe-merger innovation slowdown and support churn.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Funraise <span class="tag tag-gated ms-1">Premium plan</span></h3>
+          <p class="segment mb-3">Best for: mid / growing orgs wanting Classy-style capability without an enterprise contract</p>
+          <p>P2P is native but requires the Premium plan (from $99/mo flat; a free tier exists <strong>without</strong> P2P).
+          Platform fee up to 5% (typically donor-covered) plus 60¢/transaction.</p>
+          <p>Features: branded, mobile-optimised campaign sites with video and images; supporter pages with
+          progress bars and storytelling; Facebook Fundraiser sync; automated milestone and stalled-progress
+          emails; <strong>"Register to Fundraise"</strong> for endurance events; and <strong>"Commitments"</strong>
+          — the fundraiser's card is charged the shortfall if they do not hit a committed amount, useful for service trips.</p>
+          <p class="mb-0 text-muted"><em>Vendor-reported: "Fundraisers linked with Facebook Fundraisers raise 83% more,"
+          and "P2P fundraisers on Funraise raise $1,220, 2x the amount of top P2P programs."</em> Native CRM.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Fundraise Up <span class="tag tag-early ms-1">Early Access</span></h3>
+          <p class="segment mb-3">Best for: mid–large digital-first orgs prioritising conversion and AI</p>
+          <p>P2P ("Fundraisers") is in <strong>Early Access, launched 29 July 2026 — not generally available</strong>.</p>
+          <p>Differentiators: runs natively on the nonprofit's own website (no separate microsite); an
+          <strong>AI Coach</strong> — <em>"Every fundraiser gets an AI Coach that drafts their story, suggests next
+          steps when momentum stalls, and sends milestone nudges"</em> — plus automated milestone emails at
+          25% / 50% / 100% of goal; AI page moderation; the same conversion-optimised checkout used across the
+          platform (cited as an average 30% conversion lift); a self-service Donor Portal; and unified donor
+          records / CRM sync (<em>"nothing to reconcile"</em>).</p>
+          <p>Pricing: flat 4% transaction fee (5% crypto), no separate P2P fee disclosed; Early Access carries
+          no fee or contract.</p>
+          <p class="mb-0 text-danger-emphasis"><strong>Notable gaps:</strong> leaderboards are not confirmed in
+          current materials; company matching is a separate feature not confirmed as integrated into P2P;
+          Events (walk / run / ride) are on the roadmap ("next"), not released. G2 4.8 (~86 reviews);
+          Capterra ~92 reviews.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="platform-card p-3 p-md-4">
+          <h3 class="card-title h5">Bonterra DonorDrive <span class="tag tag-ent ms-1">Enterprise specialist</span></h3>
+          <p class="segment mb-3">Best for: large / enterprise orgs running major walk / run / ride and DIY programs</p>
+          <p>The category's enterprise P2P specialist — 25+ years; acquired by Bonterra Sept 2024.</p>
+          <p>Deep native P2P: personal, team and event fundraising pages; team captains; gamification incentives;
+          activity tracking (fitness / endurance); livestreaming; a native mobile app; and a
+          <strong>clicks-not-code event builder</strong> (vendor: 6x faster setup).</p>
+          <p class="text-muted"><em>Per a Bonterra / Business Wire release (March 2022), DonorDrive Charity Fundraising
+          app users saw "a 195% increase in the average amount raised per fundraiser, a 240% increase in the average
+          engagement rate among app users, and a 56% increase in the average adoption rate" — vendor-reported.</em></p>
+          <p>Award-winning CRM integration connects to an org's existing stack. The July 2025 native Meta integration
+          lets pages post directly into Instagram / Facebook Feeds, Stories and Profiles with donate buttons.</p>
+          <p class="mb-0">Pricing is non-public: a "lite" version ships with Bonterra Fundraising Essentials, a fully
+          featured version with Pro / Enterprise. G2 4.7 (265); Capterra ~4.2–4.7 (36 reviews).
+          <span class="text-danger-emphasis"><strong>Complaints:</strong> reporting gaps / clunkiness and a
+          post-acquisition roadmap slowdown with no AI upgrades yet.</span></p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. REQUIREMENTS / RECOMMENDATIONS -->
+  <section id="requirements" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">8</span>
+      <h2 class="mb-0">What ideali.io must build</h2>
+    </div>
+    <p class="lead-sub mb-4">The recommendations from the spec, restated as decisions and scope. Each carries an
+    identifier so it can be tracked into the backlog.</p>
+
+    <div class="row g-4 mb-4">
+
+      <div class="col-lg-6">
+        <div class="panel h-100 p-3 p-md-4">
+          <span class="req-id">R1 · POSITIONING</span>
+          <h3 class="h5 mt-2">Build, don't merely integrate — but scope to the mid-market first</h3>
+          <p class="mb-2">The mid-market ($250k–$10M) is where the strongest native competitors cluster —
+          <strong>Bloomerang Fundraising, Funraise, GiveSmart</strong> — and where CRM-native P2P data flow is both
+          most valued and most frequently criticised.</p>
+          <p class="mb-0"><strong>Match this tier before attempting DonorDrive / Classy enterprise depth.</strong></p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100 p-3 p-md-4">
+          <span class="req-id">R2 · DIFFERENTIATOR</span>
+          <h3 class="h5 mt-2">Make CRM-native data flow the flagship differentiator</h3>
+          <p class="mb-2">The consistent complaint across the market is <strong>reconciliation friction</strong>.
+          Ship P2P so that both fundraiser records and their donors land automatically in ideali.io's core CRM with:</p>
+          <ul class="mb-2">
+            <li>matching logic — no duplicates</li>
+            <li>soft-credit attribution to fundraisers</li>
+            <li>unified engagement scoring</li>
+          </ul>
+          <p class="mb-0">This is the exact model Bloomerang / Qgiv and Fundraise Up tout.
+          <strong>Threshold to prioritise:</strong> if user research shows &gt;30% of prospects currently run P2P
+          on a separate tool from their CRM, this is the wedge.</p>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="panel p-3 p-md-4">
+          <span class="req-id">R3 · V1 FEATURE FLOOR</span>
+          <h3 class="h5 mt-2">Ship the proven feature floor in v1</h3>
+          <p class="mb-3">These appear in <strong>every</strong> competitive native offering.
+          <strong class="text-danger-emphasis">Their absence is disqualifying.</strong></p>
+          <div class="row g-3">
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Individual + team pages</strong></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Team captains</strong></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Dollar-and-donor-weighted leaderboards</strong><br>
+              <span class="text-muted small">Copy Givebutter's fairness mechanic.</span></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Individual / team / campaign goals with thermometers</strong></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Page customisation</strong><br>
+              <span class="text-muted small">Photo, video, custom story, custom thank-you message.</span></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Social + email sharing</strong></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Automated milestone emails</strong><br>
+              <span class="text-muted small">Copy Funraise / DonorDrive.</span></div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <div class="callout p-3 h-100"><strong>Automated stalled-progress emails</strong><br>
+              <span class="text-muted small">Copy Funraise / DonorDrive.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100 p-3 p-md-4">
+          <span class="req-id">R4 · 2026 VECTORS</span>
+          <h3 class="h5 mt-2">Differentiate on two 2026 vectors</h3>
+          <p class="mb-2"><strong>(a) AI assistance.</strong> An "AI Coach" that drafts fundraiser stories and sends
+          nudges. This is Fundraise Up's launch feature; <strong>DonorDrive notably has none yet — a window.</strong></p>
+          <p class="mb-0"><strong>(b) Native social sharing</strong> with in-feed donate buttons — the DonorDrive–Meta
+          pattern. These are where incumbents are either just arriving or lagging.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100 p-3 p-md-4">
+          <span class="req-id">R5 · EVENTS</span>
+          <h3 class="h5 mt-2">Require event tie-in in v1.5, not v3</h3>
+          <p class="mb-2">Every serious P2P competitor links P2P to ticketed / registered events (walk-a-thons, galas)
+          — Zeffy, Givebutter, Bloomerang, Classy, Funraise, GiveSmart and DonorDrive all do.</p>
+          <p class="mb-0">Expected standard: a <strong>"registration with fundraising" campaign type</strong> plus
+          <strong>early-bird / date-based fees</strong> (Bloomerang, July 2026).</p>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="panel p-3 p-md-4">
+          <span class="req-id">R6 · PRICING</span>
+          <h3 class="h5 mt-2">Pricing model</h3>
+          <p class="mb-2"><strong>Avoid gating P2P behind a punitive tier if targeting small / mid orgs.</strong>
+          GiveSmart's "all features included" and Givebutter / Zeffy's free models are winning goodwill, while
+          Donorbox's per-feature platform fees and Classy's enterprise cost are top complaints.</p>
+          <p class="mb-2">A <strong>modest platform fee (1.5–2%)</strong> or a <strong>flat subscription with P2P
+          included</strong> will out-position add-on gating.</p>
+          <p class="mb-0"><strong>Benchmark:</strong> if CAC research shows small orgs churning to Zeffy / Givebutter
+          over fees, include P2P in the base tier.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout warn p-3 p-md-4">
+      <h4><i class="bi bi-signpost-split-fill me-2" aria-hidden="true"></i>What would change these recommendations</h4>
+      <p class="mb-2">If ideali.io's user base skews <strong>enterprise</strong> (&gt;$10M, endurance-event-heavy),
+      reprioritise toward DonorDrive-class depth — native mobile app, livestreaming, activity tracking,
+      clicks-not-code event builder — and accept a longer build.</p>
+      <p class="mb-0">If the base is overwhelmingly <strong>small / volunteer-run</strong>, a lighter
+      Zeffy / Givebutter-style free-P2P wedge beats feature depth.</p>
+    </div>
+  </section>
+
+  <!-- 9. CAVEATS -->
+  <section id="caveats" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">9</span>
+      <h2 class="mb-0">Caveats — read before quoting any figure</h2>
+    </div>
+    <p class="lead-sub mb-4">Every number in this document carries a confidence level. These are the limits of the
+    underlying research.</p>
+
+    <div class="accordion" id="caveatAccordion">
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cav1" aria-expanded="true" aria-controls="cav1">
+            Pricing is frequently non-public
+          </button>
+        </h3>
+        <div id="cav1" class="accordion-collapse collapse show" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            Classy / GoFundMe Pro, Bonterra DonorDrive and GiveSmart do not publish standard pricing.
+            Figures cited — for example Classy ~$300+/mo, GiveSmart ~$1,195/mo or ~$3,000/yr — come from
+            third-party aggregators (aitoolsbakery, SelectHub, Software Finder) and should be treated as
+            <strong>estimates, not vendor quotes</strong>. Confirm via vendor sales.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cav2" aria-expanded="false" aria-controls="cav2">
+            Vendor performance claims are marketing
+          </button>
+        </h3>
+        <div id="cav2" class="accordion-collapse collapse" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            "154% increase in funds per campaign" (DonorDrive–Meta), "83% more" and "$1,220 / 2x"
+            (Funraise Facebook sync), "6x faster setup", and the app-driven "195% / 240% / 56%" figures
+            (DonorDrive) are <strong>vendor-reported and unverified by independent audit</strong>.
+            Fundraise Up's "30% conversion lift" and "nearly doubled" early-access figures are likewise self-reported.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cav3" aria-expanded="false" aria-controls="cav3">
+            Fundraise Up P2P is Early Access
+          </button>
+        </h3>
+        <div id="cav3" class="accordion-collapse collapse" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            Its feature set will change. Leaderboards and P2P-integrated company matching are currently
+            <strong>unconfirmed</strong>, and Events are <strong>unreleased</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cav4" aria-expanded="false" aria-controls="cav4">
+            Review scores mix product-wide and feature-specific signals
+          </button>
+        </h3>
+        <div id="cav4" class="accordion-collapse collapse" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            Only Classy's 9.2/10 P2P score is a dedicated P2P-feature rating on G2. Most other star ratings
+            — Givebutter 4.7, DonorDrive 4.7 — are <strong>whole-product</strong>. G2 and Capterra were consolidated
+            under common ownership in early 2026, and G2 permits incentivised reviews. Cross-check with
+            TrustRadius where possible.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cav5" aria-expanded="false" aria-controls="cav5">
+            Keela's and DonorPerfect's P2P are not full modules
+          </button>
+        </h3>
+        <div id="cav5" class="accordion-collapse collapse" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            Keela's P2P is effectively Raisely's, and DonorPerfect's P2P is a lighter "crowdfunding" form feature.
+            <strong>Neither is a full standalone P2P module comparable to DonorDrive or Classy.</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cav6" aria-expanded="false" aria-controls="cav6">
+            Review counts vary by snapshot date and region
+          </button>
+        </h3>
+        <div id="cav6" class="accordion-collapse collapse" data-bs-parent="#caveatAccordion">
+          <div class="accordion-body">
+            For example, DonorDrive Capterra shows both ~36 and 265 depending on domain and date.
+            <strong>Treat all counts as approximate.</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary" class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num"><i class="bi bi-book" aria-hidden="true"></i></span>
+      <h2 class="mb-0">Glossary</h2>
+    </div>
+    <div class="panel p-3 p-md-4">
+      <dl class="glossary row mb-0">
+        <dt class="col-sm-4 col-lg-3">P2P (peer-to-peer)</dt>
+        <dd class="col-sm-8 col-lg-9">Supporters fundraise on the charity's behalf from their own personal pages,
+        instead of the charity asking donors directly.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Fundraiser</dt>
+        <dd class="col-sm-8 col-lg-9">The supporter running a personal page. Not the donor, and not the charity.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Team captain</dt>
+        <dd class="col-sm-8 col-lg-9">A fundraiser with permission to manage a team page and the members under it.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Soft credit</dt>
+        <dd class="col-sm-8 col-lg-9">A CRM record that credits a fundraiser for a gift someone else actually paid,
+        so their influence is visible without double-counting the money.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Matching logic</dt>
+        <dd class="col-sm-8 col-lg-9">Rules that recognise an incoming person as an existing constituent, so the
+        CRM does not create a duplicate record.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Goal thermometer</dt>
+        <dd class="col-sm-8 col-lg-9">The progress bar on a page showing how close a fundraiser, team or campaign
+        is to its target.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Weighted leaderboard</dt>
+        <dd class="col-sm-8 col-lg-9">A ranking that counts both money raised and number of donors, so a fundraiser
+        with many small gifts is not beaten purely by one large gift.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Zero-dollar fundraiser</dt>
+        <dd class="col-sm-8 col-lg-9">A supporter who signs up, gets a page, and never raises a single gift.
+        The main efficiency problem in P2P programs.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Stalled-progress email</dt>
+        <dd class="col-sm-8 col-lg-9">An automatic nudge sent when a fundraiser's page stops receiving gifts.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Registration with fundraising</dt>
+        <dd class="col-sm-8 col-lg-9">A campaign type where signing up for an event (a run, a walk) also creates
+        the participant's fundraising page.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Commitments</dt>
+        <dd class="col-sm-8 col-lg-9">Funraise's mechanic where a fundraiser's own card is charged the shortfall
+        if they miss an amount they committed to raise.</dd>
+
+        <dt class="col-sm-4 col-lg-3">Donor tip</dt>
+        <dd class="col-sm-8 col-lg-9">An optional extra the donor adds at checkout to fund the platform, used
+        instead of charging the charity a fee.</dd>
+
+        <dt class="col-sm-4 col-lg-3">CAC</dt>
+        <dd class="col-sm-8 col-lg-9">Customer acquisition cost — what it costs to win one paying customer.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- TAKEAWAY -->
+  <section class="mb-4">
+    <div class="callout p-4 p-md-5">
+      <h3 class="h4">The one-sentence takeaway</h3>
+      <p class="mb-0 fs-5">P2P itself will not win ideali.io a customer — everyone has it. What wins is
+      <strong>P2P whose fundraiser and donor records land in ideali.io's own CRM automatically, matched and
+      soft-credited, with nothing to reconcile</strong> — shipped with the full v1 feature floor, event tie-in
+      by v1.5, and priced so a mid-market org is not made to pay extra for it.</p>
+    </div>
+  </section>
+
+  <footer class="pt-4 mt-5">
+    <p class="mb-1"><strong>P2P Fundraising Competitive Feature Spec</strong> — 12 nonprofit SaaS platforms,
+    prepared for ideali.io, August 2026.</p>
+    <p class="mb-0">All pricing, ratings and vendor performance claims are reproduced from the source research.
+    See <a href="#caveats">Caveats</a> — non-public pricing is estimated, and vendor percentage claims are
+    self-reported and unaudited.</p>
+  </footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

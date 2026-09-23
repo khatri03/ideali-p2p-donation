@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Peer-to-Peer Fundraising Explained</title>
+<meta name="description" content="A plain-language guide to how peer-to-peer fundraising works, with real-world examples, money flow, fee models and the metrics that matter." />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" crossorigin="anonymous">
+<style>
+  :root{
+    --ink:#101828; --ink-soft:#475467; --line:#e4e7ec;
+    --brand:#1b4dff; --brand-soft:#eef2ff;
+    --good:#067647; --good-soft:#ecfdf3;
+    --warn:#b54708; --warn-soft:#fffaeb;
+    --surface:#ffffff; --canvas:#f8fafc;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:5rem;}
+  body{background:var(--canvas); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{letter-spacing:-.02em; font-weight:700;}
+  h2{font-size:clamp(1.5rem,1.1rem + 1.6vw,2.15rem);}
+  h3{font-size:clamp(1.15rem,1rem + .7vw,1.4rem);}
+  p,li{color:var(--ink-soft); line-height:1.7;}
+  .lead-ink{color:var(--ink);}
+  .navbar{background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line);}
+  .navbar .nav-link{color:var(--ink-soft); font-weight:500; font-size:.925rem;}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--brand);}
+  .hero{background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%); color:#fff;}
+  .hero p,.hero li{color:rgba(255,255,255,.88);}
+  .hero .kpi,.hero .card-flat p{color:var(--ink);}
+  .badge-soft{background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.3);}
+  section{scroll-margin-top:5rem;}
+  .section-num{display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; border-radius:.6rem; background:var(--brand-soft); color:var(--brand); font-weight:700; font-size:.9rem; flex:0 0 auto;}
+  .card-flat{background:var(--surface); border:1px solid var(--line); border-radius:1rem;}
+  .card-flat .card-body{padding:1.5rem;}
+  .kpi{font-size:clamp(1.4rem,1.1rem + 1vw,1.95rem); font-weight:700; color:var(--ink); line-height:1.15;}
+  .chip{display:inline-block; padding:.2rem .6rem; border-radius:999px; font-size:.78rem; font-weight:600;}
+  .chip-brand{background:var(--brand-soft); color:var(--brand);}
+  .chip-good{background:var(--good-soft); color:var(--good);}
+  .chip-warn{background:var(--warn-soft); color:var(--warn);}
+  .flow{list-style:none; padding:0; margin:0; counter-reset:flow;}
+  .flow > li{position:relative; padding:0 0 1.75rem 2.75rem; border-left:2px solid var(--line); margin-left:1rem;}
+  .flow > li:last-child{border-left-color:transparent; padding-bottom:0;}
+  .flow > li::before{counter-increment:flow; content:counter(flow); position:absolute; left:-1rem; top:-.15rem; width:2rem; height:2rem; border-radius:999px; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem;}
+  .flow h4{margin-bottom:.35rem; font-size:1.02rem; color:var(--ink);}
+  .tree{list-style:none; padding-left:0; margin:0;}
+  .tree ul{list-style:none; padding-left:1.35rem; margin:.5rem 0 0; border-left:1px dashed var(--line);}
+  .tree li{padding:.35rem 0 .35rem .9rem; position:relative; color:var(--ink);}
+  .tree ul > li::before{content:""; position:absolute; left:0; top:1.2rem; width:.75rem; height:1px; background:var(--line);}
+  .table-clean thead th{background:#f2f4f7; color:var(--ink); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--line); white-space:nowrap;}
+  .table-clean td,.table-clean th{padding:.85rem 1rem; vertical-align:top;}
+  .table-clean tbody td{color:var(--ink-soft);}
+  .table-clean tbody td strong{color:var(--ink);}
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft); border-radius:.75rem; padding:1.1rem 1.25rem;}
+  .callout.good{border-left-color:var(--good); background:var(--good-soft);}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft);}
+  .callout p:last-child{margin-bottom:0;}
+  .glossary dt{color:var(--ink); font-weight:600; margin-top:.9rem;}
+  .glossary dd{color:var(--ink-soft); margin-bottom:0;}
+  .accordion-button{font-weight:600; color:var(--ink);}
+  .accordion-button:not(.collapsed){background:var(--brand-soft); color:var(--brand); box-shadow:none;}
+  .accordion-button:focus{box-shadow:0 0 0 .2rem rgba(27,77,255,.25);}
+  footer{border-top:1px solid var(--line); background:var(--surface);}
+  a{color:var(--brand);}
+  :focus-visible{outline:3px solid rgba(27,77,255,.5); outline-offset:2px;}
+  @media print{
+    .navbar,.no-print{display:none !important;}
+    body{background:#fff;}
+    section{page-break-inside:avoid;}
+    .hero{background:#0b1c5c !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .accordion-collapse{display:block !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top no-print">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#top"><i class="bi bi-people-fill text-primary me-2" aria-hidden="true"></i>P2P Fundraising</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu" aria-controls="navmenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#basics">Basics</a></li>
+        <li class="nav-item"><a class="nav-link" href="#roles">Roles</a></li>
+        <li class="nav-item"><a class="nav-link" href="#examples">Examples</a></li>
+        <li class="nav-item"><a class="nav-link" href="#money">Money flow</a></li>
+        <li class="nav-item"><a class="nav-link" href="#fees">Fees</a></li>
+        <li class="nav-item"><a class="nav-link" href="#metrics">Metrics</a></li>
+        <li class="nav-item"><a class="nav-link" href="#glossary">Glossary</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero py-5" id="top">
+  <div class="container py-4 py-lg-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="badge badge-soft rounded-pill px-3 py-2 mb-3">Executive briefing</span>
+        <h1 class="display-5 fw-bold mb-3">Peer-to-Peer Fundraising, Explained</h1>
+        <p class="fs-5 mb-4">
+          Instead of one organisation asking thousands of strangers for money, hundreds of supporters each
+          ask the handful of people who already trust them. This document explains how that works, where the
+          money goes, how platforms earn, and what to measure &mdash; in plain language, with real examples
+          and no jargon left undefined.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge badge-soft rounded-pill px-3 py-2"><i class="bi bi-clock me-1" aria-hidden="true"></i>12 minute read</span>
+          <span class="badge badge-soft rounded-pill px-3 py-2"><i class="bi bi-briefcase me-1" aria-hidden="true"></i>Non-technical</span>
+          <span class="badge badge-soft rounded-pill px-3 py-2"><i class="bi bi-printer me-1" aria-hidden="true"></i>Print friendly</span>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="card-flat h-100"><div class="card-body">
+              <div class="kpi">1 &rarr; 200</div>
+              <p class="mb-0 small">One campaign becomes hundreds of personal fundraising pages.</p>
+            </div></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card-flat h-100"><div class="card-body">
+              <div class="kpi">Trust</div>
+              <p class="mb-0 small">People give because a friend asked, not because a brand advertised.</p>
+            </div></div>
+          </div>
+          <div class="col-12">
+            <div class="card-flat"><div class="card-body">
+              <div class="kpi">Reach grows with supporters</div>
+              <p class="mb-0 small">Not with the advertising budget. That is the whole economic argument.</p>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container py-5">
+
+  <section id="basics" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">1</span><h2 class="mb-0">What peer-to-peer fundraising actually is</h2>
+    </div>
+    <p class="fs-5 lead-ink">
+      Peer-to-peer fundraising &mdash; usually written <strong>P2P</strong> &mdash; is when an organisation
+      asks its supporters to raise money <em>on its behalf</em>, instead of asking the public for money directly.
+    </p>
+    <p>
+      The organisation creates one campaign. Each supporter then gets their own personal page inside that
+      campaign, with their own photo, their own story and their own target. They share that page with friends,
+      family and colleagues. Those people donate. Every donation, whichever personal page it came through,
+      lands in the organisation's account and counts towards one shared total.
+    </p>
+
+    <div class="row g-4 mt-1">
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-warn mb-3 d-inline-block">Traditional appeal</span>
+          <h3 class="h5">The charity does the asking</h3>
+          <p class="mb-0">
+            The charity buys advertising, sends emails, and hopes strangers respond. The message comes from an
+            institution. Cost per pound raised is high, and reach stops where the marketing budget stops.
+          </p>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-good mb-3 d-inline-block">Peer-to-peer</span>
+          <h3 class="h5">Supporters do the asking</h3>
+          <p class="mb-0">
+            Two hundred supporters each message twenty people they actually know. The message comes from a
+            trusted friend. Reach grows with the number of supporters, not with the advertising spend.
+          </p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="callout mt-4">
+      <p class="mb-0">
+        <strong>The one-sentence version:</strong> P2P turns supporters into fundraisers, and turns each
+        supporter's personal network into a donor list the organisation could never have bought.
+      </p>
+    </div>
+  </section>
+
+  <section id="compare" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">2</span><h2 class="mb-0">How it differs from ordinary online donation</h2>
+    </div>
+    <p>Both accept card payments online. Everything else is different.</p>
+    <div class="table-responsive">
+      <table class="table table-clean align-middle mb-0 bg-white rounded-3 overflow-hidden">
+        <thead>
+          <tr><th scope="col">Question</th><th scope="col">Ordinary donation page</th><th scope="col">Peer-to-peer campaign</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Who asks for money?</strong></td><td>The organisation</td><td>Each individual supporter</td></tr>
+          <tr><td><strong>How many pages exist?</strong></td><td>One</td><td>One campaign, plus one page per fundraiser and per team</td></tr>
+          <tr><td><strong>Who does the donor trust?</strong></td><td>The brand</td><td>The friend who asked</td></tr>
+          <tr><td><strong>What drives growth?</strong></td><td>Marketing budget</td><td>Number of active fundraisers</td></tr>
+          <tr><td><strong>Where does the money land?</strong></td><td>Organisation's account</td><td>Organisation's account &mdash; always. Fundraisers never hold funds.</td></tr>
+          <tr><td><strong>Typical donor</strong></td><td>An existing supporter</td><td>Mostly brand-new people the organisation had never reached</td></tr>
+          <tr><td><strong>Main risk</strong></td><td>The appeal is ignored</td><td>Fundraisers sign up but never share their page</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="roles" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">3</span><h2 class="mb-0">The four people involved</h2>
+    </div>
+    <p>Every P2P campaign has the same cast. Names change between platforms; the roles do not.</p>
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="card-flat h-100"><div class="card-body">
+          <i class="bi bi-building fs-3 text-primary" aria-hidden="true"></i>
+          <h3 class="h6 mt-3">Organiser</h3>
+          <p class="small mb-0">The charity, school or club. Creates the campaign, sets the goal and deadline, owns the bank account that receives every donation, and issues the receipts.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card-flat h-100"><div class="card-body">
+          <i class="bi bi-person-badge fs-3 text-primary" aria-hidden="true"></i>
+          <h3 class="h6 mt-3">Fundraiser</h3>
+          <p class="small mb-0">A supporter who signs up to raise money. Gets a personal page with their photo, story and target. Shares it. Never touches the money.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card-flat h-100"><div class="card-body">
+          <i class="bi bi-people fs-3 text-primary" aria-hidden="true"></i>
+          <h3 class="h6 mt-3">Team</h3>
+          <p class="small mb-0">A group of fundraisers with a shared total &mdash; a school class, an office department, a running club. Teams create friendly competition, which produces most of the lift.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card-flat h-100"><div class="card-body">
+          <i class="bi bi-heart fs-3 text-primary" aria-hidden="true"></i>
+          <h3 class="h6 mt-3">Donor</h3>
+          <p class="small mb-0">The friend, relative or colleague who gives. Lands on a personal page, donates in under a minute, leaves a message of support, and receives a receipt.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <h3 class="h5 mt-5 mb-3">How they nest</h3>
+    <div class="card-flat"><div class="card-body">
+      <ul class="tree mb-0">
+        <li><i class="bi bi-flag-fill text-primary me-2" aria-hidden="true"></i><strong>Campaign</strong> &mdash; "Spring Walkathon 2026", goal &pound;50,000
+          <ul>
+            <li><i class="bi bi-people-fill text-primary me-2" aria-hidden="true"></i><strong>Team</strong> &mdash; "Year 6 Falcons", goal &pound;5,000
+              <ul>
+                <li><i class="bi bi-person-fill me-2" aria-hidden="true"></i>Fundraiser &mdash; Aisha, goal &pound;500 &nbsp;<span class="chip chip-good">&pound;620 raised</span></li>
+                <li><i class="bi bi-person-fill me-2" aria-hidden="true"></i>Fundraiser &mdash; Daniel, goal &pound;500 &nbsp;<span class="chip chip-brand">&pound;310 raised</span></li>
+              </ul>
+            </li>
+            <li><i class="bi bi-people-fill text-primary me-2" aria-hidden="true"></i><strong>Team</strong> &mdash; "Staff Room", goal &pound;3,000</li>
+            <li><i class="bi bi-person-fill me-2" aria-hidden="true"></i><strong>Individual fundraiser</strong> &mdash; not in any team</li>
+          </ul>
+        </li>
+      </ul>
+    </div></div>
+    <p class="small mt-3 mb-0">
+      A donation to Aisha's page adds to Aisha's total, the Falcons' total and the campaign total at the same
+      moment. One payment, three counters, one bank account.
+    </p>
+  </section>
+
+  <section id="examples" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">4</span><h2 class="mb-0">Three real-world examples</h2>
+    </div>
+
+    <div class="card-flat mb-4"><div class="card-body">
+      <span class="chip chip-brand mb-2 d-inline-block">Example 1 &mdash; Schools</span>
+      <h3 class="h5">The school walkathon</h3>
+      <p>
+        A primary school wants &pound;50,000 for a new library. The old way: send a letter home and ask parents
+        to donate. Realistic result &mdash; a few hundred parents, a few thousand pounds.
+      </p>
+      <p class="mb-2"><strong>The P2P way:</strong></p>
+      <ul>
+        <li>The school creates one campaign: <em>Spring Walkathon</em>, goal &pound;50,000, closing in six weeks.</li>
+        <li>Each of 400 pupils gets a personal page: photo, one line on why the library matters, personal goal &pound;125.</li>
+        <li>Each class becomes a team, and a leaderboard shows which class is ahead.</li>
+        <li>Pupils and parents share the link on WhatsApp with grandparents, aunts, neighbours and colleagues.</li>
+        <li>Each pupil converts roughly 8 donors at an average gift of &pound;18.</li>
+      </ul>
+      <div class="row g-3 mt-1">
+        <div class="col-6 col-lg-3"><div class="card-flat h-100"><div class="card-body py-3"><div class="kpi">400</div><p class="small mb-0">fundraisers</p></div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-flat h-100"><div class="card-body py-3"><div class="kpi">3,200</div><p class="small mb-0">donors reached</p></div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-flat h-100"><div class="card-body py-3"><div class="kpi">&pound;18</div><p class="small mb-0">average gift</p></div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-flat h-100"><div class="card-body py-3"><div class="kpi">&pound;57,600</div><p class="small mb-0">raised</p></div></div></div>
+      </div>
+      <p class="mt-3 mb-0 small">
+        The school never advertised. The reach came from 400 personal networks that no mailing list contained.
+        And the school now holds contact details for thousands of warm supporters for next year.
+      </p>
+    </div></div>
+
+    <div class="card-flat mb-4"><div class="card-body">
+      <span class="chip chip-brand mb-2 d-inline-block">Example 2 &mdash; Individuals</span>
+      <h3 class="h5">The birthday fundraiser</h3>
+      <p>
+        Sara turns 30. Instead of presents she asks for donations to an animal shelter. She creates a personal
+        page inside the shelter's always-on campaign, writes two sentences about the rescue dog she adopted
+        there, sets a goal of &pound;300, and posts the link.
+      </p>
+      <p>
+        Forty-one friends give between &pound;5 and &pound;50. She raises &pound;540. The shelter spent nothing,
+        did no work, and gained 41 donors &mdash; most of whom had never heard of it before that morning.
+      </p>
+      <p class="mb-0 small"><strong>Why it works:</strong> the ask carried a personal reason and arrived from someone the donor already cares about. That is the entire mechanism, in miniature.</p>
+    </div></div>
+
+    <div class="card-flat mb-4"><div class="card-body">
+      <span class="chip chip-brand mb-2 d-inline-block">Example 3 &mdash; Corporate</span>
+      <h3 class="h5">The company marathon challenge</h3>
+      <p>
+        A 900-person company enters a charity marathon. Sixty employees run. Each gets a personal page; each
+        department becomes a team. The company promises to <strong>match every pound raised</strong>.
+      </p>
+      <ul>
+        <li>60 runners raise &pound;480 each on average, from colleagues, clients and family &mdash; <strong>&pound;28,800</strong>.</li>
+        <li>The company match doubles it &mdash; <strong>&pound;57,600</strong>.</li>
+        <li>The departmental leaderboard runs on the office screens for six weeks.</li>
+      </ul>
+      <p class="mb-0 small">
+        The charity gets funds plus a corporate relationship. The company gets staff engagement it could not
+        buy. Teams plus a matching pledge is consistently the highest-yielding P2P format.
+      </p>
+    </div></div>
+
+    <div class="callout good">
+      <p class="mb-0">
+        <strong>Pattern across all three:</strong> a personal reason, a visible goal, a deadline, and a link
+        that is easy to share. Remove any one of the four and results fall sharply.
+      </p>
+    </div>
+  </section>
+
+  <section id="money" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">5</span><h2 class="mb-0">Where the money actually goes</h2>
+    </div>
+    <p class="fs-5 lead-ink">
+      The most common misunderstanding: people assume the fundraiser collects the money and passes it on.
+      They do not. Money never touches a fundraiser's hands or account.
+    </p>
+
+    <ol class="flow mt-4">
+      <li>
+        <h4>Donor pays on the personal page</h4>
+        <p class="mb-0">Card, digital wallet or bank debit. Card details go straight to the regulated payment provider &mdash; the platform never stores a card number.</p>
+      </li>
+      <li>
+        <h4>Payment provider authorises and captures</h4>
+        <p class="mb-0">Stripe, or an equivalent provider, checks the card, runs fraud screening, and takes the payment.</p>
+      </li>
+      <li>
+        <h4>Funds are routed to the organiser's connected account</h4>
+        <p class="mb-0">Each organisation completes identity and bank verification once, up front. Money is routed to <em>their</em> account, not into a platform pool account.</p>
+      </li>
+      <li>
+        <h4>Processing fee is deducted</h4>
+        <p class="mb-0">The card networks charge a percentage plus a fixed amount per transaction. This is unavoidable and applies to every online payment everywhere.</p>
+      </li>
+      <li>
+        <h4>Three counters update instantly</h4>
+        <p class="mb-0">Fundraiser total, team total and campaign total all move at once, and the donor's message appears on the page.</p>
+      </li>
+      <li>
+        <h4>Receipt is emailed to the donor</h4>
+        <p class="mb-0">Issued in the organisation's name, carrying the details their tax authority requires.</p>
+      </li>
+      <li>
+        <h4>Payout reaches the organisation's bank</h4>
+        <p class="mb-0">On a rolling schedule, typically two to seven days after the payment, with a statement reconciling every donation in the batch.</p>
+      </li>
+    </ol>
+
+    <div class="callout warn mt-4">
+      <p class="mb-0">
+        <strong>Why this matters commercially:</strong> because funds route to a verified account belonging to
+        the organisation, the platform is not holding other people's money. That keeps the platform out of
+        money-transmission territory and places the burden of identity checks on the regulated payment provider
+        &mdash; a materially different risk and licensing position from a platform that pools funds.
+      </p>
+    </div>
+  </section>
+
+  <section id="fees" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">6</span><h2 class="mb-0">How platforms make money</h2>
+    </div>
+    <p>Three models dominate. They differ in who pays, and that difference is the whole competitive story.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-warn mb-3 d-inline-block">Model A</span>
+          <h3 class="h6">Percentage of donations</h3>
+          <p class="small">The platform takes a cut of every gift &mdash; commonly 3&ndash;8% &mdash; on top of card processing.</p>
+          <p class="small mb-0"><strong>Effect:</strong> a &pound;100 donation delivers roughly &pound;93 to the cause. Simple and predictable, and increasingly disliked by boards.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-brand mb-3 d-inline-block">Model B</span>
+          <h3 class="h6">Subscription</h3>
+          <p class="small">A flat monthly or annual licence fee. Donations pass through with only the card processing cost deducted.</p>
+          <p class="small mb-0"><strong>Effect:</strong> excellent value for high-volume organisations, poor value for small ones paying the same fee to raise very little.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-good mb-3 d-inline-block">Model C</span>
+          <h3 class="h6">Zero-fee, donor-funded tip</h3>
+          <p class="small">The organisation is charged nothing. At checkout the donor is invited to add a voluntary contribution that funds the platform.</p>
+          <p class="small mb-0"><strong>Effect:</strong> the cause can receive 100% of the intended gift. This is the model Zeffy popularised, and it is why it wins price-sensitive nonprofits.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <h3 class="h5 mt-5 mb-3">A &pound;100 donation under each model</h3>
+    <div class="table-responsive">
+      <table class="table table-clean align-middle mb-0 bg-white rounded-3 overflow-hidden">
+        <thead>
+          <tr><th scope="col">Model</th><th scope="col">Donor pays</th><th scope="col">Platform fee</th><th scope="col">Card processing</th><th scope="col">Cause receives</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>A &mdash; Percentage (5%)</strong></td><td>&pound;100.00</td><td>&pound;5.00</td><td>&pound;2.20</td><td><strong>&pound;92.80</strong></td></tr>
+          <tr><td><strong>B &mdash; Subscription</strong></td><td>&pound;100.00</td><td>&pound;0.00 <span class="small">(billed separately)</span></td><td>&pound;2.20</td><td><strong>&pound;97.80</strong></td></tr>
+          <tr><td><strong>C &mdash; Donor tip</strong></td><td>&pound;115.00 <span class="small">(&pound;100 gift + &pound;15 optional tip)</span></td><td>&pound;15.00 <span class="small">(paid by donor)</span></td><td>&pound;2.20</td><td><strong>&pound;100.00</strong> <span class="chip chip-good">full amount</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small mt-3 mb-0">
+      Illustrative figures using a typical 1.9% + &pound;0.30 card rate. Actual rates vary by country, card type
+      and volume.
+    </p>
+
+    <div class="callout mt-4">
+      <p class="mb-0">
+        <strong>Strategic read:</strong> Model C is the strongest message a nonprofit board ever hears &mdash;
+        <em>"every pound reaches the cause"</em>. Its risk is revenue concentration in donor generosity: tip
+        opt-in rate and average tip percentage become the two numbers the business genuinely lives on, and both
+        move with checkout design.
+      </p>
+    </div>
+  </section>
+
+  <section id="lifecycle" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">7</span><h2 class="mb-0">The life of a campaign</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-brand mb-2 d-inline-block">Before launch</span>
+          <h3 class="h6">Set up</h3>
+          <p class="small mb-0">Organiser creates the campaign, sets goal and deadline, verifies bank details, writes the story, and prepares the recruitment message.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-brand mb-2 d-inline-block">Weeks 1&ndash;2</span>
+          <h3 class="h6">Recruit fundraisers</h3>
+          <p class="small mb-0">The highest-leverage phase. Every extra fundraiser adds a whole network. A campaign that fails almost always failed here.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-brand mb-2 d-inline-block">Week 1</span>
+          <h3 class="h6">Personalise</h3>
+          <p class="small mb-0">Fundraisers add a photo, a reason and a target. Pages with a personal photo and story raise several times more than untouched default pages.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-brand mb-2 d-inline-block">Weeks 1&ndash;6</span>
+          <h3 class="h6">Share and give</h3>
+          <p class="small mb-0">Donations arrive in bursts, each burst following a share. Leaderboards, milestones and progress nudges keep sharing alive.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-warn mb-2 d-inline-block">Final 72 hours</span>
+          <h3 class="h6">The deadline spike</h3>
+          <p class="small mb-0">A large share of all donations arrives in the last three days. Deadlines are not decoration &mdash; they are the mechanism.</p>
+        </div></div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card-flat h-100"><div class="card-body">
+          <span class="chip chip-good mb-2 d-inline-block">After close</span>
+          <h3 class="h6">Thank and report back</h3>
+          <p class="small mb-0">Thank every donor, publish what the money achieved, and invite the best fundraisers back. This is what turns one campaign into an annual one.</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="platform" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">8</span><h2 class="mb-0">What the platform must provide</h2>
+    </div>
+    <p>The capability checklist a serious P2P product is judged against.</p>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <h3 class="h6"><i class="bi bi-flag text-primary me-2" aria-hidden="true"></i>For the organiser</h3>
+          <ul class="small mb-0">
+            <li>Create a campaign with goal, deadline, story and imagery</li>
+            <li>Invite and approve fundraisers and teams</li>
+            <li>Live dashboard: total raised, donor count, top fundraisers</li>
+            <li>Donor export, receipting and refund handling</li>
+            <li>Own logo, colours and domain</li>
+            <li>Role-based access so staff see only what they should</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <h3 class="h6"><i class="bi bi-person-badge text-primary me-2" aria-hidden="true"></i>For the fundraiser</h3>
+          <ul class="small mb-0">
+            <li>Sign-up in under two minutes</li>
+            <li>Personal page: photo, story, personal goal</li>
+            <li>One-tap sharing to messaging apps and social networks</li>
+            <li>Progress bar, milestones and a thank-you tool</li>
+            <li>Team leaderboard position</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <h3 class="h6"><i class="bi bi-heart text-primary me-2" aria-hidden="true"></i>For the donor</h3>
+          <ul class="small mb-0">
+            <li>Give in under 60 seconds, on a phone, without creating an account</li>
+            <li>Card, digital wallet and bank debit</li>
+            <li>Optional recurring gift</li>
+            <li>Leave a public message of support</li>
+            <li>Give anonymously if preferred</li>
+            <li>Immediate emailed receipt</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-flat h-100"><div class="card-body">
+          <h3 class="h6"><i class="bi bi-shield-check text-primary me-2" aria-hidden="true"></i>Trust and compliance</h3>
+          <ul class="small mb-0">
+            <li>Card data handled only by the regulated payment provider</li>
+            <li>Identity and bank verification before any payout</li>
+            <li>Fraud screening, refund and chargeback handling</li>
+            <li>Audit trail on every privileged action</li>
+            <li>Data protection: consent captured, data deletable on request</li>
+            <li>Accessible to screen-reader and keyboard users</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+    <div class="callout warn mt-4">
+      <p class="mb-0">
+        <strong>Mobile is not a nice-to-have.</strong> The overwhelming majority of P2P donations start from a
+        link in a messaging app and are completed on a phone, often on a poor connection. A checkout that is
+        slow or awkward on a small screen loses real money, donation by donation.
+      </p>
+    </div>
+  </section>
+
+  <section id="metrics" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">9</span><h2 class="mb-0">The numbers leadership should watch</h2>
+    </div>
+    <p>Total raised is the outcome. These are the levers that produce it.</p>
+    <div class="table-responsive">
+      <table class="table table-clean align-middle mb-0 bg-white rounded-3 overflow-hidden">
+        <thead>
+          <tr><th scope="col">Metric</th><th scope="col">What it means</th><th scope="col">Why it matters</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Active fundraiser rate</strong></td><td>Share of registered fundraisers who raised at least one donation</td><td>The clearest predictor of campaign outcome. Registered-but-silent fundraisers raise nothing.</td></tr>
+          <tr><td><strong>Page personalisation rate</strong></td><td>Share of pages with a photo and a personal story</td><td>Personalised pages substantially outperform untouched defaults.</td></tr>
+          <tr><td><strong>Donors per fundraiser</strong></td><td>Average number of people each fundraiser converts</td><td>Measures how far each personal network is actually being worked.</td></tr>
+          <tr><td><strong>Average donation</strong></td><td>Mean gift size</td><td>Moves with suggested-amount design more than with donor wealth.</td></tr>
+          <tr><td><strong>Checkout completion rate</strong></td><td>Share of started donations that finish</td><td>Pure product quality. Every lost percentage point is lost revenue.</td></tr>
+          <tr><td><strong>Tip opt-in rate</strong> <span class="chip chip-good">Model C only</span></td><td>Share of donors adding a voluntary platform contribution</td><td>Under the zero-fee model this <em>is</em> the revenue line.</td></tr>
+          <tr><td><strong>Repeat organiser rate</strong></td><td>Share of organisations running a second campaign</td><td>Drives retention and long-term platform value far more than one-off volume.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq" class="mb-5 pb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">10</span><h2 class="mb-0">Questions people always ask</h2>
+    </div>
+    <div class="accordion" id="faqAccordion">
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">Can a fundraiser run off with the money?</button></h3>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">No. Donations route straight to the organisation's verified account. A fundraiser has a page and a total; they never have access to funds.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">What if the campaign misses its goal?</button></h3>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Nothing is returned. Charity P2P is "keep what you raise", unlike reward crowdfunding where an all-or-nothing threshold is common. The goal is a motivator, not a condition.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">Is this the same as crowdfunding?</button></h3>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Related but distinct. Crowdfunding is usually one page raising for one project, often offering a reward. P2P is many personal pages raising for one organisation, offering nothing but the cause itself.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">Do donors need an account?</button></h3>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">They should not. Forcing registration before a donation is one of the most expensive mistakes a platform can make. Name, email, amount, pay &mdash; that is the whole flow.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">Who issues the tax receipt?</button></h3>
+        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">The organisation receiving the funds, automatically, in its own name. The platform generates it; the legal relationship is donor to organisation.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false" aria-controls="faq6">What happens with a refund or a disputed card?</button></h3>
+        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">The donation is reversed and every total it contributed to &mdash; fundraiser, team and campaign &mdash; is adjusted. Displayed totals must always reconcile to money actually settled.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="glossary" class="mb-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="section-num">11</span><h2 class="mb-0">Glossary</h2>
+    </div>
+    <div class="card-flat"><div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <dl class="glossary mb-0">
+            <dt>Campaign</dt><dd>The organisation's fundraising drive: one goal, one deadline, one total.</dd>
+            <dt>Personal page</dt><dd>A fundraiser's own page inside a campaign, with their photo, story and target.</dd>
+            <dt>Team</dt><dd>A group of fundraisers sharing a combined total and a leaderboard position.</dd>
+            <dt>Leaderboard</dt><dd>A ranking of fundraisers or teams by amount raised. The main engine of friendly competition.</dd>
+            <dt>Matching gift</dt><dd>A pledge, usually corporate, to match donations pound for pound up to a cap.</dd>
+          </dl>
+        </div>
+        <div class="col-md-6">
+          <dl class="glossary mb-0">
+            <dt>Connected account</dt><dd>The organisation's own verified account at the payment provider, into which donations are routed.</dd>
+            <dt>Payout</dt><dd>The scheduled transfer of settled donations from the payment provider to the organisation's bank.</dd>
+            <dt>Processing fee</dt><dd>The card networks' charge per transaction: a percentage plus a fixed amount.</dd>
+            <dt>Chargeback</dt><dd>A donor's bank reversing a payment after a dispute. Totals must be adjusted when it happens.</dd>
+            <dt>Recurring donation</dt><dd>An automatic repeat gift, usually monthly. The most valuable donor a campaign can produce.</dd>
+          </dl>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <div class="callout good">
+    <h2 class="h5 mb-2">The takeaway in three lines</h2>
+    <p class="mb-0">
+      P2P fundraising works because a request from a friend outperforms an advertisement from an institution.
+      The platform's job is to make asking effortless, giving instant, and money movement completely trustworthy.
+      Win on those three and the fundraising totals take care of themselves.
+    </p>
+  </div>
+
+</main>
+
+<footer class="py-4 mt-5">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+    <p class="small mb-0">Peer-to-Peer Fundraising Explained &mdash; internal briefing document.</p>
+    <p class="small mb-0">Worked figures are illustrative examples, not published benchmarks.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

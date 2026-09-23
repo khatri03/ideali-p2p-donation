@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 880" width="1280" height="880" role="img" aria-label="Campaign page with fundraiser panel"><defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#0b1c5c" flood-opacity="0.07"/></filter></defs><rect width="1280" height="880" fill="#dfe4ef"/><rect x="0" y="0" width="1280" height="880" rx="0" fill="#dfe4ef"/>
+<rect x="20" y="20" width="1240" height="840" rx="16" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<rect x="21" y="21" width="1238" height="46" rx="16" fill="#eef1f6"/>
+<rect x="21" y="50" width="1238" height="17" rx="0" fill="#eef1f6"/>
+<circle cx="48" cy="44" r="6" fill="#ff5f57"/>
+<circle cx="68" cy="44" r="6" fill="#febc2e"/>
+<circle cx="88" cy="44" r="6" fill="#28c840"/>
+<rect x="120" y="32" width="1080" height="24" rx="12" fill="#ffffff" stroke="#dbe0ea" stroke-width="1"/>
+<text x="134" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">🔒</text>
+<text x="150" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">hopefoundation.ideali.io/donate/clean-water-2026</text>
+<line x1="21" y1="67" x2="1259" y2="67" stroke="#dbe0ea" stroke-width="1"/>
+<rect x="21" y="68" width="1238" height="60" rx="0" fill="#ffffff"/>
+<line x1="21" y1="128" x2="1259" y2="128" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="21" y="128" width="1238" height="731" rx="0" fill="#fbfcff"/>
+<circle cx="66" cy="98" r="16" fill="#0f7b53" opacity="0.15"/>
+<text x="66" y="103" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0f7b53" font-weight="400" text-anchor="middle">♥</text>
+<text x="92" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="17" fill="#0b1c5c" font-weight="800" text-anchor="start">Hope Foundation</text>
+<text x="430" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Our work</text>
+<text x="540" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Campaigns</text>
+<text x="650" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Events</text>
+<text x="760" y="104" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="500" text-anchor="start">Contact</text>
+<rect x="1090" y="84" width="148" height="32" rx="16" fill="#1b4dff"/>
+<text x="1164.0" y="104.55" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle">Donate now</text>
+<defs><linearGradient id="g23" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0b1c5c"/><stop offset="100%" stop-color="#1b4dff"/></linearGradient></defs>
+<rect x="21" y="128" width="1238" height="250" rx="12" fill="url(#g23)"/>
+<circle cx="912.36" cy="203.0" r="45.0" fill="#ffffff" opacity="0.18"/>
+<circle cx="330.5" cy="323.0" r="70.0" fill="#ffffff" opacity="0.12"/>
+<text x="72" y="224" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="40" fill="#ffffff" font-weight="800" text-anchor="start">Clean Water 2026</text>
+<text x="72" y="260" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16" fill="#ffffff" font-weight="400" text-anchor="start" opacity="0.88">Safe drinking water for 12 villages in rural Sindh.</text>
+<rect x="72" y="284" width="157.98" height="24" rx="12" fill="#ffffff33"/>
+<text x="150.99" y="299.85" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#ffffff" font-weight="600" text-anchor="middle">Ends 31 December 2026</text>
+<rect x="72" y="344" width="700" height="150" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<text x="100" y="382" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="30" fill="#0b1c5c" font-weight="800" text-anchor="start">£ 48,320</text>
+<text x="240" y="382" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#6b7280" font-weight="400" text-anchor="start">raised of £100,000 goal</text>
+<rect x="100" y="400" width="644" height="12" rx="6" fill="#e8ecf6"/>
+<rect x="100" y="400" width="309.12" height="12" rx="6" fill="#0f7b53"/>
+<text x="100" y="440" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#0b1c5c" font-weight="600" text-anchor="start">1,204 donors</text>
+<text x="210" y="440" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#0b1c5c" font-weight="600" text-anchor="start">86 fundraisers</text>
+<text x="340" y="440" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#0b1c5c" font-weight="600" text-anchor="start">9 teams</text>
+<rect x="556" y="424" width="188" height="40" rx="20" fill="#1b4dff"/>
+<text x="650.0" y="448.9" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" font-weight="600" text-anchor="middle">Donate now</text>
+<rect x="800" y="344" width="408" height="150" rx="14" fill="#eef2ff" stroke="#cfd9ff" stroke-width="1" filter="url(#sh)"/>
+<text x="828" y="380" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="17" fill="#0b1c5c" font-weight="800" text-anchor="start">Fundraise for this campaign</text>
+<text x="828" y="404" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b7280" font-weight="400" text-anchor="start">Create your own page and ask friends</text>
+<text x="828" y="422" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b7280" font-weight="400" text-anchor="start">and family to give through you.</text>
+<rect x="828" y="440" width="352" height="40" rx="20" fill="#ffffff" stroke="#0f7b53" stroke-width="2"/>
+<text x="1004.0" y="464.9" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" fill="#0f7b53" font-weight="600" text-anchor="middle">Fundraise for this</text>
+<rect x="828" y="746" width="380" height="30" rx="8" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<circle cx="846" cy="761" r="10" fill="#8a5a00"/>
+<text x="846" y="766" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">1</text>
+<text x="864" y="766" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b4a00" font-weight="600" text-anchor="start">New panel, above the campaign story</text>
+<text x="72" y="544" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="20" fill="#0b1c5c" font-weight="800" text-anchor="start">Top fundraisers</text>
+<text x="1208" y="544" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#1b4dff" font-weight="600" text-anchor="end">See full leaderboard ›</text>
+<rect x="72" y="564" width="348" height="132" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<circle cx="114.0" cy="606.0" r="22.0" fill="#1b4dff"/>
+<text x="114.0" y="612.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16.72" fill="#ffffff" font-weight="700" text-anchor="middle">SM</text>
+<text x="148" y="606" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="700" text-anchor="start">Sara Malik</text>
+<text x="148" y="624" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="start">22 donors</text>
+<text x="92" y="660" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">£310 of £500</text>
+<rect x="92" y="670" width="308" height="8" rx="4" fill="#e8ecf6"/>
+<rect x="92" y="670" width="190.96" height="8" rx="4" fill="#1b4dff"/>
+<rect x="444" y="564" width="348" height="132" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<circle cx="486.0" cy="606.0" r="22.0" fill="#0f7b53"/>
+<text x="486.0" y="612.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16.72" fill="#ffffff" font-weight="700" text-anchor="middle">JE</text>
+<text x="520" y="606" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="700" text-anchor="start">James Ellis</text>
+<text x="520" y="624" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="start">14 donors</text>
+<text x="464" y="660" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">£220 of £500</text>
+<rect x="464" y="670" width="308" height="8" rx="4" fill="#e8ecf6"/>
+<rect x="464" y="670" width="135.52" height="8" rx="4" fill="#0f7b53"/>
+<rect x="816" y="564" width="348" height="132" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<circle cx="858.0" cy="606.0" r="22.0" fill="#0b1c5c"/>
+<text x="858.0" y="612.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="16.72" fill="#ffffff" font-weight="700" text-anchor="middle">PN</text>
+<text x="892" y="606" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="700" text-anchor="start">Priya Nair</text>
+<text x="892" y="624" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="start">11 donors</text>
+<text x="836" y="660" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">£180 of £300</text>
+<rect x="836" y="670" width="308" height="8" rx="4" fill="#e8ecf6"/>
+<rect x="836" y="670" width="184.79999999999998" height="8" rx="4" fill="#0b1c5c"/>
+<rect x="72" y="746" width="348" height="30" rx="8" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<circle cx="90" cy="761" r="10" fill="#8a5a00"/>
+<text x="90" y="766" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">2</text>
+<text x="108" y="766" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b4a00" font-weight="600" text-anchor="start">New panel listing the top fundraisers</text></svg>

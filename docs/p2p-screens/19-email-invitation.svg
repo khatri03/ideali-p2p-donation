@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 880" width="1280" height="880" role="img" aria-label="The invitation email a fundraiser receives"><defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#0b1c5c" flood-opacity="0.07"/></filter></defs><rect width="1280" height="880" fill="#dfe4ef"/><rect x="0" y="0" width="1280" height="880" rx="0" fill="#dfe4ef"/>
+<rect x="20" y="20" width="1240" height="840" rx="16" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<rect x="21" y="21" width="1238" height="46" rx="16" fill="#eef1f6"/>
+<rect x="21" y="50" width="1238" height="17" rx="0" fill="#eef1f6"/>
+<circle cx="48" cy="44" r="6" fill="#ff5f57"/>
+<circle cx="68" cy="44" r="6" fill="#febc2e"/>
+<circle cx="88" cy="44" r="6" fill="#28c840"/>
+<rect x="120" y="32" width="1080" height="24" rx="12" fill="#ffffff" stroke="#dbe0ea" stroke-width="1"/>
+<text x="134" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">🔒</text>
+<text x="150" y="48" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">mail.google.com/mail/u/0/#inbox</text>
+<line x1="21" y1="67" x2="1259" y2="67" stroke="#dbe0ea" stroke-width="1"/>
+<rect x="21" y="68" width="1238" height="791" rx="0" fill="#f6f8fc"/>
+<rect x="200" y="96" width="680" height="748" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<text x="224" y="134" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="19" fill="#0b1c5c" font-weight="800" text-anchor="start">Will you raise £500 for clean water?</text>
+<circle cx="242.0" cy="168.0" r="18.0" fill="#0f7b53"/>
+<text x="242.0" y="173.04" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.68" fill="#ffffff" font-weight="700" text-anchor="middle">HF</text>
+<text x="272" y="168" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#0b1c5c" font-weight="700" text-anchor="start">Hope Foundation</text>
+<text x="392" y="168" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b7280" font-weight="400" text-anchor="start">&lt;fundraising@hopefoundation.org&gt;</text>
+<text x="272" y="188" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="start">to  sara.malik@example.com</text>
+<text x="856" y="168" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="end">10:04 (2 minutes ago)</text>
+<line x1="224" y1="206" x2="856" y2="206" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="224" y="222" width="632" height="56" rx="0" fill="#0f7b53"/>
+<text x="248" y="256" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#ffffff" font-weight="800" text-anchor="start">Hope Foundation</text>
+<text x="832" y="256" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="500" text-anchor="end" opacity="0.85">Clean Water 2026</text>
+<defs><linearGradient id="g24" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1b4dff"/><stop offset="100%" stop-color="#0f7b53"/></linearGradient></defs>
+<rect x="224" y="278" width="632" height="120" rx="0" fill="url(#g24)"/>
+<circle cx="679.04" cy="314.0" r="21.599999999999998" fill="#ffffff" opacity="0.18"/>
+<circle cx="382.0" cy="371.6" r="33.6" fill="#ffffff" opacity="0.12"/>
+<text x="256" y="440" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="19" fill="#0b1c5c" font-weight="800" text-anchor="start">Sara — will you raise £500 with us?</text>
+<text x="256" y="472" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="400" text-anchor="start">Hi Sara,</text>
+<text x="256" y="494" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="400" text-anchor="start">We are raising £100,000 to bring clean water to 40 villages in Sindh.</text>
+<text x="256" y="516" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="400" text-anchor="start">Fiona at Hope Foundation would love you to raise alongside us.</text>
+<text x="256" y="538" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="400" text-anchor="start">You get your own page, with your name, your photo and your reason.</text>
+<text x="256" y="560" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#6b7280" font-weight="400" text-anchor="start">Everything given through it counts towards the campaign, and towards you.</text>
+<rect x="256" y="594" width="568" height="52" rx="10" fill="#eef2ff"/>
+<text x="276" y="618" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="600" text-anchor="start">Suggested target</text>
+<text x="276" y="638" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#1b4dff" font-weight="800" text-anchor="start">£ 500</text>
+<text x="400" y="626" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" fill="#6b7280" font-weight="400" text-anchor="start">You can change this to any amount when you set your page up.</text>
+<rect x="256" y="664" width="300" height="48" rx="24" fill="#1b4dff"/>
+<text x="406.0" y="693.25" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#ffffff" font-weight="600" text-anchor="middle">Create my fundraising page</text>
+<text x="256" y="736" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">Or paste this into your browser:</text>
+<text x="256" y="754" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#1b4dff" font-weight="600" text-anchor="start">hopefoundation.ideali.io/donate/clean-water-2026/join?i=8f3a</text>
+<text x="256" y="778" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">This invitation expires on 3 April 2026.</text>
+<line x1="256" y1="794" x2="824" y2="794" stroke="#e5e7eb" stroke-width="1"/>
+<text x="256" y="812" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="10" fill="#6b7280" font-weight="400" text-anchor="start">Hope Foundation · 14 Rivergate, Manchester M3 1AB · Registered charity 1043921</text>
+<text x="256" y="828" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="10" fill="#6b7280" font-weight="400" text-anchor="start">You received this because Hope Foundation invited you to fundraise.    Unsubscribe</text>
+<rect x="904" y="96" width="336" height="748" rx="14" fill="#fbfcff" stroke="#e5e7eb" stroke-width="1" filter="url(#sh)"/>
+<text x="928" y="134" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">What this email is</text>
+<line x1="928" y1="150" x2="1216" y2="150" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="941.0" cy="189.0" r="13.0" fill="#1b4dff" opacity="0.12"/>
+<text x="941.0" y="193.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.700000000000001" fill="#1b4dff" font-weight="700" text-anchor="middle">✓</text>
+<text x="964" y="193" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="700" text-anchor="start">It is one email, sent once</text>
+<text x="964" y="216" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">No page exists for Sara until she</text>
+<text x="964" y="233" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">clicks. A page carries her name and</text>
+<text x="964" y="250" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">her photo, so it cannot be published</text>
+<text x="964" y="267" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">without her.</text>
+<circle cx="941.0" cy="317.0" r="13.0" fill="#0f7b53" opacity="0.12"/>
+<text x="941.0" y="321.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.700000000000001" fill="#0f7b53" font-weight="700" text-anchor="middle">✓</text>
+<text x="964" y="321" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="700" text-anchor="start">The charity writes the middle</text>
+<text x="964" y="344" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">The greeting and the two lines under</text>
+<text x="964" y="361" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">it are what staff typed on the invite</text>
+<text x="964" y="378" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">screen. Everything else is fixed.</text>
+<circle cx="941.0" cy="428.0" r="13.0" fill="#0b1c5c" opacity="0.12"/>
+<text x="941.0" y="432.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.700000000000001" fill="#0b1c5c" font-weight="700" text-anchor="middle">✓</text>
+<text x="964" y="432" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="700" text-anchor="start">The link is single-use</text>
+<text x="964" y="455" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">It carries a code tied to Sara&#x27;s email</text>
+<text x="964" y="472" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">and to this campaign, and it stops</text>
+<text x="964" y="489" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">working after 30 days.</text>
+<circle cx="941.0" cy="539.0" r="13.0" fill="#8a5a00" opacity="0.12"/>
+<text x="941.0" y="543.16" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.700000000000001" fill="#8a5a00" font-weight="700" text-anchor="middle">✓</text>
+<text x="964" y="543" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="700" text-anchor="start">It sets no password</text>
+<text x="964" y="566" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">Clicking opens the sign-up screen,</text>
+<text x="964" y="583" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">where she chooses one. We never put</text>
+<text x="964" y="600" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b7280" font-weight="400" text-anchor="start">a password in an email.</text>
+<rect x="924" y="624" width="296" height="130" rx="12" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<text x="942" y="652" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b4a00" font-weight="800" text-anchor="start">What it is not</text>
+<text x="942" y="676" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">It is not an account created behind</text>
+<text x="942" y="692" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">her back, and it is not a page going</text>
+<text x="942" y="708" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">live. Both need her to act first —</text>
+<text x="942" y="724" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">which is why an invitation reads</text>
+<text x="942" y="740" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">Sent until it reads Accepted on the</text>
+<text x="942" y="756" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11" fill="#6b4a00" font-weight="400" text-anchor="start">charity&#x27;s screen.</text>
+<rect x="924" y="800" width="296" height="30" rx="8" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<circle cx="942" cy="815" r="10" fill="#8a5a00"/>
+<text x="942" y="820" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">3</text>
+<text x="960" y="820" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6b4a00" font-weight="600" text-anchor="start">New email template</text></svg>

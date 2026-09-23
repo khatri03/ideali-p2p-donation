@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Peer-to-Peer Fundraising — Feature Guide</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root { --ink: #1f2733; --muted: #5c6b7f; --line: #e3e8ef; --accent: #2563eb; }
+    body { color: var(--ink); background: #f7f9fc; }
+    .doc-header { background: #ffffff; border-bottom: 1px solid var(--line); }
+    .doc-header h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
+    .doc-header .subtitle { color: var(--muted); font-size: .95rem; }
+    .sidebar { position: sticky; top: 1.5rem; }
+    .sidebar .nav-link { color: var(--muted); padding: .35rem .5rem; border-left: 2px solid transparent; font-size: .92rem; }
+    .sidebar .nav-link:hover { color: var(--accent); }
+    .sidebar .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: #eff4ff; }
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: .5rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .panel > h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: .25rem; }
+    .panel > h3 { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: .5rem; }
+    .lede { color: var(--muted); max-width: 82ch; }
+    .screen-id { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    table.guide { font-size: .93rem; }
+    table.guide th { background: #f2f5fa; font-weight: 600; white-space: nowrap; }
+    .empty-note { border: 1px dashed var(--line); border-radius: .5rem; padding: 2rem; text-align: center; color: var(--muted); background: #fff; }
+    footer { color: var(--muted); font-size: .85rem; padding: 2rem 0; }
+    @media print {
+      body { background: #fff; }
+      .sidebar, .no-print { display: none !important; }
+      .panel { break-inside: avoid; border-color: #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="doc-header py-3 mb-4">
+  <div class="container">
+    <h1>Peer-to-Peer Fundraising — Feature Guide</h1>
+    <div class="subtitle">Screen-by-screen record of agreed behaviour. Created 2 September 2026, 20:21.</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+
+    <aside class="col-lg-3 d-none d-lg-block no-print">
+      <nav class="sidebar nav flex-column" id="toc">
+        <a class="nav-link" href="#about">About this guide</a>
+        <a class="nav-link" href="#legend">How to read it</a>
+        <a class="nav-link" href="#screens">Screens</a>
+        <a class="nav-link" href="#log">Change log</a>
+      </nav>
+    </aside>
+
+    <main class="col-lg-9">
+
+      <section class="panel" id="about">
+        <h2>About this guide</h2>
+        <p class="lede mb-2">This document records how each peer-to-peer fundraising screen behaves, in
+          plain English, one screen at a time.</p>
+        <p class="lede mb-0">It is written during an audit. A screen is added to this guide only after its
+          flow has been walked through and agreed. Nothing is written here from assumption.</p>
+      </section>
+
+      <section class="panel" id="legend">
+        <h2>How to read it</h2>
+        <p class="lede">Every screen entry uses the same headings, so the same question is answered in the
+          same place each time.</p>
+        <table class="table table-bordered guide mb-0">
+          <thead>
+            <tr><th style="width:22%">Heading</th><th>What it holds</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Who it is for</td><td>The person who reaches this screen, and how they get here.</td></tr>
+            <tr><td>What it does</td><td>The purpose of the screen in one or two sentences.</td></tr>
+            <tr><td>The flow</td><td>The agreed steps, in order, from arriving to leaving.</td></tr>
+            <tr><td>Rules</td><td>Conditions that decide what is shown or refused.</td></tr>
+            <tr><td>Messages</td><td>Wording the user sees for success, refusal and error.</td></tr>
+            <tr><td>Notes</td><td>Anything agreed that does not fit above.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="screens">
+        <div class="panel">
+          <h2>Screens</h2>
+          <p class="lede mb-0">Entries are added one at a time as the audit proceeds.</p>
+        </div>
+
+        <div class="empty-note" id="screens-empty">
+          No screen recorded yet. The first entry is added once its flow has been agreed.
+        </div>
+      </section>
+
+      <section class="panel" id="log">
+        <h2>Change log</h2>
+        <table class="table table-bordered guide mb-0">
+          <thead>
+            <tr><th style="width:18%">Date</th><th style="width:30%">Screen</th><th>Change</th></tr>
+          </thead>
+          <tbody id="log-rows">
+            <tr><td>2 Sep 2026</td><td>&mdash;</td><td>Guide created. No screen content yet.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>Ideali &mdash; peer-to-peer fundraising. Internal document.</footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const links = Array.from(document.querySelectorAll('#toc .nav-link'));
+  const targets = links.map((link) => document.querySelector(link.getAttribute('href')));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const index = targets.indexOf(entry.target);
+      links.forEach((link, position) => link.classList.toggle('active', position === index));
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  targets.forEach((target) => target && observer.observe(target));
+</script>
+
+</body>
+</html>

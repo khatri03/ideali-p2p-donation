@@ -1,0 +1,1238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peer-to-Peer Fundraising — Final Proposal</title>
+<meta name="description" content="Final leadership proposal for peer-to-peer fundraising on ideali.io: what it is, who fundraisers are, every new screen, how it is delivered, what it costs and what leadership must decide.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" crossorigin="anonymous">
+<style>
+  :root{
+    --ink:#0b1c5c; --brand:#1b4dff; --good:#0f7b53; --warn:#8a5a00; --bad:#a32020;
+    --muted:#5b6478; --line:#e3e8f2; --soft:#f4f7ff; --radius:16px;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:88px;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       color:#1d2433; background:#fbfcff; line-height:1.65;}
+  h1,h2,h3,h4{color:var(--ink); font-weight:800; letter-spacing:-.015em;}
+  h1{font-size:clamp(1.9rem,4.4vw,3rem); line-height:1.15;}
+  h2{font-size:clamp(1.4rem,2.6vw,2rem); margin-top:0;}
+  h3{font-size:clamp(1.1rem,1.9vw,1.35rem);}
+  .lead-xl{font-size:clamp(1rem,1.5vw,1.2rem); color:var(--muted);}
+  .navbar{background:#fff; border-bottom:1px solid var(--line);}
+  .navbar .nav-link{color:var(--muted); font-weight:600; font-size:.93rem;}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--brand);}
+  .hero{background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%); color:#fff;
+        border-radius:var(--radius); padding:clamp(1.75rem,4vw,3.25rem);}
+  .hero h1{color:#fff;}
+  .hero p{color:#dfe6ff;}
+  .kpi{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+       border-radius:12px; padding:1rem 1.1rem; height:100%;}
+  .kpi .n{font-size:clamp(1.5rem,3vw,2rem); font-weight:800; line-height:1.1;}
+  .kpi .l{font-size:.83rem; color:#dbe3ff;}
+  section{scroll-margin-top:88px; padding:2.5rem 0;}
+  .panel{background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+         padding:clamp(1.1rem,2.2vw,1.75rem); height:100%;}
+  .panel.soft{background:var(--soft); border-color:#d9e2ff;}
+  .num{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px;
+       border-radius:50%; background:var(--brand); color:#fff; font-weight:800; font-size:.95rem;
+       margin-right:.6rem; flex:0 0 34px;}
+  .callout{border-left:4px solid var(--brand); background:var(--soft); border-radius:10px;
+           padding:1rem 1.15rem; margin:1.25rem 0;}
+  .callout.good{border-color:var(--good); background:#eef8f3;}
+  .callout.warn{border-color:var(--warn); background:#fff8e8;}
+  .callout.bad{border-color:var(--bad); background:#fdf0f0;}
+  .shot{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff;
+        box-shadow:0 6px 24px rgba(11,28,92,.07);}
+  .shot img{display:block; width:100%; height:auto;}
+  .shot-cap{padding:.9rem 1.1rem; border-top:1px solid var(--line); background:#fff;}
+  .shot-cap .t{font-weight:800; color:var(--ink); font-size:1.02rem;}
+  .shot-cap .s{color:var(--muted); font-size:.92rem; margin:0;}
+  .who{display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.06em;
+       text-transform:uppercase; padding:.2rem .6rem; border-radius:999px; margin-bottom:.45rem;}
+  .who-public{background:#e8f5ef; color:var(--good);}
+  .who-supporter{background:#eef2ff; color:var(--brand);}
+  .who-charity{background:#fff1d6; color:var(--warn);}
+  .path{margin:.55rem 0 .8rem; padding:.55rem .75rem; background:var(--soft);
+        border:1px solid #d9e2ff; border-radius:10px; font-size:.86rem; color:var(--ink);
+        line-height:1.5;}
+  .path .lab{display:block; font-weight:800; font-size:.68rem; letter-spacing:.07em;
+             text-transform:uppercase; color:var(--muted); margin-bottom:.15rem;}
+  .path .sep{color:var(--muted); padding:0 .18rem;}
+  .path b{font-weight:700;}
+  .stage{border:1px solid var(--line); border-radius:14px; background:#fff; height:100%;}
+  .stage .hd{background:var(--soft); border-bottom:1px solid var(--line); padding:.85rem 1.1rem;
+             border-radius:14px 14px 0 0; font-weight:800; color:var(--ink);}
+  .stage .bd{padding:1.1rem;}
+  .stage .bd p{margin-bottom:.5rem;}
+  ul.tight li{margin-bottom:.4rem;}
+  .decision{border:1px solid var(--line); border-radius:12px; padding:1rem 1.15rem;
+            background:#fff; height:100%;}
+  .decision .q{font-weight:800; color:var(--ink);}
+  .decision .r{color:var(--good); font-weight:700; font-size:.93rem;}
+  .table-responsive{border-radius:12px;}
+  footer{border-top:1px solid var(--line); color:var(--muted); font-size:.9rem;}
+  a{color:var(--brand);}
+  a:focus-visible,button:focus-visible,.nav-link:focus-visible{outline:3px solid #9db4ff; outline-offset:2px;}
+  @media print{
+    .navbar,.no-print{display:none !important;}
+    section{padding:1rem 0; page-break-inside:avoid;}
+    .shot{break-inside:avoid;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top no-print">
+  <div class="container">
+    <span class="navbar-brand fw-bold" style="color:var(--ink)">Peer-to-Peer Fundraising</span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+            aria-controls="nav" aria-expanded="false" aria-label="Open menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#summary">Summary</a></li>
+        <li class="nav-item"><a class="nav-link" href="#what">What it is</a></li>
+        <li class="nav-item"><a class="nav-link" href="#accounts">Who fundraisers are</a></li>
+        <li class="nav-item"><a class="nav-link" href="#why">Why now</a></li>
+        <li class="nav-item"><a class="nav-link" href="#screens">The screens</a></li>
+        <li class="nav-item"><a class="nav-link" href="#stages">Delivery</a></li>
+        <li class="nav-item"><a class="nav-link" href="#cost">What it takes</a></li>
+        <li class="nav-item"><a class="nav-link" href="#decisions">Decisions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#risks">Risks</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container my-4 my-lg-5">
+
+  <div class="hero">
+    <p class="mb-2" style="letter-spacing:.12em; font-size:.8rem; font-weight:700; color:#c6d3ff">
+      IDEALI.IO &nbsp;·&nbsp; PRODUCT PROPOSAL &nbsp;·&nbsp; FOR LEADERSHIP &nbsp;·&nbsp; FINAL &nbsp;·&nbsp; 19 AUGUST 2026</p>
+    <h1 class="mb-3">Let supporters raise money for the charity, not just give money to it.</h1>
+    <p class="lead-xl mb-4" style="max-width:60ch">
+      Today a charity asks its supporters for money. After this change, a supporter can ask
+      <em>their own</em> friends and family on the charity's behalf — from their own page, with
+      their own photo, their own reason and their own target. Every pound still lands in the
+      charity's account. This is what every serious fundraising platform already offers, and
+      it is the biggest single gap in our donation product.
+    </p>
+    <p class="mb-4" style="max-width:60ch; color:#c6d3ff; font-size:.95rem">
+      Every screen in this document is a proposed design, drawn for this proposal. None of it is
+      built yet, and nothing here has been shown to a customer.</p>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">18</div><div class="l">new screens, every one of them drawn in this document</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">5</div><div class="l">delivery stages, each one usable on its own</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">0</div><div class="l">change to how money is taken or paid out</div></div></div>
+      <div class="col-6 col-lg-3"><div class="kpi"><div class="n">11</div><div class="l">sign-offs needed &mdash; 8 with our recommendation, 3 deliberately open</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ SUMMARY -->
+  <section id="summary">
+    <h2 class="d-flex align-items-center"><span class="num">1</span>The whole thing in one page</h2>
+    <div class="row g-4 mt-1">
+      <div class="col-lg-7">
+        <div class="panel">
+          <h3>What changes for a charity using ideali</h3>
+          <p class="mb-3">A charity runs a campaign called <strong>Clean Water 2026</strong> with a
+            &pound;100,000 target. Today, that campaign has one page and one Donate button, and the
+            charity's own staff have to find every donor.</p>
+          <p class="mb-3">After this change, the charity flips one switch. Now any supporter can press
+            <strong>"Fundraise for us"</strong> and get their own page in two minutes. Sara sets her
+            own target of &pound;500, writes why she cares, adds a photo, and sends the link to
+            her family. Her uncle gives &pound;50 on her page.</p>
+        <p class="mb-0">That &pound;50 goes to the charity exactly as it does today. The only new thing
+            is that the system <strong>remembers it came through Sara</strong> — so Sara's page shows
+            &pound;50 of &pound;500, her team's page goes up by &pound;50, and the campaign total goes
+            up by &pound;50. One gift, counted once as money, credited in three places.</p>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="panel soft">
+          <h3>Why the charity cares</h3>
+          <ul class="tight mb-3">
+            <li>The charity reaches people it has never met — Sara's family, not the charity's list.</li>
+            <li>The charity's staff stop doing the asking. Eighty-six supporters do it instead.</li>
+            <li>Every new donor is captured in the charity's own contact records, not a stranger's.</li>
+          </ul>
+          <h3 class="mt-4">Why we care</h3>
+          <p class="mb-0">Charities comparing platforms tick this box first. Right now we cannot tick
+            it, and we lose the comparison before anyone looks at the rest of our product — which is
+            already strong.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout good">
+      <strong>The important reassurance:</strong> we are not touching how payments work. Cards,
+      bank payments, receipts, refunds and payouts stay exactly as they are today. We are adding
+      pages and counting, not moving money in a new way.
+    </div>
+  </section>
+
+  <!-- ============================================================ WHAT IT IS -->
+  <section id="what">
+    <h2 class="d-flex align-items-center"><span class="num">2</span>What peer-to-peer actually means</h2>
+    <p class="lead-xl">Two words, one idea: <strong>the supporter does the asking.</strong></p>
+    <div class="row g-4 mt-1">
+      <div class="col-md-6">
+        <div class="panel">
+          <h3 class="mb-3"><i class="bi bi-megaphone me-2" aria-hidden="true"></i>How it works today</h3>
+          <ul class="tight mb-0">
+            <li>The charity creates a campaign page.</li>
+            <li>The charity emails and posts the link.</li>
+            <li>People who already know the charity give.</li>
+            <li>Growth stops at the size of the charity's own list.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel soft">
+          <h3 class="mb-3"><i class="bi bi-people me-2" aria-hidden="true"></i>How it works after this</h3>
+          <ul class="tight mb-0">
+            <li>The charity creates the same campaign page.</li>
+            <li>Supporters make their own pages under it.</li>
+            <li>Each supporter asks their own circle.</li>
+            <li>Growth follows the supporters' networks, not the charity's list.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-5">The example we will use all the way through</h3>
+    <div class="row g-3 mt-1">
+      <div class="col-lg-3 col-md-6"><div class="panel"><span class="who who-charity">The charity</span>
+        <p class="mb-0">Hope Foundation runs <strong>Clean Water 2026</strong>, target &pound;100,000.</p></div></div>
+      <div class="col-lg-3 col-md-6"><div class="panel"><span class="who who-supporter">The fundraiser</span>
+        <p class="mb-0"><strong>Sara</strong> signs up, sets her own target of &pound;500 and writes why.</p></div></div>
+      <div class="col-lg-3 col-md-6"><div class="panel"><span class="who who-supporter">The team</span>
+        <p class="mb-0">Sara joins <strong>Team Northside</strong>, her running club, target &pound;5,000.</p></div></div>
+      <div class="col-lg-3 col-md-6"><div class="panel"><span class="who who-public">The donor</span>
+        <p class="mb-0">Sara's uncle gives <strong>&pound;50</strong> on Sara's page, not the charity's.</p></div></div>
+    </div>
+
+    <div class="callout">
+      <strong>Where that &pound;50 ends up.</strong> The bank receives &pound;50, once, into Hope
+      Foundation's account — exactly as today. Then the same &pound;50 is <em>credited</em> to
+      Sara's page, to Team Northside's page and to the campaign total. Nobody is paid three
+      times; three counters go up. Getting this counting right, in every case including refunds,
+      is the real engineering work in this project.
+    </div>
+
+    <h3 class="mt-5" id="accounts" style="scroll-margin-top:88px">Who a fundraiser is, and what they log in with</h3>
+    <p style="max-width:80ch">This is the one structural question underneath the whole feature, so it
+      is worth settling in plain words before any screen is discussed.</p>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="mb-2" style="font-size:1.1rem"><i class="bi bi-person-check me-2" aria-hidden="true"></i>A fundraiser is a supporter, not a new kind of staff</h3>
+          <p class="mb-2">Sara is not an employee of Hope Foundation and does not work for us. She is
+            an ordinary supporter who pressed one button on a campaign page and now has a page of
+            her own.</p>
+          <p class="mb-0">So she signs up once — name, email, password, about a minute — and signs in
+            the same way every other supporter does. One account, one profile, one password reset.
+            There is no separate portal and no second login to explain to her.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel soft">
+          <h3 class="mb-2" style="font-size:1.1rem"><i class="bi bi-x-octagon me-2" aria-hidden="true"></i>What we looked at and are not doing</h3>
+          <p class="mb-2">We considered giving fundraisers their own separate account type with its
+            own login, kept apart from members.</p>
+          <p class="mb-2">We are not doing it, for two reasons. No competing platform does it — on
+            every one of them a fundraiser is simply a signed-up supporter. And it breaks the case
+            that matters most to our customers: a charity's existing members are its best
+            fundraisers, and a separate account type would force those people to hold two logins for
+            the same charity.</p>
+          <p class="mb-0">Keeping one account type also keeps the charity's contact list whole, which
+            is where the repeat giving comes from.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-4" style="font-size:1.15rem">Two ways somebody becomes a fundraiser</h3>
+    <div class="table-responsive mt-2">
+      <table class="table align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" style="width:26%">Route in</th>
+            <th scope="col">How it works</th>
+            <th scope="col" style="width:28%">Why it exists</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>They join themselves</strong><br><span style="color:var(--muted); font-size:.9rem">the main route</span></td>
+            <td>Sara is reading the campaign page, presses <em>Fundraise for this</em>, signs up and
+              has a page in two minutes. Nobody at the charity had to do anything.</td>
+            <td>This is where the growth comes from. Every supporter who gives is a supporter who
+              might raise, and the invitation costs the charity nothing.</td>
+          </tr>
+          <tr>
+            <td><strong>The charity invites them</strong><br><span style="color:var(--muted); font-size:.9rem">the deliberate route</span></td>
+            <td>The charity enters a name and email, or picks someone already in its member list.
+              That person gets an email, accepts, and lands on the same short sign-up.</td>
+            <td>For the specific people a charity wants on board — a patron, a committee, a school
+              class. Useful, but it is the smaller of the two numbers.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong>A charity can never publish a page in somebody else&rsquo;s name.</strong> An invitation
+      has to be accepted before anything appears. A real person&rsquo;s name, photo and story only go
+      on the public internet after that person has agreed to it. This is not a nicety — it is the
+      difference between an invitation and an impersonation, and it is why &ldquo;add a fundraiser&rdquo;
+      always means &ldquo;invite a fundraiser&rdquo;.
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="mb-2" style="font-size:1.1rem"><i class="bi bi-people me-2" aria-hidden="true"></i>How teams sit on top of this</h3>
+          <ul class="tight mb-0">
+            <li>Any fundraiser can start a team and becomes its <strong>captain</strong>.</li>
+            <li>The captain names the team, writes its reason, sets its target and shares a join link.</li>
+            <li>Anyone who follows that link joins the team and keeps their own page and their own target.</li>
+            <li>The charity can require teams to be approved before they show publicly, using the same switch as pages.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel">
+          <h3 class="mb-2" style="font-size:1.1rem"><i class="bi bi-bullseye me-2" aria-hidden="true"></i>Two targets, on purpose</h3>
+          <p class="mb-2">Sara has a personal target of &pound;500. Team Northside has a team target of
+            &pound;5,000. These are set separately and are not the same number added up — a team of
+            six people with &pound;500 targets can still choose to aim at &pound;5,000.</p>
+          <p class="mb-0">Both progress bars are shown, and both are driven by the same credited
+            gifts. Neither is a guess.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ WHY NOW -->
+  <section id="why">
+    <h2 class="d-flex align-items-center"><span class="num">3</span>Why we are doing this now</h2>
+    <div class="row g-4 mt-1">
+      <div class="col-lg-4">
+        <div class="panel"><h3>It is the gap that costs us deals</h3>
+          <p class="mb-0">Our donation product already does campaigns, recurring giving, invoices,
+            multiple payment providers, tips and reporting well. Peer-to-peer is the one thing a
+            charity asks about early and we cannot demonstrate.</p></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel"><h3>It is mostly building on what we have</h3>
+          <p class="mb-0">Payments, receipts, refunds, contact records, campaign setup and reporting
+            already exist and are reused untouched. We are adding pages, a way to sign up, and the
+            counting that ties a gift to a person.</p></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel"><h3>It sells the rest of the product</h3>
+          <p class="mb-0">A supporter who runs a page becomes a contact we hold, a donor we can
+            thank, and often a member later. This feature feeds our memberships and events
+            modules rather than sitting on its own.</p></div>
+      </div>
+    </div>
+
+    <h3 class="mt-4">What the market already does, and we do not</h3>
+    <p style="max-width:80ch">We reviewed twelve platforms a charity would realistically compare us
+      against. Peer-to-peer fundraising is not a differentiator in this market &mdash; it is the
+      price of entry. The pattern is the same across all of them.</p>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col" style="width:34%">Platform</th>
+            <th scope="col" style="width:33%">Personal fundraising pages</th>
+            <th scope="col" style="width:33%">Teams and leaderboards</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Zeffy</th><td>Yes</td><td>Yes</td></tr>
+          <tr><th scope="row">JustGiving</th><td>Yes</td><td>Yes</td></tr>
+          <tr><th scope="row">Classy</th><td>Yes</td><td>Yes</td></tr>
+          <tr><th scope="row">GoFundMe Charity</th><td>Yes</td><td>Yes</td></tr>
+          <tr><th scope="row">Donorbox, Givebutter, Bloomerang, Funraise, DonorDrive, Enthuse, Blackbaud, Raisely</th><td>Yes</td><td>Yes</td></tr>
+          <tr style="background:#fff6f6">
+            <th scope="row">ideali today</th>
+            <td><strong style="color:var(--bad)">No</strong></td>
+            <td><strong style="color:var(--bad)">No</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted)">The detail behind this table, feature by feature, is in the
+      companion competitive review and gap documents.</p>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="panel soft"><h3>What happens if we do nothing</h3>
+          <p>Nothing breaks. We keep selling to charities who want campaign giving, memberships and
+            events, and we keep losing the ones who run a run, a walk, a challenge or a
+            birthday-giving programme &mdash; which is where the volume in this sector sits.</p>
+          <p class="mb-0">The cost is not a missing feature. It is that we are removed from the
+            shortlist before we ever get to demonstrate the parts of the product that are genuinely
+            strong.</p></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel soft"><h3>What we are not claiming</h3>
+          <p>We are not claiming this wins deals on its own, and we have deliberately not put a
+            revenue number in this document, because we do not have won/lost data good enough to
+            support one.</p>
+          <p class="mb-0">If leadership wants a revenue case rather than a capability case, the
+            honest way to get one is to count how many opportunities in the last twelve months named
+            peer-to-peer as a requirement. Sales owns that answer, not us.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SCREENS -->
+  <section id="screens">
+    <h2 class="d-flex align-items-center"><span class="num">4</span>Every new screen, in order</h2>
+    <p class="lead-xl">Below is the whole product, screen by screen, in the order a real campaign
+      would use them. Each picture shows what the user sees and what they can do there.</p>
+
+    <div class="callout warn">
+      <strong>Please read the pictures as designs, not photographs.</strong> These are the screens we
+      intend to build, drawn to the same layout and spacing the real product uses. Names, amounts
+      and the charity are made up for the example. Nothing here is live yet.
+    </div>
+
+    <p style="max-width:80ch">Every screen a person can reach is drawn below, in the order it
+      happens. The map first, then the screens one at a time. Each screen also states
+      <strong>how somebody navigates to it</strong>, so the route through the product is never a
+      guess.</p>
+
+    <figure class="shot mt-4">
+      <img src="p2p-screens/00-flow-map.svg" alt="A map of the eighteen screens grouped into six stages: the charity switches it on, a supporter becomes a fundraiser, teams form, the public gives, the fundraiser keeps going, and the charity watches over it.">
+      <figcaption class="shot-cap">
+        <div class="t">The whole journey on one page</div>
+        <p class="s">Six stages, eighteen screens, in the order somebody actually meets them.</p>
+      </figcaption>
+    </figure>
+
+    <h3 class="mt-5" style="font-size:1.15rem">Only three places to remember</h3>
+    <p style="max-width:80ch">Every screen below sits under one of three entry points. Nothing is
+      hidden in a fourth menu, and nothing needs a new app.</p>
+    <div class="table-responsive mt-2">
+      <table class="table align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" style="width:24%">Entry point</th>
+            <th scope="col" style="width:24%">Who uses it</th>
+            <th scope="col">What is behind it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Donations &rsaquo; Campaigns</strong><br><span style="color:var(--muted); font-size:.9rem">the organiser menu they already use</span></td>
+            <td>Charity staff</td>
+            <td>Turning the feature on, inviting people, and the <em>Fundraisers</em>, <em>Teams</em> and <em>Invitations</em> tabs on the campaign &mdash; screens 1, 2, 13, 14, 15, 16 and 17.</td>
+          </tr>
+          <tr>
+            <td><strong>My fundraising</strong><br><span style="color:var(--muted); font-size:.9rem">a new item in the supporter&rsquo;s own menu</span></td>
+            <td>Fundraisers and team captains</td>
+            <td>Their dashboard, their page, editing it, starting a team and running it &mdash; screens 5, 6, 8, 11 and 12.</td>
+          </tr>
+          <tr>
+            <td><strong>A public web address</strong><br><span style="color:var(--muted); font-size:.9rem">shared in a message, post or QR code</span></td>
+            <td>Anyone, signed in or not</td>
+            <td>The campaign page, personal and team pages, the leaderboard and the donation screen &mdash; screens 3, 4, 7, 9 and 10.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-charity">Charity staff</span>
+      <h3 class="mt-2 mb-1">A. The charity switches it on</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Two screens, both optional beyond the first. Nothing changes on any existing campaign until somebody turns this on.</p>
+    </div>
+
+    <!-- 1 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/01-turn-on.svg" alt="Campaign setup screen showing a new peer-to-peer step with switches to turn the feature on, allow individuals, allow teams and review pages before they go live.">
+          <figcaption class="shot-cap">
+            <div class="t">1. The charity switches it on</div>
+            <p class="s">A new step inside the campaign setup the charity already uses.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-charity">Charity staff</span>
+        <h3>Nothing happens until they say so</h3>
+        <p class="path"><span class="lab">How staff get here</span>Sign in as organiser <span class="sep" aria-hidden="true">&rsaquo;</span> Donations <span class="sep" aria-hidden="true">&rsaquo;</span> Campaigns <span class="sep" aria-hidden="true">&rsaquo;</span> open a campaign <span class="sep" aria-hidden="true">&rsaquo;</span> Edit <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Peer-to-peer</b> step</p>
+        <p>The switch is <strong>off by default</strong>, so every existing campaign carries on
+          exactly as it is. When a charity turns it on, it chooses whether supporters can fundraise
+          alone, in teams, or both, and whether it wants to approve each page before it appears.</p>
+        <p class="mb-0">It can also suggest a target — &pound;500 here — which every supporter is
+          free to change on their own page.</p>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/13-invite-fundraiser.svg" alt="Charity screen for inviting fundraisers: a search box to pick existing members, name and email fields for new people, a personal message, a suggested target and a Send invitations button, beside a list of invitations already sent showing accepted, opened, sent and expired.">
+          <figcaption class="shot-cap">
+            <div class="t">2. The charity invites people (optional)</div>
+            <p class="s">Pick existing members, or type a name and an email. Then press Send.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-charity">Charity staff</span>
+        <h3>Inviting, never adding</h3>
+        <p class="path"><span class="lab">How staff get here</span>the campaign <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Fundraisers</b> tab <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Invite fundraisers</b></p>
+        <p>Most fundraisers arrive on their own from the campaign page. This screen is for the specific people a charity wants to ask directly — a patron, a committee, a school class.</p>
+        <p>Staff can pick people already in their member list or type a name and email for somebody new, write one message, and send.</p>
+        <p class="mb-0">The right-hand column shows what happened to each invitation, so nobody has to guess. <strong>Nothing appears publicly until the person accepts</strong> &mdash; a page carries their name, photo and story, so it is theirs to agree to.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-supporter">Supporter</span>
+      <h3 class="mt-2 mb-1">B. A supporter becomes a fundraiser</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Three screens, start to finish, with nobody from the charity involved.</p>
+    </div>
+
+    <!-- 3 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/02-campaign-page.svg" alt="Public campaign page with the usual total raised, plus a new Fundraise for us panel and a new Top fundraisers section.">
+          <figcaption class="shot-cap">
+            <div class="t">3. The campaign page invites people in</div>
+            <p class="s">The charity's existing public page, with two additions.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-public">Anyone on the internet</span>
+        <h3>One new button, one new panel</h3>
+        <p class="path"><span class="lab">How anyone gets here</span>the campaign's public web address &mdash; <span style="color:var(--muted)">shared by email, social post or QR code</span> &mdash; <span style="color:var(--muted)">no sign-in needed</span></p>
+        <p>The campaign page keeps its total, its progress bar and its Donate button. We add a
+          <strong>"Fundraise for us"</strong> invitation and a panel showing who is already raising
+          money — which is itself the strongest advert for joining in.</p>
+        <p class="mb-0">Everything else on this page stays where it is.</p>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/03-join.svg" alt="Sign-up form asking for name, email, whether the person is fundraising alone or in a team, their target and why they are doing it.">
+          <figcaption class="shot-cap">
+            <div class="t">4. A supporter signs up</div>
+            <p class="s">Name, email, alone or in a team, a target and a reason. That is all.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-supporter">Supporter</span>
+        <h3>Two minutes, not twenty</h3>
+        <p class="path"><span class="lab">How a supporter gets here</span>campaign page <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Fundraise for this</b> <span class="sep" aria-hidden="true">&rsaquo;</span> sign up or sign in</p>
+        <p>Long sign-up forms kill this feature. We ask for the minimum, create the page
+          immediately, and let the person improve it afterwards.</p>
+        <p class="mb-0">If the charity chose to review pages first, the page is created but stays
+          hidden until the charity approves it.</p>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/04-fundraiser-page.svg" alt="Sara's personal fundraising page with her photo, her story, her own progress bar of 310 pounds of 500, a Donate to Sara button, share buttons, recent supporters and her team's progress.">
+          <figcaption class="shot-cap">
+            <div class="t">5. The personal fundraising page</div>
+            <p class="s">The heart of the whole feature — Sara's own page, with her own link.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-public">Anyone with the link</span>
+        <h3>Sara's page, not the charity's</h3>
+        <p class="path"><span class="lab">How a fundraiser gets here</span>straight after signing up <span class="sep" aria-hidden="true">&rsaquo;</span> and afterwards from <b>My fundraising</b> <span class="sep" aria-hidden="true">&rsaquo;</span> <b>My page</b></p>
+        <p>Her photo, her words, her target, her progress. People give to <em>Sara</em> and see
+          their gift move <em>her</em> bar — that personal connection is why peer-to-peer raises
+          money that a campaign page alone never reaches.</p>
+        <p class="mb-2">The page carries share buttons because almost every gift arrives through a
+          link Sara sent to somebody.</p>
+        <p class="mb-0">The line "Goes straight to Hope Foundation" is deliberate. Donors need to
+          know the money is not passing through Sara's hands.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-supporter">Supporter</span>
+      <h3 class="mt-2 mb-1">C. Teams form</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Three screens: start the team, the team's public page, and the one screen that runs it.</p>
+    </div>
+
+    <!-- 6 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/14-create-team.svg" alt="Create a team screen with team name, photo upload, the team's reason, a team target, a choice between anyone with the join link and invite-only, and a live preview of the team page showing zero raised of five thousand pounds.">
+          <figcaption class="shot-cap">
+            <div class="t">6. A supporter starts a team</div>
+            <p class="s">Name it, say why, set the team target, get a join link.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-supporter">Supporter</span>
+        <h3>Whoever starts the team is its captain</h3>
+        <p class="path"><span class="lab">How a supporter gets here</span>campaign page <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Fundraise as a team</b> <span class="sep" aria-hidden="true">&rsaquo;</span> or <b>My fundraising</b> <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Start a team</b></p>
+        <p>Starting a team takes one short form. The person who fills it in becomes the <strong>captain</strong> and gets a join link to share.</p>
+        <p>The team target is set here and is <strong>separate from each member's own target</strong>. Six people with &pound;500 targets can still aim at &pound;5,000 together.</p>
+        <p class="mb-0">If the charity chose to review teams first, the team is created immediately but stays hidden until it is approved &mdash; the same switch that governs individual pages.</p>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/05-team-page.svg" alt="Team Northside page showing the team total of 1,750 pounds of 5,000, a ranked list of the five members with their own progress, a Donate to the team button and a Join team button.">
+          <figcaption class="shot-cap">
+            <div class="t">7. The team page</div>
+            <p class="s">A group — a running club, a workplace, a school class — with one shared goal.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-public">Anyone with the link</span>
+        <h3>Teams are where the big numbers come from</h3>
+        <p class="path"><span class="lab">How anyone gets here</span>the team's public web address <span class="sep" aria-hidden="true">&rsaquo;</span> or the leaderboard <span class="sep" aria-hidden="true">&rsaquo;</span> click the team's name &mdash; <span style="color:var(--muted)">no sign-in needed</span></p>
+        <p>One person raising &pound;500 is good. Fourteen people who will not let their team down
+          raise &pound;5,000. The team page shows the shared total and every member's own progress,
+          which is friendly competition doing the work for us.</p>
+        <p class="mb-0">A donor can give to one member or to the team as a whole. Both are handled,
+          and the panel on the right explains the difference to the donor in plain words.</p>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/15-team-members.svg" alt="Team members screen listing five people with their role, their own target, the amount each has raised with a progress bar, and buttons to view, set target and remove, plus Copy join link and Invite by email at the top.">
+          <figcaption class="shot-cap">
+            <div class="t">8. The captain adds, removes and sets goals</div>
+            <p class="s">One table: who is in, what each is aiming at, what each has raised.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-supporter">Team captain</span>
+        <h3>Running a team is one screen</h3>
+        <p class="path"><span class="lab">How the captain gets here</span><b>My fundraising</b> <span class="sep" aria-hidden="true">&rsaquo;</span> <b>My team</b> <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Members</b> &mdash; <span style="color:var(--muted)">captain only</span></p>
+        <p><strong>Adding</strong> is a join link to share or an email invitation &mdash; the person accepts and lands in the team with their own page.</p>
+        <p><strong>Setting a goal</strong> is editable in the row: the captain can give one member &pound;750 and another &pound;300. <strong>Changing the captain</strong> hands the team over to somebody else.</p>
+        <p class="mb-0"><strong>Removing</strong> takes the person out of the team. It does not delete their page, and money they already raised stays with the campaign &mdash; a leaderboard that could be rewritten by removing somebody would be worthless.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-public">Anyone on the internet</span>
+      <h3 class="mt-2 mb-1">D. The public gives</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Two screens. The second is the donation screen we already have, with one banner added.</p>
+    </div>
+
+    <!-- 9 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/06-leaderboard.svg" alt="Public leaderboard listing fundraisers ranked by amount raised, with tabs to switch between individuals and teams and a sort by number of donors.">
+          <figcaption class="shot-cap">
+            <div class="t">9. The leaderboard</div>
+            <p class="s">Individuals or teams, ranked by money raised or by number of donors.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-public">Anyone on the internet</span>
+        <h3>Competition, made visible</h3>
+        <p class="path"><span class="lab">How anyone gets here</span>campaign page <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Leaderboard</b> tab &mdash; <span style="color:var(--muted)">no sign-in needed</span></p>
+        <p>Charities ask for this by name. Being second on a public list is a strong reason to send
+          three more messages.</p>
+        <p class="mb-0">Sorting by <em>number of donors</em> as well as by amount matters: it lets a
+          student who raised &pound;80 from twenty friends be celebrated next to somebody with one
+          large cheque.</p>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/07-donate.svg" alt="The existing donation screen with a new banner at the top reading You are supporting Sara Malik, above the usual amount choices, donor details and payment section.">
+          <figcaption class="shot-cap">
+            <div class="t">10. Giving through somebody's page</div>
+            <p class="s">Our existing donation screen. The banner at the top is the only visible change.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-public">Donor</span>
+        <h3>The safest part of the whole project</h3>
+        <p class="path"><span class="lab">How a donor gets here</span>any fundraiser or team page <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Donate</b> &mdash; <span style="color:var(--muted)">no sign-in needed</span></p>
+        <p>Amounts, one-off or monthly, donor details, card and bank payment, receipts — all
+          untouched. We add a banner saying who is being supported, and we record that person
+          against the gift.</p>
+        <p class="mb-0">Because we are reusing the checkout we already trust, we are not putting
+          any existing income at risk to ship this.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-supporter">Supporter</span>
+      <h3 class="mt-2 mb-1">E. The fundraiser keeps going</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Two screens. This is the part that decides whether &pound;310 becomes &pound;500.</p>
+    </div>
+
+    <!-- 11 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/08-my-fundraising.svg" alt="Sara's dashboard showing amount raised, percentage of goal, number of donors, how many still to thank, her shareable link and a list of people who gave with a Say thanks button.">
+          <figcaption class="shot-cap">
+            <div class="t">11. The fundraiser's own dashboard</div>
+            <p class="s">Where Sara lives while her campaign is running.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-supporter">Supporter</span>
+        <h3>Keeping people going is the job</h3>
+        <p class="path"><span class="lab">How a fundraiser gets here</span>sign in <span class="sep" aria-hidden="true">&rsaquo;</span> <b>My fundraising</b> in their own menu</p>
+        <p>Most fundraisers stall after the first few gifts. This screen exists to restart them: how
+          close they are, who has given, who still needs thanking, and their link ready to copy.</p>
+        <p class="mb-0">Thanking donors is on this screen on purpose — a thanked donor is the one
+          most likely to give again next year.</p>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/09-edit-page.svg" alt="Edit screen with photo upload, display name, target and story on the left, and a live preview of the public page on the right.">
+          <figcaption class="shot-cap">
+            <div class="t">12. Making the page their own</div>
+            <p class="s">Photo, name, target and story — with a live preview beside it.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-supporter">Supporter</span>
+        <h3>Personal pages raise more</h3>
+        <p class="path"><span class="lab">How a fundraiser gets here</span><b>My fundraising</b> <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Edit my page</b></p>
+        <p>A page with a real photo and a real reason out-raises a blank one by a wide margin, so
+          this screen has to be easy enough that people actually finish it.</p>
+        <p class="mb-0">The preview on the right removes the guesswork about what the public will
+          see.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-charity">Charity staff</span>
+      <h3 class="mt-2 mb-1">F. The charity watches over it</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Four screens in one order: all fundraisers, one fundraiser, all teams, one team.</p>
+    </div>
+
+    <!-- 13 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/10-organiser-list.svg" alt="Charity staff view listing all fundraisers with status, donors and amount raised, filters, approve and suspend actions, and export to CSV or PDF.">
+          <figcaption class="shot-cap">
+            <div class="t">13. The charity stays in control</div>
+            <p class="s">Every fundraiser and team in one list, with approve, suspend and export.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-charity">Charity staff</span>
+        <h3>Public pages need a safety switch</h3>
+        <p class="path"><span class="lab">How staff get here</span>Donations <span class="sep" aria-hidden="true">&rsaquo;</span> Campaigns <span class="sep" aria-hidden="true">&rsaquo;</span> open a campaign <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Fundraisers</b> tab</p>
+        <p>Once the public can create pages under a charity's name, the charity must be able to
+          approve, hide or remove one quickly. That is not optional and it ships with the feature,
+          not after it.</p>
+        <p class="mb-0">Export gives the fundraising team the same list in a spreadsheet for their
+          own reporting.</p>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/18-organiser-fundraiser-detail.svg" alt="Charity view of one fundraiser: Sara Malik with her total raised against her target, her donations listed with dates, amounts, Gift Aid and status including one refund, which campaign and team she sits in, and controls to approve, message or suspend.">
+          <figcaption class="shot-cap">
+            <div class="t">14. Opening one fundraiser</div>
+            <p class="s">Everything the charity needs about one person, on one screen.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-charity">Charity staff</span>
+        <h3>The drill-down from the list</h3>
+        <p class="path"><span class="lab">How staff get here</span><b>Fundraisers</b> tab <span class="sep" aria-hidden="true">&rsaquo;</span> click any person's row</p>
+        <p>Clicking any row in the list opens the person: what they have raised, every gift behind that number, which team they belong to, and what their page says.</p>
+        <p>The refund line matters. When money comes back, it comes off the person's total, off their team's total and off the campaign total &mdash; <strong>all three move together, always</strong>. A leaderboard that keeps counting refunded money is a leaderboard that lies.</p>
+        <p class="mb-0">Suspending hides the page. It never removes money already raised.</p>
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/16-organiser-teams.svg" alt="Charity view listing every team with its captain, number of members, target, amount raised, and status, with search, filters, an export button and totals across the top.">
+          <figcaption class="shot-cap">
+            <div class="t">15. Browsing every team</div>
+            <p class="s">The same list, one level up: teams instead of individuals.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-charity">Charity staff</span>
+        <h3>Teams get their own tab</h3>
+        <p class="path"><span class="lab">How staff get here</span>the same screen <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Teams</b> tab</p>
+        <p>Fundraisers, teams and invitations sit as three tabs on the same screen, so staff never have to learn a second place to look.</p>
+        <p>The four counters across the top answer the question staff actually ask &mdash; how many teams, how many people in them, how much they have raised, and how many are waiting for approval.</p>
+        <p class="mb-0">Search, filter and export work exactly as they do everywhere else in the product.</p>
+      </div>
+    </div>
+
+    <!-- 16 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/17-organiser-team-detail.svg" alt="Charity view of one team: Team Northside with its captain, total raised against the team target, a table of the five members with each person's target and amount raised, a recent activity feed, and controls to message, suspend or change the captain.">
+          <figcaption class="shot-cap">
+            <div class="t">16. Opening one team</div>
+            <p class="s">The team, then the people inside it. The last level down.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-charity">Charity staff</span>
+        <h3>Two numbers, never confused</h3>
+        <p class="path"><span class="lab">How staff get here</span><b>Teams</b> tab <span class="sep" aria-hidden="true">&rsaquo;</span> click any team's row</p>
+        <p>The header shows the <strong>team</strong> total against the <strong>team</strong> target. The table below shows each person against their own. Neither is calculated from the other.</p>
+        <p>The activity feed is what staff use to spot a team that has stalled, or one that is about to beat its target and deserves a phone call.</p>
+        <p class="mb-0">This is the deepest the charity ever needs to go: campaign, then team, then person.</p>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-3">
+      <span class="who who-public">Automatic</span>
+      <h3 class="mt-2 mb-1">G. Running in the background</h3>
+      <p class="mb-0" style="color:var(--muted); max-width:76ch">Two things that are not really screens: the emails that go out on their own, and every screen above on a phone.</p>
+    </div>
+
+    <!-- 17 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/11-emails.svg" alt="Three automatic emails: somebody gave you fifty pounds, you are halfway there, and your page has gone quiet.">
+          <figcaption class="shot-cap">
+            <div class="t">17. The system does the nagging</div>
+            <p class="s">Three automatic emails, sent without anyone at the charity lifting a finger.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4">
+        <span class="who who-supporter">Sent to supporters</span>
+        <h3>This is what makes the feature pay</h3>
+        <p class="path"><span class="lab">Where staff control this</span>the campaign <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Peer-to-peer</b> step <span class="sep" aria-hidden="true">&rsaquo;</span> <b>Emails</b> &mdash; <span style="color:var(--muted)">nobody has to send these by hand</span></p>
+        <p>A fundraiser who is thanked and gently pushed raises considerably more than one left
+          alone. With eighty-six pages running, no charity can do that by hand.</p>
+        <p class="mb-0">Three triggers cover most of the value: a gift arrived, you are halfway, and
+          your page has gone quiet for a week.</p>
+      </div>
+    </div>
+
+    <!-- 18 -->
+    <div class="row g-4 align-items-center mt-4 pt-2">
+      <div class="col-lg-8 order-lg-2">
+        <figure class="shot mb-0">
+          <img src="p2p-screens/12-mobile.svg" alt="The fundraiser page, leaderboard and personal dashboard shown on three phone screens.">
+          <figcaption class="shot-cap">
+            <div class="t">18. All of it on a phone</div>
+            <p class="s">The same pages, built for the screen most donors will actually use.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="col-lg-4 order-lg-1">
+        <span class="who who-public">Everyone</span>
+        <h3>Phone first, not phone later</h3>
+        <p class="path"><span class="lab">How anyone gets here</span>the same web addresses, in a phone browser &mdash; <span style="color:var(--muted)">nothing to install</span></p>
+        <p>These links travel through WhatsApp, Messenger and text. The overwhelming majority of
+          people who open one will do it on a phone, in a few seconds, one-handed.</p>
+        <p class="mb-0">So every screen here is designed for the small screen first and expands to
+          desktop, rather than the other way round.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ STAGES -->
+  <section id="stages">
+    <h2 class="d-flex align-items-center"><span class="num">5</span>How we will deliver it</h2>
+    <p class="lead-xl">Five stages. Each one is finished and usable before the next begins, so the
+      work can be stopped, shown or re-prioritised at any point without leaving something
+      half-built.</p>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-4 col-md-6">
+        <div class="stage"><div class="hd">Stage 1 — The counting</div><div class="bd">
+          <p><strong>What we build:</strong> a gift can be tied to a person, and it correctly moves
+            three totals — the fundraiser, the team, and the campaign.</p>
+          <p><strong>Why first:</strong> everything else is a view of this. Nothing visible ships in
+            this stage, and it carries nearly all of the technical risk.</p>
+          <p class="mb-0"><strong>Done when:</strong> a gift credits three totals; a refund, a
+            partial refund and a card dispute each take the right amount back off all three; and the
+            leaderboard reorders to match, with nobody re-entering anything by hand.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="stage"><div class="hd">Stage 2 — Pages and sign-up</div><div class="bd">
+          <p><strong>What we build:</strong> supporters can join, get a page, add a photo, a story
+            and a target, share it, and watch their own progress.</p>
+          <p><strong>Why second:</strong> this is the first stage you can put in front of a charity
+            and let them use for real.</p>
+          <p class="mb-0"><strong>Done when:</strong> a supporter goes from "Fundraise for us" to a
+            live page with a shareable link, unaided.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="stage"><div class="hd">Stage 3 — Teams and leaderboards</div><div class="bd">
+          <p><strong>What we build:</strong> teams, team pages, captains, and the public
+            leaderboards for both individuals and teams.</p>
+          <p><strong>Why third:</strong> this is the point where our product stands up next to the
+            platforms charities compare us with.</p>
+          <p class="mb-0"><strong>Done when:</strong> a campaign with fifty fundraisers is fast and
+            readable on a phone.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="stage"><div class="hd">Stage 4 — Automation and control</div><div class="bd">
+          <p><strong>What we build:</strong> the automatic emails, and the charity's approve,
+            suspend and export tools.</p>
+          <p><strong>Why fourth:</strong> it needs real pages and real gifts to be worth anything,
+            and it is what keeps totals climbing after week one.</p>
+          <p class="mb-0"><strong>Done when:</strong> a fundraiser who stops is nudged without a
+            member of staff noticing first.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="stage"><div class="hd">Stage 5 — Records and reporting</div><div class="bd">
+          <p><strong>What we build:</strong> the credit flows into the charity's contact records, so
+            it can see that Sara brought in twenty-two donors.</p>
+          <p><strong>Why last:</strong> it depends on everything above being correct, and it is what
+            makes a charity renew rather than just try us.</p>
+          <p class="mb-0"><strong>Done when:</strong> the charity can report on who influenced which
+            income.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="stage" style="border-color:#d9e2ff"><div class="hd" style="background:#eef3ff">Suggested checkpoint</div><div class="bd">
+          <p>After <strong>Stage 3</strong>, run a closed pilot with two or three friendly charities
+            on one live campaign each.</p>
+          <p class="mb-0">Real supporters find the awkward parts that no internal review does, and
+            fixing them before general release is far cheaper than fixing them after.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>We have deliberately not put dates in this document.</strong> The screens above are
+      ours to build and we have sized them. What we have not yet done is confirm how much of the
+      supporting work the backend already covers. That review is the first task, it is short, and
+      an estimate given before it would be a guess presented as a plan.
+      <br><br>
+      <strong>What we are asking for instead of a date:</strong> a named backend owner and a
+      two-week window to complete that review. Dates for all five stages follow within a week of it
+      finishing, and we will hold to them.
+    </div>
+  </section>
+
+  <!-- ============================================================ COST -->
+  <section id="cost">
+    <h2 class="d-flex align-items-center"><span class="num">6</span>What it will take</h2>
+    <p class="lead-xl">No dates yet, for the reason above. Size, shape of team, and the known hidden
+      costs we can give now, because none of those depend on the backend review.</p>
+
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col" style="width:34%">Stage</th>
+            <th scope="col" style="width:16%">Size</th>
+            <th scope="col" style="width:50%">What drives the size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">1 &mdash; The counting</th><td><span class="who who-charity">Large</span></td>
+            <td>Mostly backend, plus the automated testing this product does not have today.</td></tr>
+          <tr><th scope="row">2 &mdash; Pages and sign-up</th><td><span class="who who-charity">Large</span></td>
+            <td>Seven new screens, public and private, on phone and desktop.</td></tr>
+          <tr><th scope="row">3 &mdash; Teams and leaderboards</th><td><span class="who who-supporter">Medium</span></td>
+            <td>Six screens, and totals that stay correct as people join, leave and change target.</td></tr>
+          <tr><th scope="row">4 &mdash; Automation and control</th><td><span class="who who-supporter">Medium</span></td>
+            <td>Automatic emails, and the four screens staff use to browse, approve, suspend and remove.</td></tr>
+          <tr><th scope="row">5 &mdash; Records and reporting</th><td><span class="who who-public">Small</span></td>
+            <td>Exports and reporting, built on reporting we already have.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="panel"><h3>The team this needs</h3>
+          <p>One backend engineer and one frontend engineer working together for the whole run, with
+            design and testing available part-time rather than borrowed from other projects.</p>
+          <p class="mb-0">Splitting either role across other work is the most reliable way to turn
+            this into a stalled feature, because Stages 1 to 3 depend on each other in order.</p></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel" style="border-color:#f0d48a; background:#fffbf0">
+          <h3>Two costs that are real but invisible in the screens</h3>
+          <p><strong>The existing donation checkout has to be rebuilt internally first.</strong> It
+            has grown into a single very large screen. It works today, but it cannot safely absorb
+            the new "you are supporting Sara" behaviour as it stands. Rebuilding it changes nothing
+            a user sees, and it has to happen inside Stage 2.</p>
+          <p class="mb-0"><strong>Automated testing starts from zero.</strong> There is no test
+            coverage anywhere in this product today, so Stage 1 carries the cost of putting the
+            first testing in place as well as the feature itself. See decision 8.</p></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>How to read these sizes.</strong> They are our own estimates of the screens and the
+      counting, and we are confident in them. They assume the backend review finds that most of the
+      supporting work already exists. If it does not, Stage 1 grows &mdash; which is exactly why we
+      are not attaching dates before that review.
+    </div>
+  </section>
+
+  <!-- ============================================================ DECISIONS -->
+  <section id="decisions">
+    <h2 class="d-flex align-items-center"><span class="num">7</span>What we need from leadership</h2>
+    <p class="lead-xl">Eleven sign-offs. Eight come with our recommendation, so agreeing with those is
+      a single yes. Three we are deliberately leaving open, because they are not ours to decide and
+      guessing them would be worse than asking.</p>
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">1. Must a supporter create an account to fundraise?</p>
+          <p class="mb-1">The alternative is a link emailed to them that logs them straight in.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: yes, an account. It is safer, simpler, and they become a contact we hold.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">2. Can a team contain other teams?</p>
+          <p class="mb-1">For example, a region containing branches containing clubs.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: no, not in this phase. It complicates every total for a small number of customers.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">3. Must every fundraiser set a target?</p>
+          <p class="mb-1">A page without a target has no progress bar, which weakens it.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: optional, but pre-filled with the charity's suggestion so most people keep it.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">4. Does the charity approve pages before they appear?</p>
+          <p class="mb-1">Approval is safer; instant publishing raises more money.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: a switch per campaign, off by default, so each charity chooses.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">5. Who pays the processing fee on a peer-to-peer gift?</p>
+          <p class="mb-1">The charity, the donor as an optional top-up, or us. Our closest competitor
+            sells hard on the donor covering it and the charity keeping 100%.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: keep exactly what the charity has already set for ordinary gifts. This is a pricing decision, not a product one, and it should not get made quietly inside this feature.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">6. Do fundraisers use the ordinary supporter account?</p>
+          <p class="mb-1">The alternative is a separate fundraiser account type with its own login,
+            kept apart from members.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: the ordinary account. No competitor separates them, and separating them would force an existing member who wants to fundraise to hold two logins.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="decision">
+          <p class="q mb-1">7. Can a charity add a fundraiser without being asked?</p>
+          <p class="mb-1">Adding somebody directly is faster than inviting them and waiting.</p>
+          <p class="r mb-0"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Recommended: no. Adding is always an invitation the person accepts, because their name and photo end up on a public page.</p>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="decision" style="border-color:#f0d48a; background:#fffbf0">
+          <p class="q mb-1">8. Do we approve automated testing as part of Stage 1?</p>
+          <p class="mb-1">This product currently has no automated tests at all. This feature decides
+            who gets credited with money, and a quiet mistake in that counting is the kind of thing a
+            charity discovers in front of its own donors.</p>
+          <p class="r mb-0"><i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>Recommended: yes, and it is a prerequisite, not a follow-up. We consider Stage 1 unsafe to ship without it.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-4">Three questions we are not answering ourselves</h3>
+    <p style="max-width:80ch">Each of these has a legal, financial or brand consequence that sits
+      outside engineering. We would rather show them open than quietly pick an answer and have it
+      discovered later.</p>
+    <div class="row g-3 mt-1">
+      <div class="col-lg-4">
+        <div class="decision" style="border-color:#f0d48a; background:#fffbf0">
+          <p class="q mb-1">A. Gift Aid on peer-to-peer gifts</p>
+          <p class="mb-1">A donor giving through Sara's page is giving to the charity, so the claim
+            belongs to the charity. But the declaration has to be collected on the page the donor
+            actually used, and it has to survive a refund.</p>
+          <p class="mb-0" style="color:var(--muted)">Needs a finance and compliance answer before
+            Stage 2 is designed in detail. Getting this wrong is a reclaim problem, not a bug.</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="decision" style="border-color:#f0d48a; background:#fffbf0">
+          <p class="q mb-1">B. What happens when somebody leaves a team</p>
+          <p class="mb-1">Does the money they raised stay with the team, or leave with them? Both
+            answers are defensible, and both will upset somebody.</p>
+          <p class="mb-0" style="color:var(--muted)">Our lean is that raised money stays with the
+            team, because the donors gave while that person was on it. It is a promise we make to
+            customers, so it should be decided rather than assumed.</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="decision" style="border-color:#f0d48a; background:#fffbf0">
+          <p class="q mb-1">C. Personal data on public pages</p>
+          <p class="mb-1">A fundraiser page publishes a real person's name, photo and story to the
+            open internet under the charity's brand, and search engines will index it. Under-18
+            fundraisers, consent wording, photo moderation and what happens on deletion all follow
+            from this.</p>
+          <p class="mb-0" style="color:var(--muted)">The approval switch in decision 4 is a control,
+            not a policy. The policy needs a data-protection answer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ RISKS -->
+  <section id="risks">
+    <h2 class="d-flex align-items-center"><span class="num">8</span>What could go wrong, honestly</h2>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col" style="width:26%">The risk</th>
+            <th scope="col" style="width:37%">What it looks like if it happens</th>
+            <th scope="col" style="width:37%">What we are doing about it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">A gift is credited to the wrong person, or to nobody</th>
+            <td>Nobody notices for weeks. A fundraiser's total is quietly wrong, and we look
+              untrustworthy on the one number that matters.</td>
+            <td>Stage 1 exists only to get this right. Automated tests around it, and a gift with a
+              bad reference is rejected loudly instead of being accepted and lost.</td>
+          </tr>
+          <tr>
+            <th scope="row">The supporting backend work is larger than expected</th>
+            <td>The timeline moves after we have already committed to it.</td>
+            <td>The review of what already exists is the first task and finishes before any date is
+              promised.</td>
+          </tr>
+          <tr>
+            <th scope="row">Somebody creates an offensive or fake page</th>
+            <td>It carries the charity's name and appears in search results.</td>
+            <td>Approval switch, plus suspend and remove available from day one — not added later.</td>
+          </tr>
+          <tr>
+            <th scope="row">Leaderboards slow down on a large campaign</th>
+            <td>A campaign with a thousand fundraisers becomes slow exactly when it is most
+              visible.</td>
+            <td>Pages are loaded in blocks rather than all at once, and totals are worked out rather
+              than stored, so they can never drift.</td>
+          </tr>
+          <tr>
+            <th scope="row">Automatic emails land in spam, or breach marketing rules</th>
+            <td>The three encouragement emails stop arriving, fundraisers go quiet, and the feature
+              looks like it does not work.</td>
+            <td>Sending domain, unsubscribe handling and delivery monitoring are part of Stage 4, not
+              an afterthought once emails are already going out.</td>
+          </tr>
+          <tr>
+            <th scope="row">Everything in this document is shown in pounds</th>
+            <td>A charity outside the UK sees amounts in the wrong currency on a public page
+              carrying their own name.</td>
+            <td>Pounds are used here only as an example. Every amount follows the currency the
+              charity already has set, exactly as the existing donation screens do.</td>
+          </tr>
+          <tr>
+            <th scope="row">Scope grows during the build</th>
+            <td>Badges, contests, custom questions and social integrations arrive one at a time and
+              nothing ships.</td>
+            <td>The list in this document is fixed. Anything else is written down for the next
+              phase, not added to this one.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mt-4">Deliberately not in this phase</h3>
+    <div class="row g-3 mt-1">
+      <div class="col-md-4"><div class="panel"><p class="mb-0">Badges, contests and prize levels for
+        fundraisers.</p></div></div>
+      <div class="col-md-4"><div class="panel"><p class="mb-0">Facebook fundraiser syncing,
+        text-to-give, and cryptocurrency.</p></div></div>
+      <div class="col-md-4"><div class="panel"><p class="mb-0">A mobile app, livestream giving, and
+        matched-giving campaigns.</p></div></div>
+    </div>
+    <p class="mt-3 mb-0" style="color:var(--muted)">These are all reasonable requests and several are
+      worth doing. None of them changes whether a charity can run peer-to-peer at all, which is what
+      this phase is for.</p>
+  </section>
+
+  <div class="callout good mt-4">
+    <h3 class="mb-2">In one sentence</h3>
+    <p class="mb-0">We are adding the one thing our donation product cannot currently demonstrate,
+      by building eighteen well-defined screens on top of the payments, records and reporting we
+      already have — and we would rather take one short review of the backend before quoting a
+      date than quote one now and correct it later.</p>
+  </div>
+
+  <footer class="mt-5 pt-4">
+    <p class="mb-1">Companion documents: <em>How peer-to-peer fundraising works</em>,
+      <em>Competitive requirements</em>, <em>Donation module deep dive</em>,
+      <em>Gap analysis</em>, and the technical <em>Integration plan</em>.</p>
+    <p class="mb-0">Screens in this document are proposed designs, not screenshots of working
+      software. Example charity, names and amounts are illustrative.</p>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

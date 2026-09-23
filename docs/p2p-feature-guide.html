@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peer-to-Peer Fundraising &mdash; Feature Guide</title>
+<meta name="description" content="What peer-to-peer fundraising is, screen by screen, for everyone who has to sell it, plan it, test it or build it.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1b3e; --muted:#5b6784; --line:#e3e8f2; --bg:#f6f8fc; --panel:#fff;
+    --brand:#2b50ec; --brand-soft:#eef2ff;
+    --ok:#0f8a5f; --ok-soft:#e8f7f0;
+    --warn:#a8730a; --warn-soft:#fff8e8;
+    --open:#8a3ffc; --open-soft:#f4ecff;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg); color:var(--ink); margin:0;
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       font-size:15.5px; line-height:1.62}
+  img{max-width:100%; height:auto}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 1rem}
+  h1,h2,h3,h4{font-weight:700; letter-spacing:-.02em}
+  h2{font-size:1.5rem; margin:2.4rem 0 .8rem}
+  h3{font-size:1.12rem; margin:1.5rem 0 .5rem}
+  h4{font-size:.95rem; margin:1.1rem 0 .35rem}
+  a{color:var(--brand)}
+  .hero{background:linear-gradient(150deg,#0d1b3e 0%,#1b2f6d 55%,#2b50ec 100%); color:#fff; padding:2.6rem 0 2.2rem}
+  .hero .eyebrow{letter-spacing:.16em; font-size:.7rem; color:#9fb4ff; font-weight:600}
+  .hero h1{margin:.4rem 0 .6rem; font-size:clamp(1.7rem,4vw,2.5rem)}
+  .hero p{color:#cfdaff; margin:0; max-width:62ch}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; margin-top:1rem}
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft); border-radius:0 10px 10px 0; padding:.9rem 1.1rem; margin:1rem 0}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft)}
+  .callout.ok{border-left-color:var(--ok); background:var(--ok-soft)}
+  .callout.open{border-left-color:var(--open); background:var(--open-soft)}
+  .callout p:last-child{margin-bottom:0}
+  .lanes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.9rem; margin-top:1rem}
+  .lane{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem 1.1rem}
+  .lane .who{font-size:.72rem; letter-spacing:.09em; text-transform:uppercase; color:var(--brand); font-weight:700}
+  .lane p{margin:.35rem 0 0; color:var(--muted); font-size:.92rem}
+  .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  table{width:100%; border-collapse:collapse; min-width:520px}
+  th,td{padding:.6rem .7rem; border-bottom:1px solid var(--line); vertical-align:top; text-align:left}
+  th{font-size:.74rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); white-space:nowrap}
+  .pill{display:inline-block; font-size:.72rem; font-weight:700; padding:.15rem .55rem; border-radius:99px; white-space:nowrap}
+  .pill.live{background:var(--ok-soft); color:var(--ok)}
+  .pill.watch{background:var(--warn-soft); color:var(--warn)}
+  .pill.open{background:var(--open-soft); color:var(--open)}
+  .feature{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; margin-top:1.1rem}
+  .feature > summary{cursor:pointer; list-style:none; display:flex; gap:.8rem; align-items:baseline; flex-wrap:wrap;
+                     font-weight:700; font-size:1.12rem; letter-spacing:-.02em; min-height:44px; padding:.4rem 0}
+  .feature > summary::-webkit-details-marker{display:none}
+  .feature > summary::before{content:"\F282"; font-family:bootstrap-icons; font-weight:400; font-size:.85rem; color:var(--brand)}
+  .feature[open] > summary::before{content:"\F286"}
+  .feature > summary:focus-visible{outline:3px solid var(--brand); outline-offset:3px; border-radius:8px}
+  .feature > summary .num{font-size:.72rem; letter-spacing:.09em; color:var(--muted); font-weight:700}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem}
+  .shot{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; margin:.8rem 0 0}
+  .shot img{display:block; width:100%}
+  .shot figcaption{padding:.7rem .9rem; font-size:.88rem; color:var(--muted); border-top:1px solid var(--line)}
+  ul.tight{margin:.3rem 0 0; padding-left:1.15rem}
+  ul.tight li{margin:.25rem 0}
+  .toolbar{display:flex; gap:.6rem; flex-wrap:wrap; margin:1.2rem 0 .2rem}
+  .toolbar button{min-height:44px; padding:.5rem 1rem; border-radius:10px; border:1px solid var(--line);
+                  background:#fff; color:var(--ink); font-weight:600; cursor:pointer}
+  .toolbar button:hover{border-color:var(--brand); color:var(--brand)}
+  .toolbar button:focus-visible{outline:3px solid var(--brand); outline-offset:2px}
+  footer{color:var(--muted); font-size:.85rem; padding:2rem 0 3rem}
+  @media print{ .toolbar{display:none} .feature{break-inside:avoid} details{display:block} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">IDEALI &middot; DONATION &middot; FEATURE GUIDE</div>
+    <h1>Peer-to-peer fundraising</h1>
+    <p>Supporters raise money on a charity&rsquo;s behalf, on their own page, under the charity&rsquo;s control.
+       This guide walks the whole thing, feature by feature, in plain language.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="panel" id="how-to-read">
+    <h2 style="margin-top:0">How to read this</h2>
+    <p>One document, four readers. Every feature below is written in the same shape, so you can skim straight to
+      the part that is yours.</p>
+    <div class="lanes">
+      <div class="lane"><div class="who">CEO</div>
+        <p>Read <em>What it is</em> and <em>Why it matters</em>. Skip the rest. Ten minutes end to end.</p></div>
+      <div class="lane"><div class="who">Project manager</div>
+        <p>Add <em>What the person sees</em> and the status pill. That is scope and state in one pass.</p></div>
+      <div class="lane"><div class="who">QA</div>
+        <p><em>What to check</em> is your list. Every branch a person can reach is named there.</p></div>
+      <div class="lane"><div class="who">Developer</div>
+        <p>The same list, plus <em>Rules that must hold</em> &mdash; behaviour that is not allowed to drift.</p></div>
+    </div>
+    <div class="toolbar">
+      <button type="button" data-all="open">Expand all</button>
+      <button type="button" data-all="close">Collapse all</button>
+      <button type="button" data-print="1">Print / save as PDF</button>
+    </div>
+  </section>
+
+  <section class="panel" id="summary">
+    <h2 style="margin-top:0">The whole thing in one minute</h2>
+    <p>A charity already runs donation campaigns. Peer-to-peer adds one idea on top: a supporter can ask
+      <em>on the charity&rsquo;s behalf</em>. They get their own page, with their own photo, their own story and
+      their own goal, pointing at the charity&rsquo;s campaign. They share that address. People who give through
+      it are counted twice &mdash; once for the campaign, once for the supporter who asked.</p>
+    <div class="callout ok">
+      <p><strong>The money does not change hands differently.</strong> Every donation still goes to the charity,
+        through the same payment methods the campaign already accepted. The supporter never touches it, never holds
+        it and is never paid out. Their page changes who asked, not where the money lands.</p>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Question</th><th>Answer</th></tr>
+        <tr><td>Who turns it on?</td><td>The charity, one campaign at a time. Off by default. Nothing appears anywhere until it is switched on.</td></tr>
+        <tr><td>Who can raise?</td><td>Anybody with an account, once they sign up and confirm their email address.</td></tr>
+        <tr><td>Does the charity approve pages?</td><td>Its choice. A campaign can let pages go live at once, or hold every page for review.</td></tr>
+        <tr><td>Can supporters group up?</td><td>Yes &mdash; teams, with a captain, when the charity allows teams on that campaign.</td></tr>
+        <tr><td>Who gets paid?</td><td>The charity. Always. There is no supporter payout, by design.</td></tr>
+        <tr><td>What if it goes wrong?</td><td>The charity can hide any page or team at any moment, and the address stops working.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="journey">
+    <h2 style="margin-top:0">The journey, start to finish</h2>
+    <ol>
+      <li><strong>The charity switches it on</strong> for one campaign and picks its rules &mdash; approval, teams, a suggested goal.</li>
+      <li><strong>A supporter finds the campaign</strong> and sees a new invitation on it: raise for this.</li>
+      <li><strong>They sign up and confirm their email</strong>, then write their page &mdash; title, story, photo, goal.</li>
+      <li><strong>The charity reviews it</strong>, when that campaign asks for review. The supporter is told either way.</li>
+      <li><strong>They share the address.</strong> Friends open the page and give, through the campaign&rsquo;s own payment methods.</li>
+      <li><strong>Everybody watches the numbers</strong> &mdash; the supporter on their console, the charity on its oversight screens, everyone on the leaderboard.</li>
+      <li><strong>Emails carry the story along</strong> &mdash; invitations, a welcome, a first-donation nudge, the approval or refusal notice.</li>
+    </ol>
+    <figure class="shot">
+      <img src="p2p-screens/00-flow-map-18.svg" alt="Flow map of the peer-to-peer screens and the paths a person takes between them.">
+      <figcaption>Every screen in the feature and the routes between them. A supporter&rsquo;s path runs across the
+        top; the charity&rsquo;s oversight screens sit underneath. Nobody can reach a screen the campaign&rsquo;s
+        settings have not enabled.</figcaption>
+    </figure>
+  </section>
+
+  <h2 id="features">The features, one by one</h2>
+  <p style="color:var(--muted); margin-top:-.4rem">Nine groups, in the order they were built and roughly the order
+    a person meets them. Each one opens.</p>
+
+  <details class="feature" open>
+    <summary><span class="num">01</span> The switch, and the charity&rsquo;s rules <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>One screen inside a donation campaign where the charity decides whether supporters may fundraise for it, and
+      under what rules.</p>
+
+    <h4>Why it matters</h4>
+    <p>Nothing else in this feature exists until this switch is on. It is the charity&rsquo;s guarantee that
+      peer-to-peer never appears on a campaign that did not ask for it, and the one place to stop it if it ever
+      needs stopping.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>A single on/off control for fundraising on this campaign.</li>
+      <li>Directly beneath it, whether new pages go live at once or wait for the charity to approve them
+        &mdash; the question the switch above immediately raises, answered without scrolling.</li>
+      <li>Whether supporters may form teams.</li>
+      <li>A suggested goal that a new page starts with.</li>
+      <li>Who is allowed to see the leaderboard.</li>
+      <li>The web address supporters will share, shown as it will really read.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Save, reload &mdash; the settings are still as saved.</li>
+      <li>A goal below one is refused on screen, and nothing is sent.</li>
+      <li>Turning fundraising <em>off</em> asks first, and names what happens to pages that already exist.</li>
+      <li>The settings read in this order: fundraising on, review before live, teams, suggested goal,
+        leaderboard. Approval sits second because it is the only one here that can put a page in front of
+        the public unread.</li>
+      <li>At 375px wide the screen fits with no sideways scrolling and every control is thumb-sized.</li>
+    </ul>
+
+    <h4>Rules that must hold</h4>
+    <ul class="tight">
+      <li>Off is the default for every existing campaign. Nothing switched itself on.</li>
+      <li>Switching teams off stops new teams; teams that already exist stay readable rather than vanishing.</li>
+      <li>The charity running the campaign cannot have a supporter page on it. Staff of that charity are
+        offered no invitation on the campaign, and the server refuses the page even if the address is
+        typed by hand. Staff of a <em>different</em> charity are ordinary supporters and may fundraise.</li>
+    </ul>
+
+    <figure class="shot">
+      <img src="p2p-screens/01-turn-on.svg" alt="The campaign settings for peer-to-peer fundraising: the master switch, then approval, teams, suggested goal and leaderboard visibility.">
+      <figcaption>The charity decides here whether supporters may fundraise, and reads the approval question
+        straight after &mdash; the two decisions that together settle whether a page written by a stranger can
+        appear under the charity&rsquo;s name unread. For the user, this is the difference between a campaign that
+        quietly gains a new invitation and one that stays exactly as it was.</figcaption>
+    </figure>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">02</span> Becoming a fundraiser <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>The way in. An invitation on the campaign page, a sign-up, an email confirmation, and the form where a
+      supporter writes their page.</p>
+
+    <h4>Why it matters</h4>
+    <p>This is where a supporter is either won or lost. It has to be short, and it has to be honest about what
+      happens next &mdash; especially when the charity will review the page before anybody can see it.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>On the campaign, a short panel headed <em>Fundraise for this campaign</em> &mdash; only when the charity
+        allows it, and only for somebody who has no page here yet. It sits above the campaign story, in the
+        charity&rsquo;s own campaign colour, so it is read whatever the story&rsquo;s length.</li>
+      <li>A supporter who already has a live page sees the way back to it instead &mdash; not the invitation again.</li>
+      <li>A supporter waiting on the charity is told they are waiting, and can still open their own page.</li>
+      <li>A supporter whose page was paused or turned down sees nothing about it here. That news reached them by
+        email and it is written plainly on their own console; a public page a friend may be looking at is not the
+        place to repeat it.</li>
+      <li>Sign up or sign in, then a one-time email to confirm the address is really theirs.</li>
+      <li>A form: page title, their story, a photo they can crop before it uploads, and their goal.</li>
+      <li>A plain statement of what happens on save &mdash; live immediately, or waiting for the charity.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>A campaign with fundraising off shows no invitation at all &mdash; not a greyed one.</li>
+      <li>On a campaign with a very long story, the invitation is still visible without reading to the end:
+        it sits between the goal and the story, never underneath it.</li>
+      <li>The invitation is drawn in the campaign&rsquo;s own colour, not the product&rsquo;s blue.</li>
+      <li>An unconfirmed email cannot create a page, and the screen says why rather than just failing.</li>
+      <li>The same person cannot create two pages on one campaign, and the campaign never invites them to try.</li>
+      <li>The invitation is only drawn once the viewer&rsquo;s own standing is known, so no wording is shown and
+        then taken back, and the page does not jump.</li>
+      <li>A confirmation link that was already used explains itself instead of breaking.</li>
+      <li>Leaving the form with unsaved words asks before discarding them.</li>
+    </ul>
+
+    <h4>Rules that must hold</h4>
+    <ul class="tight">
+      <li>An email address is confirmed once, and the link cannot be reused.</li>
+      <li>Sign-up requests are rate limited per address; a burst is refused rather than served.</li>
+    </ul>
+
+    <div class="grid2">
+      <figure class="shot">
+        <img src="p2p-screens/02-campaign-page.svg" alt="The campaign page carrying the new invitation to fundraise for it.">
+        <figcaption>The campaign page gains one panel and nothing else changes. It is placed above the campaign
+          story rather than below it, because a story has no length limit and anything under one is only reached by
+          a reader who got to the end. A donor who only wants to give still sees the page they always saw.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="p2p-screens/03-join.svg" alt="The form where a supporter writes their fundraising page title, story, photo and goal.">
+        <figcaption>Where the supporter writes their page. Every field explains itself, and the screen states
+          whether the page goes live at once or waits for the charity.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">03</span> A public page that takes money <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>The supporter&rsquo;s page as a stranger sees it, and the donation flow behind its button.</p>
+
+    <h4>Why it matters</h4>
+    <p>This is the page that gets pasted into a group chat. It is the only screen here that a complete stranger
+      will judge the charity by, so it has to load fast, read well and take money without a wobble.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>The supporter&rsquo;s photo, title and story, with the charity&rsquo;s campaign named above them.</li>
+      <li>Progress towards their goal, the donor count, and recent donations.</li>
+      <li>One donate action, leading into the campaign&rsquo;s own donation flow.</li>
+      <li>An address that can be copied, with a readable fallback when copying fails.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Every payment method the campaign already offered is offered here too &mdash; card, bank debit and wallet alike.</li>
+      <li>The gift lands against both the campaign and the supporter, and the two totals agree.</li>
+      <li>A page waiting for approval, hidden, or never created shows its own explained screen &mdash; never a broken one.</li>
+      <li>No email address and no account identifier is ever visible on the public page.</li>
+      <li>Long stories and long names do not break the layout at any width.</li>
+    </ul>
+
+    <h4>Rules that must hold</h4>
+    <ul class="tight">
+      <li>Peer-to-peer changes nothing about existing payment methods. Zero tolerance on this.</li>
+      <li>A donation is never lost, and never counted twice, when it is attributed to a supporter.</li>
+    </ul>
+
+    <div class="grid2">
+      <figure class="shot">
+        <img src="p2p-screens/04-fundraiser-page.svg" alt="A supporter's public fundraising page with photo, story, progress and a donate action.">
+        <figcaption>The page a supporter shares. It has to stand on its own, with no explanation attached to it.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="p2p-screens/07-donate.svg" alt="Donating through a supporter's page, using the campaign's existing payment methods.">
+        <figcaption>Donating runs through the campaign&rsquo;s existing flow. For the donor, nothing about paying
+          has changed &mdash; only who is credited for asking.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">04</span> The fundraiser&rsquo;s own console <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>The supporter&rsquo;s private screen: how they are doing, who gave, and the way back into editing their page.</p>
+
+    <h4>Why it matters</h4>
+    <p>A supporter who cannot see progress stops asking. This screen is what brings them back, and what makes them
+      share again.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>Their total against their goal, and how many people have given.</li>
+      <li>Recent donations, most recent first.</li>
+      <li>The share panel, identical to the one on their public page.</li>
+      <li>One primary action: edit my page. Plus a link to view it as the public sees it.</li>
+      <li>Their team, when they are in one.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Somebody with no page yet is offered the way to create one, not shown an empty console.</li>
+      <li>A page still waiting for approval says so, and the share panel behaves accordingly.</li>
+      <li>Editing and saving updates the public page; cancelling changes nothing.</li>
+      <li>Leaving edit with unsaved changes asks first &mdash; including when the browser tab is closed.</li>
+    </ul>
+
+    <div class="grid2">
+      <figure class="shot">
+        <img src="p2p-screens/08-my-fundraising.svg" alt="The supporter's own console showing progress, donors and the edit action.">
+        <figcaption>The supporter&rsquo;s home for the campaign. Everything they need to keep asking sits on one
+          screen.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="p2p-screens/09-edit-page.svg" alt="Editing a fundraising page, with per-field validation and an unsaved-changes guard.">
+        <figcaption>Editing keeps the same shape as creating, so nothing has to be relearned. Unsaved words are
+          never thrown away silently.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">05</span> Teams <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>Supporters can group their pages under one team, with a captain who runs it and a public team page that adds
+      their totals together.</p>
+
+    <h4>Why it matters</h4>
+    <p>Teams are how a workplace, a family or a running club raise together. They raise more than the same people
+      raise alone, because a team total is something to chase.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>A list of teams on the campaign, each with its standing, its size and its captain.</li>
+      <li>Start a team, or join one, when they are fundraising and not already in a team.</li>
+      <li>A public team page: combined total against a team goal, and every member with their own figure.</li>
+      <li>For a captain: manage members, remove somebody, hand the captaincy on.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>The member figures add up to the team total, every time.</li>
+      <li>Removing a member says plainly that their page and their donations are unaffected &mdash; and that is true.</li>
+      <li>Handing over the captaincy names the person taking it, and says it cannot be undone by the person giving it away.</li>
+      <li>A plain member is refused every captain action, and the refusal changes nothing.</li>
+      <li>The last member leaving closes the team, and every gift the campaign banked stays exactly where it was.</li>
+      <li>With teams switched off: no new team, no joining, and existing teams stay readable.</li>
+    </ul>
+
+    <h4>Rules that must hold</h4>
+    <ul class="tight">
+      <li>A team is not a payee. Donating from a team page asks which member to support first.</li>
+      <li>A captain cannot remove themselves &mdash; leaving is the way out, and the server refuses it too.</li>
+    </ul>
+
+    <div class="grid2">
+      <figure class="shot">
+        <img src="p2p-screens/05-team-page.svg" alt="A public team page showing the combined total and every member with their own figure.">
+        <figcaption>The team page adds the members up in public. Every figure can be accounted for, so nobody has
+          to take the total on trust.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="p2p-screens/15-team-members.svg" alt="The captain's screen for managing team members.">
+        <figcaption>The captain&rsquo;s screen. Both consequential actions &mdash; removing and handing over &mdash;
+          state their consequence before they happen.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">06</span> The charity watches over it <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>The charity&rsquo;s oversight: every page and every team its supporters made, what each has raised, and the
+      power to approve, refuse, hide or bring back.</p>
+
+    <h4>Why it matters</h4>
+    <p>This is the answer to the one question that stops a charity switching this on: <em>what if somebody puts
+      something inappropriate under our name?</em> One screen, one action, and it is gone.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>A list of fundraising pages with search, a status filter, and an export.</li>
+      <li>One page in full: what the supporter wrote, what they raised, and the decisions taken on it so far.</li>
+      <li>Approve, refuse, hide, or bring back &mdash; each confirming with its consequence named.</li>
+      <li>The same for teams: list, filter, review, hide, restore.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Approving puts the page live, and the supporter is told.</li>
+      <li>Refusing keeps the charity&rsquo;s note private &mdash; the supporter learns the decision, never the note.</li>
+      <li>A page that was refused can still be approved later, so a decision taken in haste is not final.</li>
+      <li>Hiding a page takes it down and its address stops serving; bringing it back restores it.</li>
+      <li>A hidden team disappears from public browsing, but its members&rsquo; own pages stay live.</li>
+      <li>The totals on the charity&rsquo;s screens agree with each other and with the money actually banked.</li>
+      <li>Export hands over a file named after the campaign.</li>
+      <li>A reason longer than allowed is refused on screen, and nothing is sent.</li>
+    </ul>
+
+    <h4>Rules that must hold</h4>
+    <ul class="tight">
+      <li>The refusal note reaches nobody outside the charity, in any form.</li>
+      <li>Another charity&rsquo;s pages are unreachable, and the refusal does not reveal whether they exist.</li>
+    </ul>
+
+    <div class="grid2">
+      <figure class="shot">
+        <img src="p2p-screens/10-organiser-list.svg" alt="The charity's list of every fundraising page on a campaign, with search, filter and export.">
+        <figcaption>Every page the charity&rsquo;s supporters made, in one list &mdash; searchable, filterable,
+          exportable.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="p2p-screens/18-organiser-fundraiser-detail.svg" alt="Reviewing one fundraising page, with approve, refuse and hide.">
+        <figcaption>One page in full, with every decision the charity can take and a record of the ones already
+          taken. Nothing happens without a confirmation that names the consequence.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">07</span> Invitations and the emails <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>The charity can invite people to fundraise by email, and edit the wording of every automatic message the
+      feature sends.</p>
+
+    <h4>Why it matters</h4>
+    <p>Most supporters do not stumble onto a campaign &mdash; they are asked. This turns a mailing list into
+      fundraisers, in the charity&rsquo;s own voice rather than ours.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>An invite screen that states plainly that nothing is created until the person agrees.</li>
+      <li>Editable templates: subject, body, on or off, and a way to send a test to yourself.</li>
+      <li>A landing page for the invited person, and a one-click way to stop receiving them.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>A malformed address is refused on screen, and nothing is written or sent.</li>
+      <li>Send stays unavailable until there is something to send, showing a &ldquo;not allowed&rdquo; cursor.</li>
+      <li>Unsubscribing works from the email without signing in, and is honoured afterwards.</li>
+      <li>The same automatic email is never sent twice for the same event.</li>
+    </ul>
+
+    <figure class="shot">
+      <img src="p2p-screens/13-invite-fundraiser.svg" alt="The charity's screen for inviting people to fundraise by email.">
+      <figcaption>Inviting is an ask, not an enrolment &mdash; the screen says so, and no page exists until the
+        person agrees. For the charity, this is the difference between a campaign that waits and one that grows.</figcaption>
+    </figure>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">08</span> Competition &mdash; the leaderboard <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>Public standings for a campaign: who has raised what, individually and by team.</p>
+
+    <h4>Why it matters</h4>
+    <p>Visible standings are the cheapest fundraising mechanic there is. People who can see their position raise
+      more, and they come back to check it.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>Ranked supporters and ranked teams, each linking to its page.</li>
+      <li>A designed empty state when nobody has raised yet &mdash; not a blank table.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Standings match the totals shown on the individual pages.</li>
+      <li>Hidden pages and hidden teams do not appear.</li>
+      <li>Nothing on the board exposes an email address or an account identifier.</li>
+    </ul>
+
+    <figure class="shot">
+      <img src="p2p-screens/06-leaderboard.svg" alt="The campaign leaderboard ranking supporters and teams.">
+      <figcaption>The standings, public to anybody with the campaign address. Seeing a position is what makes a
+        supporter ask one more person.</figcaption>
+    </figure>
+  </details>
+
+  <details class="feature">
+    <summary><span class="num">09</span> Telling the supporter what was decided <span class="pill live">Delivered</span></summary>
+
+    <h4>What it is</h4>
+    <p>When the charity approves or refuses a page, the supporter is emailed once, automatically.</p>
+
+    <h4>Why it matters</h4>
+    <p>Before this, a supporter who wrote a page and waited heard nothing at all. Silence after asking somebody to
+      volunteer is how volunteers are lost.</p>
+
+    <h4>What the person sees</h4>
+    <ul class="tight">
+      <li>Approved: one email saying the page is live, carrying its address.</li>
+      <li>Refused: one email saying the charity could not publish it &mdash; and nothing more.</li>
+      <li>Both messages are editable by the charity, like every other template.</li>
+    </ul>
+
+    <h4>What to check</h4>
+    <ul class="tight">
+      <li>Exactly one email per decision. A second decision on the same review sends nothing.</li>
+      <li>The refusal carries neither the charity&rsquo;s private note nor any gap where it used to be.</li>
+      <li>Hiding a page sends nothing &mdash; nobody was waiting on that.</li>
+    </ul>
+
+    <div class="callout warn">
+      <p><strong>Worth a decision.</strong> If the charity switches the &ldquo;page approved&rdquo; message off,
+        supporters go back to hearing nothing &mdash; the exact silence this feature was built to end &mdash; and
+        the screen gives no warning. Suggested: keep the switch, add a plain warning beside it. Open for discussion.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="p2p-screens/11-emails.svg" alt="The charity's editable lifecycle emails, including the approval and refusal notices.">
+      <figcaption>Every automatic message in one place, in the charity&rsquo;s own words, each one switchable and
+        testable. The two decision notices arrive here as two more cards rather than as a separate screen.</figcaption>
+    </figure>
+  </details>
+
+  <section class="panel" id="screens">
+    <h2 style="margin-top:0">Every screen, and whose it is</h2>
+    <div class="table-scroll">
+      <table>
+        <tr><th>#</th><th>Screen</th><th>Whose</th><th>State</th></tr>
+        <tr><td>01</td><td>Campaign fundraising settings</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>02</td><td>Campaign page entry point</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>03</td><td>Create my fundraising page</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>04</td><td>A fundraiser&rsquo;s public page</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>05</td><td>Public team page</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>06</td><td>Leaderboard</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>07</td><td>Donating through a page</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>08</td><td>My fundraising console</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>09</td><td>Editing my page</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>10</td><td>Fundraising pages list</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>11</td><td>Lifecycle emails</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>12</td><td>The phone pass &mdash; every screen at 375px</td><td>Everyone</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>13</td><td>Invite people to fundraise</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>14</td><td>Start a team</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>15</td><td>Captain&rsquo;s member management</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>16</td><td>Teams list</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>17</td><td>Reviewing one team</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>18</td><td>Reviewing one fundraising page</td><td>Charity</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>19</td><td>The invitation email</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>20</td><td>Fundraiser sign-up</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>21</td><td>Fundraiser sign-in</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>22</td><td>The menu item that leads in</td><td>Supporter</td><td><span class="pill live">Delivered</span></td></tr>
+        <tr><td>23</td><td>Browse teams</td><td>Public</td><td><span class="pill live">Delivered</span></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="promises">
+    <h2 style="margin-top:0">Promises this feature makes</h2>
+    <p>These are not preferences. If one of them stops being true, the feature is broken regardless of what else
+      works.</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Promise</th><th>What it means in practice</th></tr>
+        <tr><td>Existing donations are untouched</td><td>Card, bank debit and wallet payments behave exactly as they did. A campaign with fundraising off is the campaign it always was.</td></tr>
+        <tr><td>The charity is always in control</td><td>Off by default, optional approval, and any page or team can be taken down in one action.</td></tr>
+        <tr><td>Money only ever goes to the charity</td><td>No supporter payout exists anywhere in the feature, by design.</td></tr>
+        <tr><td>Nobody&rsquo;s private details leak</td><td>Public pages carry no email address and no account identifier &mdash; not for the supporter, not for donors.</td></tr>
+        <tr><td>Private notes stay private</td><td>A refusal reason written by the charity is never sent, shown or hinted at outside the charity.</td></tr>
+        <tr><td>It works on a phone</td><td>Every screen is checked at 320, 375, 768, 1024, 1440 and 1920 pixels wide, with no sideways scrolling and thumb-sized controls.</td></tr>
+        <tr><td>Every number can be accounted for</td><td>Supporter totals, team totals and campaign totals reconcile against the money actually banked.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="not-in-scope">
+    <h2 style="margin-top:0">What this deliberately does not do</h2>
+    <ul class="tight">
+      <li><strong>No supporter payouts.</strong> Supporters raise; the charity is paid. Nothing else.</li>
+      <li><strong>No offline or cash entry</strong> against a supporter&rsquo;s page.</li>
+      <li><strong>No matched giving or employer matching</strong> in this release.</li>
+      <li><strong>No supporter-to-supporter messaging.</strong> Sharing happens through the address, in the channels people already use.</li>
+      <li><strong>No formatting in a supporter&rsquo;s story.</strong> Plain words only &mdash; a deliberate safety choice, open to revisit.</li>
+      <li><strong>A supporter cannot delete their own page.</strong> They ask the charity, which can hide it. Also open to revisit.</li>
+    </ul>
+  </section>
+
+  <section class="panel" id="open">
+    <h2 style="margin-top:0">Open for discussion</h2>
+    <p>A live list. It changes as we talk, and every answer lands in the decision log underneath.</p>
+
+    <div class="callout open">
+      <h3 style="margin-top:0">1. Switching the approval email off</h3>
+      <p>The charity can turn off the message that tells a supporter their page is live. Doing so restores exactly
+        the silence this feature was built to end, and nothing on screen says so.
+        <strong>Suggested:</strong> keep the switch, add a warning beside it.</p>
+    </div>
+
+    <div class="callout open">
+      <h3 style="margin-top:0">2. Turning teams off while teams exist</h3>
+      <p>Today: no new teams, no joining, existing teams stay readable. That is the safe behaviour, but the charity
+        is not told what happens to the teams already out there.
+        <strong>Suggested:</strong> say it in the confirmation, in numbers &mdash; &ldquo;4 teams stay live and
+        readable&rdquo;.</p>
+    </div>
+
+    <div class="callout open">
+      <h3 style="margin-top:0">3. A supporter withdrawing their own page</h3>
+      <p>There is no way for a supporter to take their own page down; they must ask the charity.
+        <strong>Question:</strong> deliberate policy, or a gap?</p>
+    </div>
+
+    <div class="callout open">
+      <h3 style="margin-top:0">4. Plain-text stories</h3>
+      <p>Supporters write plain words &mdash; no bold, no paragraphs, no links. Safe, but it makes a long story hard
+        to read. <strong>Question:</strong> is limited formatting worth adding?</p>
+    </div>
+
+    <div class="callout open">
+      <h3 style="margin-top:0">5. Where fundraising sits in the menu</h3>
+      <p>A supporter reaches their console through a menu item that appears once they are fundraising.
+        <strong>Question:</strong> discoverable enough, or should the campaign itself always link back?</p>
+    </div>
+  </section>
+
+  <section class="panel" id="decisions">
+    <h2 style="margin-top:0">Decision log</h2>
+    <p>Settled, and not reopened. Added to as we talk.</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Decision</th><th>Where it landed</th></tr>
+        <tr><td>Peer-to-peer is per campaign, off by default</td><td>The charity opts in one campaign at a time. No existing campaign changed on its own.</td></tr>
+        <tr><td>Approval is the charity&rsquo;s choice, not ours</td><td>A campaign either publishes pages at once or holds every one for review.</td></tr>
+        <tr><td>One page per person per campaign</td><td>Enforced, so totals and standings can never be split across duplicates.</td></tr>
+        <tr><td>A team is not a payee</td><td>Donating from a team page asks which member to support first.</td></tr>
+        <tr><td>Refusal notes stay with the charity</td><td>The supporter is told the decision, never the reason.</td></tr>
+        <tr><td>Existing payment methods are untouchable</td><td>No change of any kind to card, bank debit or wallet donations.</td></tr>
+        <tr><td>A page names the campaign, not just the charity</td><td>The line under a supporter&rsquo;s name reads &ldquo;Fundraising for &lt;campaign&gt;&rdquo;, with &ldquo;by &lt;charity&gt;&rdquo; under it. A gift is ring-fenced to a campaign, so that is what a donor is told, and the campaign name opens the campaign.</td></tr>
+        <tr><td>The charity is named in plain text, never a tag</td><td>The charity issues the receipt, so it is readable text beside the campaign rather than a decorative pill.</td></tr>
+        <tr><td>A charity does not fundraise for itself</td><td>Whoever runs a campaign also decides which pages on it go live. A page of their own would be approved by its own author and would count the charity among its own supporters, so the invitation is not offered to them and the server refuses the page.</td></tr>
+        <tr><td>Settings are ordered by consequence, not by kind</td><td>Whether pages are reviewed before they go live now sits directly under the switch that creates those pages. It is the only setting on that screen whose wrong value is publicly visible, so it is read before the settings that merely tune the experience.</td></tr>
+        <tr><td>The fundraising offer sits above the campaign story, not below it</td><td>A campaign story has no length limit, so a control underneath one is only ever seen by a reader who got to the end &mdash; while the campaign&rsquo;s own donate card is in view from the first moment. The offer that asks for more commitment was the one nobody was being shown. It now sits between the goal and the story: read after the reader knows what the campaign is for, and read whatever the story&rsquo;s length.</td></tr>
+        <tr><td>The offer is drawn in the charity&rsquo;s campaign colour</td><td>Every other surface on a campaign page uses the colour the charity chose. A control in the product&rsquo;s own brand colour read as an advertisement dropped onto the page rather than a second thing the campaign is offering, so it now follows the campaign like everything around it.</td></tr>
+        <tr><td>The campaign invitation reads the supporter&rsquo;s own state</td><td>Somebody already fundraising is offered their page, somebody waiting is told they are waiting, and somebody with no page is invited. The invitation stays a working control in every case &mdash; never a dead sentence where a button used to be.</td></tr>
+        <tr><td>A refusal is never written on a public screen</td><td>A supporter whose page was turned down is told once by email and once on their own private console, where the wording also says what to do about it. The campaign page carries nothing, because a stranger or a friend may be reading it over their shoulder. Silence there is not hiding it; the person already knows.</td></tr>
+        <tr><td>A refusal is not the end of it</td><td>The charity can still approve a page it turned down, so a decision made in haste is reversible without anybody being locked out of the campaign.</td></tr>
+        <tr><td>The count of other fundraisers is not shown to donors</td><td>It answers nothing a donor is deciding, and on a new campaign it reads as nobody else caring. Removed from the public page, and the server no longer counts them either — one database query per page view saved on the busiest public screen we have.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Peer-to-peer fundraising &mdash; feature guide.</strong> A living document, updated as features and
+      decisions change. Companion documents: the release note written for charities, and the build plan written for
+      the delivery team.</p>
+    <p>Last updated 28 August 2026.</p>
+  </footer>
+
+</main>
+
+<script>
+  document.querySelectorAll('.toolbar button[data-all]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var shouldOpen = button.dataset.all === 'open';
+      document.querySelectorAll('details.feature').forEach(function (feature) { feature.open = shouldOpen; });
+    });
+  });
+  document.querySelectorAll('.toolbar button[data-print]').forEach(function (button) {
+    button.addEventListener('click', function () { window.print(); });
+  });
+</script>
+
+</body>
+</html>

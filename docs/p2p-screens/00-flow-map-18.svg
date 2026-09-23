@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 980" width="1280" height="980" role="img" aria-label="The order the screens happen in"><defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#0b1c5c" flood-opacity="0.07"/></filter></defs><rect width="1280" height="980" fill="#dfe4ef"/><rect x="0" y="0" width="1280" height="980" rx="0" fill="#f4f7fe"/>
+<text x="64" y="66" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="26" fill="#0b1c5c" font-weight="800" text-anchor="start">The whole journey, in the order it happens</text>
+<text x="64" y="94" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13.5" fill="#6b7280" font-weight="400" text-anchor="start">Every numbered box below is a screen shown in this document.</text>
+<rect x="64" y="138" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="138" width="6" height="106" rx="3" fill="#1b4dff"/>
+<text x="92" y="170" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">The charity sets it up</text>
+<rect x="92" y="184" width="212.0" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="206" r="14" fill="#1b4dff"/>
+<text x="118" y="211" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">1</text>
+<text x="140" y="211" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Turn peer-to-peer on</text>
+<text x="308.0" y="212" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="326.0" y="184" width="242.39999999999998" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="352.0" cy="206" r="14" fill="#1b4dff"/>
+<text x="352.0" y="211" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">2</text>
+<text x="374.0" y="211" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Invite people (optional)</text>
+<rect x="64" y="256" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="256" width="6" height="106" rx="3" fill="#0f7b53"/>
+<text x="92" y="288" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">A supporter becomes a fundraiser</text>
+<rect x="92" y="302" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="324" r="14" fill="#0f7b53"/>
+<text x="118" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">3</text>
+<text x="140" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Campaign page</text>
+<text x="280" y="330" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="298" y="302" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="324" cy="324" r="14" fill="#0f7b53"/>
+<text x="324" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">4</text>
+<text x="346" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Sign up</text>
+<text x="486" y="330" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="504" y="302" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="530" cy="324" r="14" fill="#0f7b53"/>
+<text x="530" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">5</text>
+<text x="552" y="329" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Their own page</text>
+<rect x="64" y="374" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="374" width="6" height="106" rx="3" fill="#0b1c5c"/>
+<text x="92" y="406" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">Teams form</text>
+<rect x="92" y="420" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="442" r="14" fill="#0b1c5c"/>
+<text x="118" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">6</text>
+<text x="140" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Create a team</text>
+<text x="280" y="448" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="298" y="420" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="324" cy="442" r="14" fill="#0b1c5c"/>
+<text x="324" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">7</text>
+<text x="346" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Team page</text>
+<text x="486" y="448" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="504" y="420" width="227.2" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="530" cy="442" r="14" fill="#0b1c5c"/>
+<text x="530" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">8</text>
+<text x="552" y="447" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Add, remove, set goals</text>
+<rect x="64" y="492" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="492" width="6" height="106" rx="3" fill="#7c3aed"/>
+<text x="92" y="524" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">The public gives</text>
+<rect x="92" y="538" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="560" r="14" fill="#7c3aed"/>
+<text x="118" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">9</text>
+<text x="140" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Leaderboard</text>
+<text x="280" y="566" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="298" y="538" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="324" cy="560" r="14" fill="#7c3aed"/>
+<text x="324" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">10</text>
+<text x="346" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Donate</text>
+<text x="486" y="566" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="504" y="538" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="530" cy="560" r="14" fill="#7c3aed"/>
+<text x="530" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">17</text>
+<text x="552" y="565" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Automatic emails</text>
+<rect x="64" y="610" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="610" width="6" height="106" rx="3" fill="#8a5a00"/>
+<text x="92" y="642" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">The fundraiser keeps going</text>
+<rect x="92" y="656" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="678" r="14" fill="#8a5a00"/>
+<text x="118" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">11</text>
+<text x="140" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Their dashboard</text>
+<text x="280" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="298" y="656" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="324" cy="678" r="14" fill="#8a5a00"/>
+<text x="324" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">12</text>
+<text x="346" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">Edit their page</text>
+<text x="486" y="684" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="504" y="656" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="530" cy="678" r="14" fill="#8a5a00"/>
+<text x="530" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">18</text>
+<text x="552" y="683" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">On a phone</text>
+<rect x="64" y="728" width="1152" height="106" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="64" y="728" width="6" height="106" rx="3" fill="#a32020"/>
+<text x="92" y="760" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" fill="#0b1c5c" font-weight="800" text-anchor="start">The charity watches over it</text>
+<rect x="92" y="774" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="118" cy="796" r="14" fill="#a32020"/>
+<text x="118" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">13</text>
+<text x="140" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">All fundraisers</text>
+<text x="280" y="802" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="298" y="774" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="324" cy="796" r="14" fill="#a32020"/>
+<text x="324" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">14</text>
+<text x="346" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">One fundraiser</text>
+<text x="486" y="802" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="504" y="774" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="530" cy="796" r="14" fill="#a32020"/>
+<text x="530" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">15</text>
+<text x="552" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">All teams</text>
+<text x="692" y="802" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="18" fill="#6b7280" font-weight="700" text-anchor="middle">›</text>
+<rect x="710" y="774" width="184" height="44" rx="10" fill="#f7f9ff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="736" cy="796" r="14" fill="#a32020"/>
+<text x="736" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle">16</text>
+<text x="758" y="801" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#0b1c5c" font-weight="600" text-anchor="start">One team</text>
+<rect x="64" y="854" width="1152" height="60" rx="12" fill="#fff8e1" stroke="#f0d48a" stroke-width="1"/>
+<text x="88" y="880" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b4a00" font-weight="600" text-anchor="start">Screens 1, 2, 13, 14, 15 and 16 are used by charity staff. Everything else is used by supporters and the public.</text>
+<text x="88" y="900" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6b4a00" font-weight="400" text-anchor="start">Nothing in the supporter journey needs a member of staff to be involved.</text></svg>
