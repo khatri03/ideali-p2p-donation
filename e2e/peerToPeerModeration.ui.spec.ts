@@ -635,6 +635,16 @@ test.describe('Campaign list peer-to-peer pill', () => {
   const campaignCard = (page: Page) =>
     page.getByText(campaign.name).filter({ visible: true }).first();
 
+  /**
+   * The pill for this campaign and no other. The list carries a card per campaign and several of them
+   * run supporter fundraising, so a page-wide match would read a neighbour's marking as this one's.
+   */
+  const pillForThisCampaign = (page: Page) =>
+    page.locator(
+      `a[href$="/campaign/${campaign.uniqueId.toLowerCase()}/peer-to-peer"], ` +
+        `a[href$="/campaign/${campaign.uniqueId.toUpperCase()}/peer-to-peer"]`,
+    );
+
   const fundraisingIsOn = (): boolean =>
     querySingleValue(
       `SELECT CAST(IsPeerToPeerEnabled AS INT) FROM DonationCampaign WHERE Id = ${campaignIdSql};`,
@@ -678,7 +688,7 @@ test.describe('Campaign list peer-to-peer pill', () => {
     await page.goto(campaignsPath);
     await expect(campaignCard(page)).toBeVisible();
 
-    await expect(page.getByRole('link', { name: /^P2P\./ })).toHaveCount(0);
+    await expect(pillForThisCampaign(page)).toHaveCount(0);
   });
 
   /**
@@ -689,9 +699,10 @@ test.describe('Campaign list peer-to-peer pill', () => {
     setFundraising(true);
 
     await page.goto(campaignsPath);
-    await visibleLink(page, /^P2P\./).click();
+    await pillForThisCampaign(page).filter({ visible: true }).first().click();
 
-    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer$`));
+    // The address bar lowercases the identifier the card was rendered with, so the match ignores case.
+    await expect(page).toHaveURL(new RegExp(`${campaign.uniqueId}/peer-to-peer$`, 'i'));
     await expect(page.getByRole('heading', { name: 'P2P fundraising' })).toBeVisible();
   });
 

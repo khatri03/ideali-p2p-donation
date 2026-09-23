@@ -1,4 +1,4 @@
-import { APIRequestContext, expect, test } from '@playwright/test';
+import { APIRequestContext, Page, expect, test } from '@playwright/test';
 import { authenticatedApi, settingsUrl, signIn } from './support/apiSession';
 import { liveCampaign } from './support/campaignFixtures';
 import { execute, querySingleValue } from './support/database';
@@ -19,6 +19,14 @@ import { clearFundraiserPages, restoreFundraiserPages } from './support/fundrais
 test.use({ storageState: SUPPORTER_STORAGE_STATE_PATH });
 
 const campaign = liveCampaign();
+/**
+ * Chakra draws a radio as a label sitting over a visually hidden input, so the label is what a finger
+ * touches and what a click has to land on. Reading the input directly measures the hidden 1px box and
+ * clicking it is intercepted by the label above it.
+ */
+const teamChoice = (page: Page, label: RegExp) =>
+  page.locator('label.chakra-radio').filter({ hasText: label });
+
 const joinPath = `/donation/campaign/${campaign.uniqueId}/peer-to-peer/join`;
 
 const PROBE_TAG = 'e2e-join-team';
@@ -157,7 +165,7 @@ test.describe('The team question on the join screen', () => {
     await page.goto(joinPath);
 
     await page.locator(displayNameField).fill('E2E Join Supporter');
-    await page.getByRole('radio', { name: /Start a team/ }).click();
+    await teamChoice(page, /Start a team/).click();
     await page.locator(teamNameField).fill(STARTED_TEAM_NAME);
     await page.getByRole('button', { name: 'Create my page' }).click();
 
@@ -172,7 +180,7 @@ test.describe('The team question on the join screen', () => {
     await page.goto(joinPath);
 
     await page.locator(displayNameField).fill('E2E Join Supporter');
-    await page.getByRole('radio', { name: /Join a team/ }).click();
+    await teamChoice(page, /Join a team/).click();
     await page.locator(teamPicker).selectOption(EXISTING_TEAM_SLUG);
     await page.getByRole('button', { name: 'Create my page' }).click();
 
@@ -208,7 +216,7 @@ test.describe('The team question on the join screen', () => {
     await page.goto(joinPath);
 
     await page.locator(displayNameField).fill('E2E Join Supporter');
-    await page.getByRole('radio', { name: /Join a team/ }).click();
+    await teamChoice(page, /Join a team/).click();
     await page.locator(teamPicker).selectOption(EXISTING_TEAM_SLUG);
     await page.getByRole('button', { name: 'Create my page' }).click();
 
@@ -226,7 +234,7 @@ test.describe('The team question on the join screen', () => {
 
     await page.goto(joinPath);
     await page.locator(displayNameField).fill('E2E Join Supporter');
-    await page.getByRole('radio', { name: /Join a team/ }).click();
+    await teamChoice(page, /Join a team/).click();
     await page.locator(teamPicker).selectOption(EXISTING_TEAM_SLUG);
     await page.getByRole('button', { name: 'Create my page' }).click();
     await expect(page.getByText('Your page has been sent for review')).toBeVisible();
@@ -251,7 +259,7 @@ test.describe('The team question on the join screen', () => {
   /** Every answer has to be reachable by thumb, not only by mouse. */
   test('JoinScreen_AtEveryWidth_KeepsEveryTeamAnswerAtLeast44pxTall', async ({ page }) => {
     await page.goto(joinPath);
-    const choices = page.getByRole('radio');
+    const choices = page.locator('label.chakra-radio');
 
     await expect(choices.first()).toBeVisible();
 

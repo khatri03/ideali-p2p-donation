@@ -336,7 +336,7 @@ test.describe('Browsing teams as somebody who could join one', () => {
     insertTeam({ captainIsMine: false, memberSlugs: [THEIRS_SLUG] });
 
     await page.goto(teamPath());
-    await expect(page.getByRole('heading', { name: TEAM_NAME })).toBeVisible();
+    await expect(page.getByRole('heading', { name: TEAM_NAME, exact: true })).toBeVisible();
 
     await expect(page.getByRole('link', { name: 'Back to my fundraising' })).toHaveCount(0);
   });

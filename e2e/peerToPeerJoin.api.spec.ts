@@ -122,6 +122,7 @@ test.describe('Peer-to-peer join endpoint', () => {
     expect(Object.keys(data).sort()).toEqual(
       [
         'alreadyJoined',
+        'areTeamsAllowed',
         'blockedKind',
         'blockedReason',
         'campaignName',

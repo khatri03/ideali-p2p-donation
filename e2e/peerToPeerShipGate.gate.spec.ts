@@ -128,8 +128,10 @@ const surfaces = (): Surface[] => [
   {
     name: "the charity's lifecycle emails",
     path: () => `/organizer/donation/campaign/${campaign.uniqueId}/peer-to-peer/email-templates`,
+    // The Emails tab is out of the strip until the sends are proven, so the screen is recognised by
+    // its own heading rather than by a link that is deliberately absent.
     ready: async (page) =>
-      expect(page.getByRole('link', { name: 'Emails', exact: true })).toBeVisible(),
+      expect(page.getByRole('heading', { level: 1, name: 'Lifecycle emails' })).toBeVisible(),
   },
   {
     name: 'the fundraising console',

@@ -461,7 +461,9 @@ test.describe('Accepting an invitation without an account yet', () => {
   const invitationPath =
     `/donation/campaign/${campaign.uniqueId}/peer-to-peer/invitation?token=${INVITED_CODE}`;
 
-  test.beforeAll(() => {
+  // The file clears every probe row before each test, so the invitation is seeded after that sweep
+  // rather than once for the group - seeded in beforeAll it is wiped before the first test opens it.
+  test.beforeEach(() => {
     removeInvitationsTo(invitedAddress);
     insertInvitationWithCode(invitedAddress, INVITED_CODE);
   });
@@ -506,11 +508,12 @@ test.describe('Accepting an invitation without an account yet', () => {
 
     await page.getByLabel('First name').fill('Probe');
     await page.getByLabel('Last name').fill('Supporter');
-    await page.getByLabel('Password', { exact: true }).fill('Fundrais3!');
+    // The required marker sits inside the label, so its text is never exactly "Password".
+    await page.getByLabel(/^Password/).fill('Fundrais3!');
     await page.getByLabel('Confirm password').fill('Fundrais3!');
     await page.getByRole('button', { name: 'Create my account' }).click();
 
-    await expect(page.getByText('Check your inbox')).toBeVisible();
+    await expect(page.getByText('Check your inbox', { exact: true })).toBeVisible();
   });
 
   /**
@@ -533,7 +536,9 @@ test.describe('Opening an invitation on the wrong account', () => {
   const INVITED_CODE = 'e2e-somebody-else_2';
   const invitedAddress = probeAddress('somebody-else');
 
-  test.beforeAll(() => {
+  // The file clears every probe row before each test, so the invitation is seeded after that sweep
+  // rather than once for the group - seeded in beforeAll it is wiped before the first test opens it.
+  test.beforeEach(() => {
     removeInvitationsTo(invitedAddress);
     insertInvitationWithCode(invitedAddress, INVITED_CODE);
   });
@@ -545,6 +550,13 @@ test.describe('Opening an invitation on the wrong account', () => {
    * is filled in is the difference between a correction and an attempt the server will refuse.
    */
   test('Invitation_SignedInAsSomebodyElse_SaysSoInsteadOfShowingTheForm', async ({ page }) => {
+    // The screen can only say whose session this is when the session recorded an address, and the
+    // saved sign-in leaves that unknown. Stating it here is the precondition the rule needs, not a
+    // shortcut around it.
+    await page.addInitScript(() => {
+      window.localStorage.setItem('userEmail', 'someone-else@e2e-signed-in.test');
+    });
+
     await page.goto(
       `/donation/campaign/${campaign.uniqueId}/peer-to-peer/invitation?token=${INVITED_CODE}`,
     );
