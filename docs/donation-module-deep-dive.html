@@ -1,0 +1,1393 @@
+<title>Donation Module Deep Dive — ideali.io</title>
+<meta name="description" content="End-to-end technical and functional walkthrough of the ideali.io donation module: campaign creation wizard, public donation flow, payment architecture, post-donation operations and known gaps." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+
+<style>
+  :root{
+    --ink:#0b1c5c;
+    --brand:#1b4dff;
+    --brand-soft:#eef2ff;
+    --good:#0f7b53;
+    --good-soft:#e8f6f0;
+    --warn:#8a5a00;
+    --warn-soft:#fdf4e3;
+    --bad:#a32020;
+    --bad-soft:#fdecec;
+    --muted:#5b6478;
+    --line:#e3e7f0;
+    --radius:14px;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:5rem;}
+  body{
+    background:#f6f8fc;
+    color:#1a2035;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;
+  }
+  h1,h2,h3,h4{color:var(--ink); font-weight:700; letter-spacing:-.01em;}
+  h1{font-size:clamp(1.75rem,4.5vw,3rem);}
+  h2{font-size:clamp(1.35rem,3vw,2.1rem); margin-bottom:.35rem;}
+  h3{font-size:clamp(1.1rem,2.2vw,1.4rem);}
+  h4{font-size:clamp(1rem,1.8vw,1.15rem);}
+  p,li{font-size:clamp(.95rem,1.4vw,1.02rem);}
+  a{color:var(--brand);}
+  code,kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  code{background:#eef1f8; color:#233; padding:.1rem .35rem; border-radius:6px; font-size:.86em; word-break:break-word;}
+
+  .navbar{background:#fff; border-bottom:1px solid var(--line); box-shadow:0 1px 12px rgba(11,28,92,.05);}
+  .navbar .nav-link{color:var(--muted); font-weight:600; font-size:.9rem;}
+  .navbar .nav-link:hover{color:var(--brand);}
+  .navbar-brand{color:var(--ink); font-weight:800;}
+
+  .hero{
+    background:linear-gradient(160deg,#0b1c5c 0%,#1b4dff 100%);
+    color:#fff; border-radius:var(--radius);
+  }
+  .hero h1{color:#fff;}
+  .hero p{color:#dbe3ff;}
+  .kpi{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:12px; height:100%;
+  }
+  .kpi .k{font-size:clamp(1.3rem,3vw,1.9rem); font-weight:800; line-height:1.1;}
+  .kpi .v{font-size:.82rem; color:#dbe3ff;}
+
+  section{scroll-margin-top:5rem;}
+  .panel{
+    background:#fff; border:1px solid var(--line);
+    border-radius:var(--radius); height:100%;
+  }
+  .panel-h{border-bottom:1px solid var(--line); padding:.85rem 1.15rem; font-weight:700; color:var(--ink);}
+  .panel-b{padding:1.15rem;}
+
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:.09em;
+    font-size:.74rem; font-weight:800; color:var(--brand);
+  }
+  .lede{color:var(--muted);}
+
+  .plain{
+    border:1px dashed #b9c4e0; background:#fbfcff;
+    border-radius:12px; padding:1rem 1.15rem;
+  }
+  .plain .t{font-weight:700; color:var(--ink); font-size:.9rem; margin-bottom:.3rem;}
+  .plain p:last-child{margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft); border-radius:0 10px 10px 0; padding:.85rem 1.05rem;}
+  .callout.good{border-left-color:var(--good); background:var(--good-soft);}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft);}
+  .callout.bad{border-left-color:var(--bad); background:var(--bad-soft);}
+  .callout p:last-child{margin-bottom:0;}
+
+  .tag{
+    display:inline-block; font-size:.72rem; font-weight:700;
+    padding:.18rem .55rem; border-radius:999px; white-space:nowrap;
+  }
+  .tag-ok{background:var(--good-soft); color:var(--good);}
+  .tag-warn{background:var(--warn-soft); color:var(--warn);}
+  .tag-bad{background:var(--bad-soft); color:var(--bad);}
+  .tag-neutral{background:#eef1f8; color:#41496b;}
+  .tag-brand{background:var(--brand-soft); color:var(--brand);}
+
+  .req-id{
+    font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.74rem; font-weight:700;
+    background:var(--ink); color:#fff; padding:.15rem .5rem; border-radius:6px;
+  }
+
+  .flow{list-style:none; counter-reset:flow; padding-left:0; margin:0;}
+  .flow>li{
+    counter-increment:flow; position:relative;
+    padding-left:3rem; padding-bottom:1.35rem;
+  }
+  .flow>li::before{
+    content:counter(flow);
+    position:absolute; left:0; top:0;
+    width:2rem; height:2rem; border-radius:50%;
+    background:var(--brand); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:.9rem;
+  }
+  .flow>li::after{
+    content:""; position:absolute; left:.97rem; top:2.1rem; bottom:.25rem;
+    width:2px; background:var(--line);
+  }
+  .flow>li:last-child{padding-bottom:0;}
+  .flow>li:last-child::after{display:none;}
+  .flow .ft{font-weight:700; color:var(--ink);}
+
+  .table{background:#fff; margin-bottom:0;}
+  .table thead th{
+    background:var(--ink); color:#fff; font-size:.8rem; font-weight:700;
+    white-space:nowrap; vertical-align:middle; border-color:#22357a;
+  }
+  .table td,.table th{font-size:.87rem; vertical-align:top;}
+  .table-responsive{border:1px solid var(--line); border-radius:var(--radius); overflow-x:auto;}
+
+  .step-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); height:100%;}
+  .step-card .sn{
+    width:2.1rem; height:2.1rem; border-radius:10px; background:var(--brand-soft);
+    color:var(--brand); font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .kv{font-size:.85rem; margin:0;}
+  .kv dt{color:var(--muted); font-weight:600;}
+  .kv dd{margin-bottom:.5rem; word-break:break-word;}
+
+  .tree{
+    background:#0b1c5c; color:#dbe3ff; border-radius:var(--radius);
+    padding:1rem 1.15rem; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:.8rem; line-height:1.7; overflow-x:auto; white-space:pre;
+  }
+
+  dl.gloss dt{color:var(--ink); font-weight:700; margin-top:.65rem;}
+  dl.gloss dd{color:var(--muted); margin-bottom:0;}
+
+  footer{border-top:1px solid var(--line); color:var(--muted); font-size:.87rem;}
+  a:focus-visible,button:focus-visible,.nav-link:focus-visible,.accordion-button:focus-visible{
+    outline:3px solid var(--brand); outline-offset:2px;
+  }
+  .accordion-button:not(.collapsed){background:var(--brand-soft); color:var(--ink);}
+  .accordion-button{font-weight:600;}
+
+  @media print{
+    .navbar,.no-print{display:none !important;}
+    body{background:#fff;}
+    section{page-break-inside:avoid;}
+    .hero{background:#0b1c5c !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .accordion-collapse{display:block !important;}
+    .table-responsive{overflow:visible !important;}
+    .tree{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container-xl">
+    <a class="navbar-brand" href="#top"><i class="bi bi-heart-fill me-2" aria-hidden="true"></i>Donation Module</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+        <li class="nav-item"><a class="nav-link" href="#architecture">Architecture</a></li>
+        <li class="nav-item"><a class="nav-link" href="#lifecycle">Lifecycle</a></li>
+        <li class="nav-item"><a class="nav-link" href="#wizard">Create Wizard</a></li>
+        <li class="nav-item"><a class="nav-link" href="#distribute">Share</a></li>
+        <li class="nav-item"><a class="nav-link" href="#donate">Donate Flow</a></li>
+        <li class="nav-item"><a class="nav-link" href="#payments">Payments</a></li>
+        <li class="nav-item"><a class="nav-link" href="#operations">Operations</a></li>
+        <li class="nav-item"><a class="nav-link" href="#donor">Donor Portal</a></li>
+        <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
+        <li class="nav-item"><a class="nav-link" href="#gaps">Gaps</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container-xl py-4 py-lg-5" id="top">
+
+  <!-- HERO -->
+  <div class="hero p-4 p-lg-5 mb-5">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-7">
+        <div class="eyebrow" style="color:#a8bcff">Engineering deep dive · Frontend</div>
+        <h1 class="mt-2 mb-3">How the ideali.io Donation Module Actually Works</h1>
+        <p class="mb-0">
+          A complete walkthrough of the donation module as it exists in the codebase today — how an organizer
+          builds a campaign in nine steps, how a donor gives money in two steps, how the money moves through
+          Stripe, and what happens afterwards. Written to be read by an engineer, a product owner, or an
+          executive without a translation layer in between.
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <div class="row g-3">
+          <div class="col-6"><div class="kpi p-3"><div class="k">9</div><div class="v">Campaign creation steps</div></div></div>
+          <div class="col-6"><div class="kpi p-3"><div class="k">2</div><div class="v">Donor checkout steps</div></div></div>
+          <div class="col-6"><div class="kpi p-3"><div class="k">5</div><div class="v">Payment method families</div></div></div>
+          <div class="col-6"><div class="kpi p-3"><div class="k">3</div><div class="v">Giving frequencies</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. OVERVIEW -->
+  <section id="overview" class="mb-5">
+    <div class="eyebrow">Section 1</div>
+    <h2>What the module does</h2>
+    <p class="lede mb-4">The whole module in one paragraph, then the parts.</p>
+
+    <div class="plain mb-4">
+      <div class="t">Read this first</div>
+      <p class="mb-0">
+        An <strong>organizer</strong> (a nonprofit or a charity on the platform) builds a <strong>campaign</strong> —
+        a public fundraising page with a goal, a story, a picture and a set of suggested amounts. The platform gives
+        them a public link, a QR code and an embeddable widget. A <strong>donor</strong> opens that link, picks an
+        amount, enters their contact details, pays by card or bank, and receives a receipt by email. Everything after
+        that — invoices, donor records, recurring charges, exports, CRM sync — is bookkeeping around those two events.
+      </p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="panel">
+          <div class="panel-h"><i class="bi bi-1-circle-fill me-2 text-primary" aria-hidden="true"></i>Build</div>
+          <div class="panel-b">
+            <p class="mb-2">Organizer creates a campaign through a 9-step wizard with a live phone/desktop preview beside it.</p>
+            <p class="mb-0 small text-muted">Each step saves to its own backend endpoint, so a half-finished campaign survives a browser close.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel">
+          <div class="panel-h"><i class="bi bi-2-circle-fill me-2 text-primary" aria-hidden="true"></i>Collect</div>
+          <div class="panel-b">
+            <p class="mb-2">Publishing produces a public page at <code>/donate/:campaignId</code> that needs no login, plus a QR code and an iframe/popup embed.</p>
+            <p class="mb-0 small text-muted">Bot protection sits in front of the submit, Stripe handles the card data.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel">
+          <div class="panel-h"><i class="bi bi-3-circle-fill me-2 text-primary" aria-hidden="true"></i>Operate</div>
+          <div class="panel-b">
+            <p class="mb-2">Invoices, donor lists, recurring subscriptions, archives, exports to Excel/PDF/CSV, and a push of donors into a connected marketing CRM.</p>
+            <p class="mb-0 small text-muted">Donors get their own portal to see history and cancel recurring gifts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-4">
+      <p><strong>The one thing to remember:</strong> this frontend never touches card numbers. It asks the backend to
+      create a Stripe payment intent, hands the sensitive fields to Stripe's own components, and posts only a Stripe
+      <em>token reference</em> back to our API. That design is what keeps PCI scope narrow.</p>
+    </div>
+  </section>
+
+  <!-- 2. ARCHITECTURE -->
+  <section id="architecture" class="mb-5">
+    <div class="eyebrow">Section 2</div>
+    <h2>Architecture and code map</h2>
+    <p class="lede mb-4">Where every piece lives, and which layer is allowed to talk to which.</p>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Layer rules</div>
+          <div class="panel-b">
+            <ol class="mb-0 ps-3">
+              <li class="mb-2"><strong>Screen components</strong> render and hold local state. They never call <code>axios</code> directly.</li>
+              <li class="mb-2"><strong>Services</strong> (<code>app/service/organizer/donation/*</code>) own every HTTP call and are pure TypeScript — no React, no JSX.</li>
+              <li class="mb-2"><strong>HttpClient</strong> is the single axios instance. It attaches the bearer token, sends credentials, and retries once after refreshing an expired token.</li>
+              <li class="mb-0"><strong>Redux slice</strong> (<code>store/slices/donationSlice.ts</code>) holds the campaign list, the wizard form and the campaign being donated to. Everything else is component state.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Request path</div>
+          <div class="panel-b">
+            <ul class="flow">
+              <li><span class="ft">Component</span><br /><span class="small text-muted">fires an effect or a handler, never a fetch inside JSX</span></li>
+              <li><span class="ft">Redux thunk or direct service call</span><br /><span class="small text-muted">thunks for shared state, direct calls for screen-local data</span></li>
+              <li><span class="ft">Service function</span><br /><span class="small text-muted">builds the URL and query string, types the response</span></li>
+              <li><span class="ft">HttpClient → .NET API</span><br /><span class="small text-muted">auth header, 401 refresh queue, <code>withCredentials</code></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-4 mb-2">File map</h3>
+    <div class="tree mb-3">src/
+├── app/components/organizer/donation/
+│   ├── donationModule.tsx              module shell
+│   ├── DonationList.tsx                campaign grid, filters, per-card action menu
+│   ├── createDonationPage.tsx          wizard shell + live preview + step rail
+│   ├── createDonation.tsx              wizard state machine, all 9 save handlers
+│   ├── createDonationSteps/            Step1..Step9 presentational components
+│   │   ├── shared/                     nav buttons, types, email editor, modals
+│   │   └── step8Components/            subject input, variable insert, snippets
+│   ├── mobilePreview.tsx  desktopPreview.tsx
+│   ├── donateToCampaign.tsx            PUBLIC donation checkout (2 steps)
+│   ├── organizerDonationComponents/    amount selector, summary/tip, contact form,
+│   │                                   payment selector, wallet button, share, QR,
+│   │                                   success/failure modals, export helpers
+│   ├── publicCampaigns/campaignList.tsx  public campaign directory per organizer
+│   ├── allInvoice.tsx  InvoiceListPage.tsx  InvoiceDetail.tsx  InvoicePage.tsx
+│   ├── DonorList.tsx  CampaignSpecificDonors.tsx  archiveList.tsx
+│   └── RecurringDonation.tsx  campaignRecurringDonation.tsx
+├── app/service/organizer/donation/
+│   ├── donationService.ts              campaigns, steps, banners, donate, exports
+│   ├── paymentAccountService.ts        Stripe Connect accounts + ACH/PAD intents
+│   ├── donatePaymentService.ts         preset tip percentages
+│   ├── InvoiceService.ts  sendInvoiceService.ts
+│   ├── donorListService.ts  RecurringDonationService.ts
+│   ├── campaignArchiveService.ts  campaignEditorService.ts  QRService.ts
+│   └── publicCampaigns/campaignSevice.ts
+├── app/components/member/                donor-facing portal + donorDonationService
+├── app/interface/donationInter/          request/response contracts
+└── store/slices/donationSlice.ts         campaigns, wizard form, donate target, cache</div>
+
+    <div class="callout warn">
+      <p><strong>Naming note for reviewers:</strong> two files break the repo's own conventions —
+      <code>publicCampaigns/campaignSevice.ts</code> (missing the <code>r</code>) and
+      <code>organizerDonationComponents/helperFuntions.tsx</code> (missing the <code>c</code>). Both are imported
+      under those spellings, so renaming them is a small mechanical change, not a no-op.</p>
+    </div>
+  </section>
+
+  <!-- 3. LIFECYCLE -->
+  <section id="lifecycle" class="mb-5">
+    <div class="eyebrow">Section 3</div>
+    <h2>Campaign lifecycle, roles and routes</h2>
+    <p class="lede mb-4">Which states a campaign moves through, who can do what, and which URL shows what.</p>
+
+    <h3 class="mb-2">States</h3>
+    <div class="table-responsive mb-4">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">State</th>
+            <th scope="col">How it is reached</th>
+            <th scope="col">Public page live?</th>
+            <th scope="col">What the organizer can do</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><span class="tag tag-neutral">Draft</span></th>
+            <td>Created the moment step 1 is saved. Every later step edits the same draft.</td>
+            <td><span class="tag tag-bad">No</span></td>
+            <td>Edit, delete, archive, duplicate. Share, donor list, recurring and the Donate button are all disabled.</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="tag tag-ok">Published / Started</span></th>
+            <td>Step 9 <em>Publish</em> is pressed. Confetti fires, a success modal shows the live link.</td>
+            <td><span class="tag tag-ok">Yes</span></td>
+            <td>Share, QR, embed, view donors and invoices, manage recurring, duplicate, configure CRM sync.</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="tag tag-warn">Ended</span></th>
+            <td>The campaign end date has passed.</td>
+            <td><span class="tag tag-bad">No new gifts</span></td>
+            <td>Read-only reporting plus archive. Donate button disabled.</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="tag tag-neutral">Archived</span></th>
+            <td>Archive action — only allowed while the campaign is <em>Draft</em> or <em>Ended</em>.</td>
+            <td><span class="tag tag-bad">No</span></td>
+            <td>Visible in the separate archive list with its own export.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mb-2">Routes</h3>
+    <div class="table-responsive mb-4">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">URL</th>
+            <th scope="col">Audience</th>
+            <th scope="col">Screen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><code>/donate/:campaignId</code></th><td><span class="tag tag-brand">Public, no login</span></td><td>Donation checkout</td></tr>
+          <tr><th scope="row"><code>/campaign-list/:organizerUniqueId</code></th><td><span class="tag tag-brand">Public, no login</span></td><td>All live campaigns for one organizer</td></tr>
+          <tr><th scope="row"><code>/invoice/:invoiceUniqueId</code></th><td><span class="tag tag-brand">Public link</span></td><td>Receipt / invoice view</td></tr>
+          <tr><th scope="row"><code>/manage-create-donation</code></th><td>Organizer</td><td>Wizard entry</td></tr>
+          <tr><th scope="row"><code>/create-donation-campaign/:campaignId?</code></th><td>Organizer</td><td>Wizard, create or resume (<code>?step=N</code> resumes at a step)</td></tr>
+          <tr><th scope="row"><code>/donation/manage-donation-module</code></th><td>Organizer</td><td>Campaign grid</td></tr>
+          <tr><th scope="row"><code>/donation/list/paid</code></th><td>Organizer</td><td>All paid invoices</td></tr>
+          <tr><th scope="row"><code>/donation/invoice-list/:campaignId?</code></th><td>Organizer</td><td>Invoices for one campaign</td></tr>
+          <tr><th scope="row"><code>/donation/invoice-detail/:invoiceUniqueId?</code></th><td>Organizer</td><td>Single invoice</td></tr>
+          <tr><th scope="row"><code>/donation/donor-list</code> · <code>/donation/donor-list/:campaignId?</code></th><td>Organizer</td><td>Donors, all or per campaign</td></tr>
+          <tr><th scope="row"><code>/donation/recurring-donations/:campaignId?</code></th><td>Organizer</td><td>Recurring subscriptions</td></tr>
+          <tr><th scope="row"><code>/donation/archived-donors</code></th><td>Organizer</td><td>Archived campaigns</td></tr>
+          <tr><th scope="row"><code>/my-donations</code></th><td>Member / Donor</td><td>Personal giving history + recurring</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mb-2">Permissions enforced in the UI</h3>
+    <p class="small text-muted mb-2">Every one of these is a <code>hasPermission(...)</code> gate around a button or a menu item.</p>
+    <div class="row g-2 mb-3">
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>Donation.Campaign.View</code> · <code>ViewDetail</code> · <code>Create</code> · <code>Edit</code> · <code>Delete</code> · <code>Archive</code></div></div></div>
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>Donation.Campaign.ViewQrCode</code> · <code>ViewEmbeddedCode</code></div></div></div>
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>Donation.Invoice.View</code> · <code>ViewDetail</code> · <code>Send</code> · <code>Export</code></div></div></div>
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>Donation.Donors.View</code> · <code>Donation.Donors.Export</code></div></div></div>
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>Donation.Recurring.View</code> · <code>Cancel</code> · <code>Export</code> · <code>Donation.Archived.Export</code></div></div></div>
+      <div class="col-md-6 col-xl-4"><div class="panel"><div class="panel-b py-2"><code>donation:donors:sync</code> · <code>:create-list</code> · <code>donation:email-snippet:*</code></div></div></div>
+    </div>
+
+    <div class="callout bad">
+      <p><strong>Security reality check.</strong> These permission gates are <em>presentation only</em>. They decide
+      whether a button renders; they authorise nothing. Every privileged action must be checked again server-side,
+      because the browser copy of the permission list can be edited by anyone with developer tools open.</p>
+    </div>
+  </section>
+
+  <!-- 4. WIZARD -->
+  <section id="wizard" class="mb-5">
+    <div class="eyebrow">Section 4</div>
+    <h2>Creating a campaign — the nine-step wizard</h2>
+    <p class="lede mb-4">What each step asks for, what it validates, and where it saves.</p>
+
+    <div class="plain mb-4">
+      <div class="t">How saving works — this is the important bit</div>
+      <p class="mb-0">
+        The wizard is <strong>not</strong> one big form submitted at the end. Step 1 creates the campaign record and
+        returns a <code>uniqueId</code>; every later step posts only its own slice of data to its own endpoint with a
+        <code>?stepNo=N</code> marker. The backend keeps a list of completed steps, which the UI re-reads on load. That
+        is why an organizer can leave halfway, come back days later, and land exactly where they stopped —
+        and why <em>Save &amp; Exit</em> works on every step.
+      </p>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">1</div>
+          <div>
+            <h4 class="mb-1">Basic Information</h4>
+            <p class="mb-2 small">Campaign name, start date, end date.</p>
+            <dl class="kv mb-0">
+              <dt>Validates</dt>
+              <dd>Name required. Both dates required and must parse. End date must be strictly after start date, enforced with both an inline error and a toast.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST /api/donation/campaign/create</code> on first save; <code>.../set-basic-info</code> on every edit after that.</dd>
+              <dt>Side effect</dt>
+              <dd>The returned <code>uniqueId</code> is stored in Redux and every later step depends on it.</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">2</div>
+          <div>
+            <h4 class="mb-1">Set Goal</h4>
+            <p class="mb-2 small">Target amount, plus a switch for whether donors see the goal at all.</p>
+            <dl class="kv mb-0">
+              <dt>Why the switch matters</dt>
+              <dd>A campaign can raise money without publishing a target. When it is off, the public page hides the progress thermometer entirely.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST /api/donation/campaign/{id}/set-goal?stepNo=2</code></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">3</div>
+          <div>
+            <h4 class="mb-1">Add Description</h4>
+            <p class="mb-2 small">The campaign story, written in a rich-text editor (TipTap) with bold, lists, headings, alignment, links, images and special characters.</p>
+            <dl class="kv mb-0">
+              <dt>AI assist</dt>
+              <dd>An inline panel takes a plain-language prompt, calls <code>POST /api/OpenAI/ask</code>, converts the returned markdown to editor HTML, and offers <em>insert</em> or <em>replace</em>. The writer stays in control — nothing is auto-applied.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-description?stepNo=3</code></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">4</div>
+          <div>
+            <h4 class="mb-1">Payment Account</h4>
+            <p class="mb-2 small">Pick which connected merchant account receives the money, then tick which payment methods that account offers.</p>
+            <dl class="kv mb-0">
+              <dt>Dependency</dt>
+              <dd>Accounts come from <code>/api/organizer/payment-account/items</code>; methods are fetched per account. No account connected means no way to publish a working campaign.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-payment-account?stepNo=4</code></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">5</div>
+          <div>
+            <h4 class="mb-1">Preset Donation Amounts</h4>
+            <p class="mb-2 small">Three independent blocks — One Time, Monthly, Yearly — each with its own on/off switch and its own list of amounts.</p>
+            <dl class="kv mb-0">
+              <dt>Each preset carries</dt>
+              <dd>An amount and a short impact line, e.g. <em>"Can help feeding 30 children"</em>. That description is what turns a number into a reason to give.</dd>
+              <dt>Consequence</dt>
+              <dd>Which blocks are switched on decides which frequency tabs the donor sees. All three off means the donor only gets a free-text amount box.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-presets?stepNo=5</code> · skippable</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">6</div>
+          <div>
+            <h4 class="mb-1">Campaign Colour</h4>
+            <p class="mb-2 small">One theme colour, defaulting to <code>#044bd9</code>.</p>
+            <dl class="kv mb-0">
+              <dt>Where it lands</dt>
+              <dd>The public donation page uses it for buttons, selected states, the progress bar and highlight panels. One value, applied everywhere the donor looks.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-campaign-theme?stepNo=6</code></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">7</div>
+          <div>
+            <h4 class="mb-1">Banner Image</h4>
+            <p class="mb-2 small">Three ways to get a picture, all landing in the same crop editor with a zoom slider.</p>
+            <dl class="kv mb-0">
+              <dt>Upload</dt>
+              <dd>Any image type, hard limit 5&nbsp;MB, rejected with a clear message above that.</dd>
+              <dt>Stock library</dt>
+              <dd>Unsplash search, landscape orientation, paged 20 at a time. Requires <code>VITE_UNSPLASH_ACCESS_KEY</code>; without it the tab tells the user the key is missing.</dd>
+              <dt>AI generated</dt>
+              <dd>A text prompt and an aspect ratio (16:9 or 1:1) sent to <code>/api/OpenAI</code>, returned as base64 and dropped straight into the cropper.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-banner?stepNo=7</code> as multipart form data.</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">8</div>
+          <div>
+            <h4 class="mb-1">Thank-You Email</h4>
+            <p class="mb-2 small">The receipt email every donor gets. Subject plus body, 5,000 character limit.</p>
+            <dl class="kv mb-0">
+              <dt>Merge variables</dt>
+              <dd>Placeholders are pulled from <code>/api/donation/email-template/place-holders</code> and inserted at the cursor in either the subject or the body.</dd>
+              <dt>Snippets</dt>
+              <dd>Reusable blocks of copy with full create / edit / delete, each behind its own permission, so a team writes a paragraph once and reuses it across campaigns.</dd>
+              <dt>Fixed header</dt>
+              <dd>The system's own receipt block is not editable; the organizer's message is appended after it.</dd>
+              <dt>Saves to</dt>
+              <dd><code>POST .../set-email-template?stepNo=8</code> · skippable</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="step-card p-3 d-flex gap-3">
+          <div class="sn">9</div>
+          <div>
+            <h4 class="mb-1">Review &amp; Publish</h4>
+            <p class="mb-2 small">Everything from steps 1–8 read back from <code>/review-data</code>, then one irreversible button.</p>
+            <dl class="kv mb-0">
+              <dt>Publish</dt>
+              <dd><code>POST .../publish</code>. Guarded against double-submit and against re-publishing an already-published campaign.</dd>
+              <dt>Then</dt>
+              <dd>Status flips to Published, confetti runs for four seconds, and a success modal hands over the live donation link.</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Live preview</div>
+          <div class="panel-b">
+            <p class="mb-2">The wizard renders the donor-facing page beside the form and updates it as the organizer types — name, description, goal, colour, banner and presets all reflect immediately.</p>
+            <p class="mb-0 small text-muted">Two modes: phone frame and desktop frame, toggled from the header. On screens below the <code>md</code> breakpoint the preview is hidden by default and opens as a slide-over.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Navigation controls on every step</div>
+          <div class="panel-b">
+            <ul class="mb-0 ps-3">
+              <li><strong>Back One Step</strong> — no save, just move.</li>
+              <li><strong>Skip</strong> — steps 5, 7 and 8 only. Optional content stays optional.</li>
+              <li><strong>Save &amp; Next</strong> — validates, posts that step, marks it complete, advances.</li>
+              <li><strong>Save &amp; Exit</strong> — posts the current step, then leaves. The step rail lets the organizer jump straight back to any step that already holds data.</li>
+              <li><strong>Exit</strong> — a confirmation dialog first, so a stray click never discards work silently.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. DISTRIBUTE -->
+  <section id="distribute" class="mb-5">
+    <div class="eyebrow">Section 5</div>
+    <h2>Getting the campaign in front of donors</h2>
+    <p class="lede mb-4">Four distribution channels ship today, all from one Share modal.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6 col-xl-3">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-link-45deg me-2" aria-hidden="true"></i>Direct link</div>
+          <div class="panel-b">
+            <p class="mb-0 small">A copy-to-clipboard field with the public URL <code>/donate/{campaignId}</code>, meant for email and SMS.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-qr-code me-2" aria-hidden="true"></i>QR code</div>
+          <div class="panel-b">
+            <p class="mb-0 small">Generated server-side from the donation link, downloadable as PNG for posters, screens and printed appeals. Behind <code>ViewQrCode</code>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-code-square me-2" aria-hidden="true"></i>Embed</div>
+          <div class="panel-b">
+            <p class="mb-0 small">Two snippets: an <strong>inline</strong> iframe that sits in a page, and a <strong>popup</strong> script that opens the form over the organizer's own site. Behind <code>ViewEmbeddedCode</code>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-facebook me-2" aria-hidden="true"></i>Social</div>
+          <div class="panel-b">
+            <p class="mb-0 small">Facebook share and Messenger send, routed through <code>/api/social-sharing/share/facebook/{id}</code> so the link carries proper preview metadata.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <p><strong>Sharing is gated on status.</strong> Share, donor list, recurring and the Donate button are all
+      disabled while a campaign is a Draft, and the disabled controls show a <code>not-allowed</code> cursor rather
+      than failing silently on click.</p>
+    </div>
+  </section>
+
+  <!-- 6. DONATE FLOW -->
+  <section id="donate" class="mb-5">
+    <div class="eyebrow">Section 6</div>
+    <h2>The donation flow — what a donor actually does</h2>
+    <p class="lede mb-4">Public, no account required, two steps.</p>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Step 1 — Choose the gift</div>
+          <div class="panel-b">
+            <ul class="mb-3 ps-3">
+              <li class="mb-2"><strong>Frequency tabs</strong> — One Time, Monthly, Yearly. Only the frequencies the organizer switched on in wizard step 5 appear.</li>
+              <li class="mb-2"><strong>Preset buttons</strong> — the configured amounts, each showing its impact line underneath.</li>
+              <li class="mb-2"><strong>Custom amount</strong> — a free-text field capped at five digits, rejecting zero and negatives inline.</li>
+              <li class="mb-0"><strong>Confirmation line</strong> — "You're donating $50 monthly", so the choice is never ambiguous.</li>
+            </ul>
+            <p class="mb-0 small text-muted">The page also shows the banner, the story, and — if the organizer allowed it — the goal with progress against it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Step 2 — Pay</div>
+          <div class="panel-b">
+            <ul class="mb-3 ps-3">
+              <li class="mb-2"><strong>Contact details</strong> — first and last name, email, phone. Each has its own validator with a field-level message.</li>
+              <li class="mb-2"><strong>Optional note</strong> — up to 1,000 characters, in memory of / in honour of, and similar.</li>
+              <li class="mb-2"><strong>Payment method</strong> — only the methods the campaign's payment account actually supports.</li>
+              <li class="mb-2"><strong>Platform tip</strong> — see below.</li>
+              <li class="mb-0"><strong>Bot check</strong> — Cloudflare Turnstile. No token, no submit.</li>
+            </ul>
+            <p class="mb-0 small text-muted">A confirmation dialog stands between the button and the charge; wallet payments skip it because the wallet sheet is itself the confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mb-2">The tip model — how the platform funds itself</h3>
+    <div class="plain mb-3">
+      <div class="t">Plain English</div>
+      <p class="mb-0">
+        The donor is asked to add a small optional amount <em>on top of</em> their gift, described as
+        "help keep our platform free for charities". Percentage options come from the API
+        (<code>/api/donation/preset-tips</code>), one of which is marked default and is pre-selected. The donor can pick a
+        different percentage or type any amount, including zero. The charity receives the full donation either way —
+        the tip is a separate line, added to the total, and travels to the API as <code>tipDetail</code> with its own
+        description such as <code>Tip Amount-15%</code>.
+      </p>
+    </div>
+    <div class="callout good mb-4">
+      <p><strong>Why this matters commercially:</strong> it is the same revenue model Zeffy uses — zero platform fee to
+      the nonprofit, funded by voluntary donor contributions. It is the reason the pricing page can say "free" without
+      an asterisk, and it is already wired end to end in this codebase.</p>
+    </div>
+
+    <h3 class="mb-2">Payment methods supported</h3>
+    <div class="table-responsive mb-4">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col">Region</th>
+            <th scope="col">What the donor sees</th>
+            <th scope="col">How it is processed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Credit / debit card</th>
+            <td>Any</td>
+            <td>Card fields rendered by Stripe, plus a cardholder-name box of our own.</td>
+            <td>Stripe Elements creates a payment method; only its ID reaches our API.</td>
+          </tr>
+          <tr>
+            <th scope="row">Google Pay / Apple Pay</th>
+            <td>Any supported device</td>
+            <td>A native wallet sheet. Shown only when the device and browser support it.</td>
+            <td>Stripe Payment Request. The sheet <em>must</em> open synchronously from the click, so all validation runs before it.</td>
+          </tr>
+          <tr>
+            <th scope="row">ACH bank debit</th>
+            <td>United States</td>
+            <td>Routing number (9 digits), account number, account and holder type.</td>
+            <td>Backend creates the intent, Stripe collects and verifies the bank account, then the payment is confirmed explicitly.</td>
+          </tr>
+          <tr>
+            <th scope="row">PAD bank debit</th>
+            <td>Canada</td>
+            <td>Institution number (3 digits), transit number (5 digits), account number.</td>
+            <td>Same three-stage pattern as ACH, on the Canadian rails.</td>
+          </tr>
+          <tr>
+            <th scope="row">Cheque</th>
+            <td>Any</td>
+            <td>Cheque number and an optional description.</td>
+            <td>Recorded offline — no card network involved. The invoice is created for reconciliation.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mb-2">End to end, in order</h3>
+    <div class="panel">
+      <div class="panel-b">
+        <ul class="flow mb-0">
+          <li>
+            <span class="ft">Page loads</span><br />
+            <span class="small text-muted">Redux fetches the campaign from <code>/api/donation/{id}/donate</code> — story, colour, banner, presets, allowed payment methods, payment account. The banner is pulled as a blob and shown behind a skeleton.</span>
+          </li>
+          <li>
+            <span class="ft">Stripe credentials fetched</span><br />
+            <span class="small text-muted">The campaign's payment account returns a publishable key and a connected-account ID. Stripe is initialised <em>for that specific charity</em>, so funds route to their account, not a platform pool.</span>
+          </li>
+          <li>
+            <span class="ft">Donor picks amount and frequency</span><br />
+            <span class="small text-muted">Blocked from continuing on a zero, blank or over-length amount.</span>
+          </li>
+          <li>
+            <span class="ft">Donor fills contact, note, tip and payment details</span><br />
+            <span class="small text-muted">Turnstile renders and issues a token in the background.</span>
+          </li>
+          <li>
+            <span class="ft">Submit — validation gate</span><br />
+            <span class="small text-muted">Amount, method, names, email, phone, Turnstile token, and every method-specific rule (card fields complete, 9-digit routing, 3-digit institution, cheque number present) must pass before anything is charged.</span>
+          </li>
+          <li>
+            <span class="ft">Payment authorisation</span><br />
+            <span class="small text-muted">Card: Stripe creates a payment method. Wallet: the native sheet confirms. ACH/PAD: intent → collect → confirm. Cheque: nothing to authorise.</span>
+          </li>
+          <li>
+            <span class="ft">Donation posted</span><br />
+            <span class="small text-muted"><code>POST /api/donation/{campaignId}/donate</code> with the amount, frequency, method, note, tip, contact and the Stripe references — carrying the Turnstile token in a request header.</span>
+          </li>
+          <li>
+            <span class="ft">Outcome shown</span><br />
+            <span class="small text-muted">Success modal, or a failure modal carrying the API's message. The receipt email defined in wizard step 8 goes out, and an invoice record is created.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout mt-4">
+      <p><strong>What is posted to our API on a card gift</strong> — note what is <em>absent</em>: no card number, no CVV, no expiry.</p>
+      <p class="mb-0"><code>{ donationAmount, frequency, paymentMethod, Notes?, paymentMethodDetail: { paymentMethodId, paymentIntentId?, cardHolderName? }, contact: { firstName, middleName?, lastName, primaryEmail, cellPhone? }, tipDetail: { description?, amount? } }</code></p>
+    </div>
+  </section>
+
+  <!-- 7. PAYMENTS -->
+  <section id="payments" class="mb-5">
+    <div class="eyebrow">Section 7</div>
+    <h2>Payment architecture</h2>
+    <p class="lede mb-4">How money reaches the charity rather than the platform.</p>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-7">
+        <div class="panel h-100">
+          <div class="panel-h">Stripe Connect, per organizer</div>
+          <div class="panel-b">
+            <p>Each organizer connects their own Stripe account through an OAuth handshake:</p>
+            <ol class="ps-3 mb-3">
+              <li class="mb-1">The platform reads its OAuth settings and sends the organizer to Stripe.</li>
+              <li class="mb-1">Stripe returns an authorisation code.</li>
+              <li class="mb-1">The backend exchanges that code for the connected account ID and publishable key.</li>
+              <li class="mb-0">Campaigns then reference that payment account, and payments are initialised against it.</li>
+            </ol>
+            <p class="mb-0 small text-muted">A cache keyed on <em>publishable key + connected account</em> prevents re-initialising Stripe on every render while keeping two charities' contexts strictly separate.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="panel h-100">
+          <div class="panel-h">Where the sensitive data goes</div>
+          <div class="panel-b">
+            <ul class="mb-3 ps-3">
+              <li class="mb-2">Card number, expiry and CVV are typed into <strong>Stripe's own iframe fields</strong>. Our React code cannot read them.</li>
+              <li class="mb-2">Bank details for ACH/PAD are passed directly to Stripe's collection call.</li>
+              <li class="mb-0">Our API receives <strong>references only</strong> — a payment method ID and a payment intent ID.</li>
+            </ul>
+            <p class="mb-0 small text-muted">Card brand and last-four come back later from the API for display in invoices and recurring records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">Bank debit (ACH / PAD), stage by stage</div>
+      <div class="panel-b">
+        <ul class="flow mb-0">
+          <li><span class="ft">Create the intent</span><br /><span class="small text-muted">Our backend calls Stripe with the amount, the tip as an admin fee, the donor's name and email, the bank details, and metadata tying the payment to this campaign and the Donation module. It returns a client secret.</span></li>
+          <li><span class="ft">Collect the bank account</span><br /><span class="small text-muted">Stripe opens its own modal and validates the account against the client secret. Any error here surfaces as a clear message and the flow stops.</span></li>
+          <li><span class="ft">Confirm</span><br /><span class="small text-muted">The payment is explicitly confirmed with the collected payment method.</span></li>
+          <li><span class="ft">Record</span><br /><span class="small text-muted">Only then is the donation posted to our API, with the payment method and intent IDs attached.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <p><strong>Multi-currency is account-scoped.</strong> The merchant list and currency list come from admin
+      reference data, and a payment account is bound to one currency. A campaign therefore collects in the currency of
+      the account chosen in wizard step 4 — not in the donor's local currency.</p>
+    </div>
+  </section>
+
+  <!-- 8. OPERATIONS -->
+  <section id="operations" class="mb-5">
+    <div class="eyebrow">Section 8</div>
+    <h2>After the gift — operations</h2>
+    <p class="lede mb-4">Invoices, donors, recurring gifts, archives, exports and CRM sync.</p>
+
+    <div class="row g-3 mb-4">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-receipt me-2" aria-hidden="true"></i>Invoices</div>
+          <div class="panel-b">
+            <p class="mb-2 small">Every donation produces an invoice. Lists exist both platform-wide and per campaign, filterable by status, free-text search, and member vs non-member.</p>
+            <p class="mb-2 small"><strong>Statuses:</strong>
+              <span class="tag tag-warn">Pending Payment</span>
+              <span class="tag tag-warn">Partially Paid</span>
+              <span class="tag tag-ok">Paid</span>
+              <span class="tag tag-bad">Cancelled</span>
+              <span class="tag tag-neutral">Refund</span>
+              <span class="tag tag-brand">Adjusted In System</span>
+            </p>
+            <p class="mb-0 small text-muted">Labels and badge colours come from one shared map, so a status never renders two different ways in two screens. Invoices can be re-sent by email, downloaded as PDF, and opened on a public link.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-people me-2" aria-hidden="true"></i>Donors</div>
+          <div class="panel-b">
+            <p class="mb-2 small">A donor record joins campaign, invoice and contact — name, email, phone, address, gift amount and date. Available across all campaigns or scoped to one.</p>
+            <p class="mb-0 small text-muted">Selecting donors enables a manual push into a connected marketing list; leaving the selection empty configures an ongoing automatic sync instead.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>Recurring donations</div>
+          <div class="panel-b">
+            <p class="mb-2 small">Monthly and yearly gifts become subscriptions with their own list, filterable by state:
+              <span class="tag tag-brand">Processing</span>
+              <span class="tag tag-warn">Waiting</span>
+              <span class="tag tag-bad">Failed</span>
+              <span class="tag tag-neutral">Cancelled</span>
+            </p>
+            <p class="mb-0 small text-muted">Each row shows the donor, the amount, the card brand and last four, the last charge date and the next one. Cancelling is confirmed in a modal, and an already-cancelled row offers no cancel action at all.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-arrow-left-right me-2" aria-hidden="true"></i>CRM / marketing sync</div>
+          <div class="panel-b">
+            <p class="mb-2 small">The Auto Sync modal lists the organizer's connected integrations, loads the audiences or lists inside the chosen one, and can create a new list without leaving the screen.</p>
+            <p class="mb-0 small text-muted">Two modes: queue the selected donors once, or save a configuration so future donors flow automatically.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-download me-2" aria-hidden="true"></i>Exports</div>
+          <div class="panel-b">
+            <p class="mb-2 small">Campaign list, invoice list, donor list, recurring list and archive list each export to the format the user picks. The file streams as a blob and the filename is taken from the response header when the server supplies one.</p>
+            <p class="mb-0 small text-muted">A confirmation dialog precedes the download so a large export is never triggered by accident.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><i class="bi bi-archive me-2" aria-hidden="true"></i>Archive, duplicate, delete</div>
+          <div class="panel-b">
+            <p class="mb-2 small"><strong>Duplicate</strong> clones a campaign as a fresh draft — the fastest route to next year's appeal.</p>
+            <p class="mb-2 small"><strong>Archive</strong> moves a Draft or Ended campaign out of the main grid into its own list.</p>
+            <p class="mb-0 small"><strong>Delete</strong> is destructive and sits behind a confirmation modal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">Campaign grid — the organizer's home screen</div>
+      <div class="panel-b">
+        <p class="mb-2">A card per campaign showing the banner, the status badge, the goal and how much of it has been raised, and the invoice count. Search runs against the API; date filters offer Today, This Week, This Month and a custom range.</p>
+        <p class="mb-0 small text-muted">Every card carries a three-dot menu whose items enable and disable by status — the same rule set described in the lifecycle table above.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. DONOR PORTAL -->
+  <section id="donor" class="mb-5">
+    <div class="eyebrow">Section 9</div>
+    <h2>The donor's own portal</h2>
+    <p class="lede mb-4">What a logged-in member sees about their own giving.</p>
+
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="panel h-100">
+          <div class="panel-h">Giving history</div>
+          <div class="panel-b"><p class="mb-0 small">A paged, searchable table of every gift, each row opening a detail modal with the full record.</p></div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel h-100">
+          <div class="panel-h">Receipts</div>
+          <div class="panel-b"><p class="mb-0 small">A download button per gift pulls the invoice PDF — the artefact donors need at tax time.</p></div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel h-100">
+          <div class="panel-h">Recurring control</div>
+          <div class="panel-b"><p class="mb-0 small">Active subscriptions with a self-service cancel, so a donor never has to email the charity to stop a monthly gift.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-4">
+      <p class="mb-0">Access is module-gated: the <em>My Donations</em> navigation item only appears when the signed-in
+      user's allowed-modules claim includes Donation, so a membership-only organisation never sees a donation menu.</p>
+    </div>
+  </section>
+
+  <!-- 10. API -->
+  <section id="api" class="mb-5">
+    <div class="eyebrow">Section 10</div>
+    <h2>API surface</h2>
+    <p class="lede mb-4">Every donation endpoint this frontend calls, grouped by purpose.</p>
+
+    <div class="table-responsive mb-4">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Purpose</th>
+            <th scope="col">Endpoint</th>
+            <th scope="col">Used by</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row" rowspan="1">List campaigns</th><td><code>GET /api/donation/campaign/list</code></td><td>Campaign grid (paged, searchable, date-filtered)</td></tr>
+          <tr><th scope="row">Create campaign</th><td><code>POST /api/donation/campaign/create</code></td><td>Wizard step 1, first save</td></tr>
+          <tr><th scope="row">Read one campaign</th><td><code>GET /api/donation/campaign/{id}</code></td><td>Detail views</td></tr>
+          <tr><th scope="row" rowspan="8">Wizard — read back</th><td><code>GET .../{id}/basic-info</code></td><td>Step 1</td></tr>
+          <tr><td><code>GET .../{id}/get-goal</code></td><td>Step 2</td></tr>
+          <tr><td><code>GET .../{id}/get-description</code></td><td>Step 3</td></tr>
+          <tr><td><code>GET .../{id}/get-payment-account</code></td><td>Step 4</td></tr>
+          <tr><td><code>GET .../{id}/get-presets</code></td><td>Step 5</td></tr>
+          <tr><td><code>GET .../{id}/get-campaign-theme</code></td><td>Step 6</td></tr>
+          <tr><td><code>POST .../{id}/get-banners</code></td><td>Step 7</td></tr>
+          <tr><td><code>GET .../{id}/get-email-template</code></td><td>Step 8</td></tr>
+          <tr><th scope="row" rowspan="7">Wizard — save</th><td><code>POST .../{id}/set-basic-info</code></td><td>Step 1 edit</td></tr>
+          <tr><td><code>POST .../{id}/set-goal?stepNo=2</code></td><td>Step 2</td></tr>
+          <tr><td><code>POST .../{id}/set-description?stepNo=3</code></td><td>Step 3</td></tr>
+          <tr><td><code>POST .../{id}/set-payment-account?stepNo=4</code></td><td>Step 4</td></tr>
+          <tr><td><code>POST .../{id}/set-presets?stepNo=5</code></td><td>Step 5</td></tr>
+          <tr><td><code>POST .../{id}/set-campaign-theme?stepNo=6</code> · <code>set-banner?stepNo=7</code></td><td>Steps 6–7</td></tr>
+          <tr><td><code>POST .../{id}/set-email-template?stepNo=8</code></td><td>Step 8</td></tr>
+          <tr><th scope="row">Progress + review</th><td><code>GET .../{id}/get-completed-steps</code> · <code>.../review-data</code></td><td>Step rail, step 9</td></tr>
+          <tr><th scope="row">Lifecycle</th><td><code>POST .../{id}/publish</code> · <code>/delete</code> · <code>/archived</code> · <code>/duplicate</code> · <code>/remove-banner</code></td><td>Step 9 and the card action menu</td></tr>
+          <tr><th scope="row">Public donation page</th><td><code>GET /api/donation/{id}/donate</code></td><td>Loads the donor-facing campaign</td></tr>
+          <tr><th scope="row">Submit a gift</th><td><code>POST /api/donation/{id}/donate</code></td><td>Checkout, with the Turnstile token in a header</td></tr>
+          <tr><th scope="row">Card intent</th><td><code>POST /api/donation/{id}/stripe/create-intent</code></td><td>Card and wallet payments</td></tr>
+          <tr><th scope="row">Platform tips</th><td><code>GET /api/donation/preset-tips</code></td><td>Tip percentage options</td></tr>
+          <tr><th scope="row">Payment accounts</th><td><code>GET /api/organizer/payment-account/items</code> · <code>/{id}/payment-methods</code> · <code>/{id}/detail</code> · <code>/create</code> · <code>/{id}/update</code></td><td>Wizard step 4 and settings</td></tr>
+          <tr><th scope="row">Stripe Connect</th><td><code>GET .../stripe/oauth-settings</code> · <code>.../stripe/exchange-token</code> · <code>.../pci/{id}/credentials</code></td><td>Organizer onboarding, checkout key fetch</td></tr>
+          <tr><th scope="row">Invoices</th><td><code>GET /api/invoice/donation/list/paid</code> · <code>/{campaignId}/list/paid</code> · <code>/{id}/re-send</code> · <code>.../{format}/export</code></td><td>Invoice screens</td></tr>
+          <tr><th scope="row">Donors</th><td><code>GET /api/donation/campaign/donor-list</code> · <code>/{campaignId}/donor-list</code> · <code>.../{format}/export</code></td><td>Donor screens</td></tr>
+          <tr><th scope="row">Recurring</th><td><code>GET /api/donation/recurring/list</code> · <code>/list/{status}</code> · <code>/{campaignId}/list</code> · <code>POST /api/donation/recurring/cancel</code></td><td>Recurring screens</td></tr>
+          <tr><th scope="row">Email template tooling</th><td><code>GET /api/donation/email-template/place-holders</code> · <code>/snippet/list</code> · <code>/snippet/create</code> · <code>/snippet/{id}/update</code> · <code>/{id}/delete</code></td><td>Wizard step 8</td></tr>
+          <tr><th scope="row">Media + QR</th><td><code>GET /api/images/{bannerId}.png</code> · <code>POST /api/qr-code/generate</code></td><td>Banners, share modal</td></tr>
+          <tr><th scope="row">AI helpers</th><td><code>GET /api/OpenAI</code> (image) · <code>POST /api/OpenAI/ask</code> (text)</td><td>Steps 3 and 7</td></tr>
+          <tr><th scope="row">CRM sync</th><td><code>/api/organizer/contact-sync/integration/*</code></td><td>Auto Sync modal</td></tr>
+          <tr><th scope="row">Donor portal</th><td><code>GET /api/member/me/donations</code> · <code>/{invoiceId}</code> · <code>/recurring-donations</code> · <code>POST .../{subscriptionId}/cancel</code></td><td>My Donations</td></tr>
+          <tr><th scope="row">Public directory</th><td><code>GET /api/organizer/{id}/campaign-list</code></td><td>Public campaign list page</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">Shared conventions</div>
+      <div class="panel-b">
+        <dl class="kv mb-0">
+          <dt>Envelope</dt>
+          <dd>Responses wrap the payload as <code>{ data, success, message, errorCode, validationErrors, meta, timestamp }</code>.</dd>
+          <dt>Paging</dt>
+          <dd>Requests use <code>pageNo</code> and <code>pageSize</code>; list responses return <code>{ pageNo, pageSize, pageCount, totalRecordsCount, pageData }</code>.</dd>
+          <dt>Search</dt>
+          <dd><code>searchTerm</code>, occasionally with <code>startDate</code> / <code>endDate</code>.</dd>
+          <dt>Identifiers</dt>
+          <dd>Campaigns, invoices and subscriptions are addressed by <code>uniqueId</code>, never by a database integer.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. STATE -->
+  <section id="state" class="mb-5">
+    <div class="eyebrow">Section 11</div>
+    <h2>State management</h2>
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">What lives in Redux</div>
+          <div class="panel-b">
+            <ul class="mb-0 ps-3">
+              <li class="mb-1">The campaign list with its paging, search and date filters.</li>
+              <li class="mb-1">The wizard form, the current step and the set of completed steps.</li>
+              <li class="mb-1">The campaign currently being donated to.</li>
+              <li class="mb-1">Per-area loading flags and per-area error strings — list, detail, create, update, donation, banners.</li>
+              <li class="mb-0">A short-lived response cache keyed by query, with explicit invalidation.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h">Async thunks</div>
+          <div class="panel-b">
+            <p class="mb-2 small"><code>fetchList</code> · <code>fetchById</code> · <code>fetchForEdit</code> · <code>create</code> · <code>updateBasicInfo</code> · <code>fetchForDonation</code> · <code>submit</code> · <code>fetchBanners</code> · <code>fetchCompletedSteps</code></p>
+            <p class="mb-0 small text-muted">Resuming an edit fans out eight step reads in parallel and merges them into one form object, which is why re-opening a half-built campaign feels instant rather than sequential.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn mt-4">
+      <p class="mb-0"><strong>Cache caveat:</strong> the list cache is time-based and has no cross-tab invalidation. After
+      a mutation the code refetches explicitly. Any new mutation must remember to do the same, or the grid will show
+      stale numbers until the entry expires.</p>
+    </div>
+  </section>
+
+  <!-- 12. GAPS -->
+  <section id="gaps" class="mb-5">
+    <div class="eyebrow">Section 12</div>
+    <h2>Known gaps and risks</h2>
+    <p class="lede mb-4">Measured against this repository's own production quality bar. Stated plainly rather than softened.</p>
+
+    <div class="row g-3 mb-4">
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G1</span> <span class="ms-2">Debug output in shipped code</span></div>
+          <div class="panel-b">
+            <p class="mb-2"><strong>279</strong> <code>console.*</code> calls across the donation components, services and slice — including full donation payloads printed with <code>JSON.stringify</code>, and Stripe client secrets logged during the ACH flow.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> donor names, emails and payment references are written to the browser console of every visitor. <strong>Fix:</strong> strip them; where a log is genuinely needed, gate it behind <code>import.meta.env.DEV</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G2</span> <span class="ms-2">Untyped boundaries</span></div>
+          <div class="panel-b">
+            <p class="mb-2"><strong>115</strong> <code>: any</code> annotations in this module, several of them on service return types and on the donation payload itself.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> a backend contract change compiles cleanly and fails at runtime, in a payment path. <strong>Fix:</strong> declare the shapes in <code>app/interface/donationInter</code> and remove <code>any</code> from every service signature.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G3</span> <span class="ms-2">Responsive debt</span></div>
+          <div class="panel-b">
+            <p class="mb-2">The module uses responsive props in 103 places, but 9 grids are still hard-coded to a fixed column count — including the donation preset buttons (<code>columns={2}</code>) and the payment-method picker (<code>repeat(2, 1fr)</code>) — and <code>100vh</code> is used in 15 places instead of <code>100dvh</code>.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> cramped preset buttons at 320–375&nbsp;px, and a checkout whose bottom is cut off by mobile browser chrome. <strong>Fix:</strong> responsive column objects, and <code>minH="100dvh"</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G4</span> <span class="ms-2">Oversized components</span></div>
+          <div class="panel-b">
+            <p class="mb-2"><code>createDonation.tsx</code> is 1,968 lines and <code>donateToCampaign.tsx</code> is 1,717 — against a repo target of roughly 150 lines per page component. Both fetch, validate, orchestrate payment and render.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> the payment orchestration is untestable in isolation and hard to review. <strong>Fix:</strong> lift each payment method into its own hook and each wizard step handler into its own module.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G5</span> <span class="ms-2">Hardcoded values</span></div>
+          <div class="panel-b">
+            <p class="mb-2">The Turnstile site key is a literal in the checkout file, and <code>getBannerImageUrl</code> hardcodes a testing host (<code>api.testing.Ideali.com</code>) rather than reading the configured base URL.</p>
+            <p class="mb-0 small text-muted"><strong>Note:</strong> a Turnstile <em>site</em> key is public by design, so this is a configuration defect, not a leaked secret. The hardcoded host is a live bug for any environment that is not testing. <strong>Fix:</strong> move both into validated build-time configuration.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G6</span> <span class="ms-2">Zero test coverage</span></div>
+          <div class="panel-b">
+            <p class="mb-2">The repository has no test runner and no test files. Nothing in this module — not the amount validation, not the ACH sequence, not the tip calculation — is covered by an automated check.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> every change to a payment path is verified by hand or not at all. <strong>Fix:</strong> this is an approved-dependency decision, not a drive-by; it needs a deliberate call.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G7</span> <span class="ms-2">Money handled as floats</span></div>
+          <div class="panel-b">
+            <p class="mb-2">Amounts and tips are parsed with <code>parseFloat</code> and added directly; the total is a string produced by <code>toFixed(2)</code>.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> binary floating point rounding on a currency total. <strong>Fix:</strong> do the arithmetic in minor units (integer cents) and format only at the edge, with <code>Intl.NumberFormat</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G8</span> <span class="ms-2">Silent failures and defensive guessing</span></div>
+          <div class="panel-b">
+            <p class="mb-2">Several wizard read calls swallow their error and return <code>null</code>, so a failed load looks identical to an empty field. Field extraction guesses across three or four possible response key names.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> an organizer sees a blank step, saves it, and overwrites real data with empty values. <strong>Fix:</strong> surface a retryable error, and pin one contract per endpoint.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G9</span> <span class="ms-2">Hard caps with no explanation</span></div>
+          <div class="panel-b">
+            <p class="mb-2">The custom donation amount is capped at five digits, so the largest gift a donor can type is 99,999. There is no message telling them why the field stops accepting input.</p>
+            <p class="mb-0 small text-muted"><strong>Risk:</strong> a major donor is silently blocked at the checkout. <strong>Fix:</strong> make the limit configurable and state it in the UI.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel h-100">
+          <div class="panel-h"><span class="req-id">G10</span> <span class="ms-2">No peer-to-peer capability</span></div>
+          <div class="panel-b">
+            <p class="mb-2">The module is a direct-giving product: organizer creates a campaign, donors give to it. There is no individual fundraiser page, no team, no team captain, no leaderboard, no supporter-side sharing or milestone email.</p>
+            <p class="mb-0 small text-muted"><strong>Context:</strong> those are exactly the items the competitive spec names as the disqualifying v1 floor for peer-to-peer. Everything below is what the existing module already gives that build a head start.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <p class="mb-2"><strong>What is already in place that a peer-to-peer build can reuse.</strong> This is a strong foundation, not a blank page:</p>
+      <ul class="mb-0 ps-3">
+        <li>A public, login-free donation page with a themeable identity and a working goal thermometer.</li>
+        <li>Stripe Connect per organizer, with card, wallet, ACH, PAD and cheque already wired.</li>
+        <li>The tip-funded revenue model, live and configurable from the API.</li>
+        <li>Recurring gifts, invoices, receipts and a donor self-service portal.</li>
+        <li>Share, QR and embed distribution, plus Facebook sharing with server-rendered preview metadata.</li>
+        <li>A CRM sync path for pushing donors into a marketing list.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 13. FAQ -->
+  <section id="faq" class="mb-5">
+    <div class="eyebrow">Section 13</div>
+    <h2>Questions this document gets asked</h2>
+
+    <div class="accordion" id="faqAcc">
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q1h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q1" aria-expanded="false" aria-controls="q1">
+            If a donor closes the tab mid-payment, are they charged?
+          </button>
+        </h3>
+        <div id="q1" class="accordion-collapse collapse" aria-labelledby="q1h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            For card and wallet, the charge only happens after Stripe authorises and our API records it — closing before
+            that leaves nothing behind. For ACH and PAD there is a genuine window: the payment intent is confirmed with
+            Stripe <em>before</em> our API is told about it, so a tab closed between those two calls can produce a bank
+            debit with no invoice on our side. Reconciling that window belongs to backend webhook handling, not to this
+            frontend.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q2h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2" aria-expanded="false" aria-controls="q2">
+            Can an organizer edit a campaign after publishing?
+          </button>
+        </h3>
+        <div id="q2" class="accordion-collapse collapse" aria-labelledby="q2h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            Yes. Edit re-opens the same nine-step wizard with every step pre-filled, and each step saves to the same
+            endpoint it used the first time. Publish itself is guarded — an already-published campaign cannot be
+            published twice.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q3h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3" aria-expanded="false" aria-controls="q3">
+            Does the charity pay a platform fee?
+          </button>
+        </h3>
+        <div id="q3" class="accordion-collapse collapse" aria-labelledby="q3h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            Not in this flow. The donor is offered an optional contribution on top of their gift, and that is what the
+            checkout copy describes as keeping the platform free for charities. Card-network processing fees are a
+            separate matter, settled by Stripe against the organizer's own connected account.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q4h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4" aria-expanded="false" aria-controls="q4">
+            What stops bots and card testing on a public page?
+          </button>
+        </h3>
+        <div id="q4" class="accordion-collapse collapse" aria-labelledby="q4h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            Cloudflare Turnstile issues a token that must be present before submit, and the token is carried to the API
+            in a request header so the backend can verify it independently. The browser check is a filter, not the
+            defence — server-side verification and rate limiting are what actually hold.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q5h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q5" aria-expanded="false" aria-controls="q5">
+            Where does the money physically land?
+          </button>
+        </h3>
+        <div id="q5" class="accordion-collapse collapse" aria-labelledby="q5h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            In the organizer's own Stripe account, connected through OAuth. The checkout initialises Stripe against that
+            connected account ID, so funds never pool in a platform-held balance before reaching the charity.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h3 class="accordion-header" id="q6h">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q6" aria-expanded="false" aria-controls="q6">
+            How far is this from a peer-to-peer product?
+          </button>
+        </h3>
+        <div id="q6" class="accordion-collapse collapse" aria-labelledby="q6h" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            The payment rails, the receipt pipeline, the recurring engine and the donor portal are done — that is the
+            expensive half. What is missing is the social layer: a fundraiser page owned by an individual supporter,
+            teams and captains, leaderboards, and the automated nudges that make supporters actually raise money. Those
+            build <em>on top of</em> the campaign entity that already exists rather than replacing it.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary" class="mb-5">
+    <div class="eyebrow">Reference</div>
+    <h2>Glossary</h2>
+    <div class="panel">
+      <div class="panel-b">
+        <dl class="gloss row mb-0">
+          <div class="col-lg-6">
+            <dt>Organizer</dt><dd>The nonprofit or charity account that owns campaigns and receives the money.</dd>
+            <dt>Campaign</dt><dd>One fundraising effort with a goal, a story, a banner, dates and suggested amounts.</dd>
+            <dt>Draft</dt><dd>A campaign that has been started in the wizard but never published. Not reachable by donors.</dd>
+            <dt>Preset amount</dt><dd>A suggested giving amount with an impact line attached, e.g. $50 — "feeds 30 children".</dd>
+            <dt>Frequency</dt><dd>One Time, Monthly or Yearly. Monthly and Yearly create a recurring subscription.</dd>
+            <dt>Goal thermometer</dt><dd>The progress bar comparing money raised to the target. Hidden if the organizer switched off goal visibility.</dd>
+            <dt>Platform tip</dt><dd>The optional extra the donor adds on top of their gift to fund the platform. Never deducted from the charity's amount.</dd>
+          </div>
+          <div class="col-lg-6">
+            <dt>Payment account</dt><dd>The organizer's connected merchant account. Determines the currency and which payment methods a campaign can offer.</dd>
+            <dt>Stripe Connect</dt><dd>Stripe's model for paying an organisation other than the platform. Each organizer authorises the platform to charge on their behalf.</dd>
+            <dt>Payment intent</dt><dd>Stripe's record of an attempted payment. Created before money moves and confirmed once the donor authorises.</dd>
+            <dt>ACH / PAD</dt><dd>Direct bank debit in the United States (ACH) and Canada (PAD). Cheaper than cards for large gifts, slower to clear.</dd>
+            <dt>Turnstile</dt><dd>Cloudflare's bot check. Produces a token the backend verifies before accepting a donation.</dd>
+            <dt>Invoice</dt><dd>The financial record of a gift, and the basis of the donor's receipt.</dd>
+            <dt>Recurring subscription</dt><dd>A monthly or yearly gift that charges automatically until it is cancelled or fails.</dd>
+            <dt>Auto sync</dt><dd>Pushing donor contact records into a connected marketing list, either once or continuously.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <div class="callout mb-4">
+    <p class="mb-0"><strong>In one sentence:</strong> the donation module is a complete, production-wired direct-giving
+    product — nine-step campaign builder, two-step public checkout, five payment method families on Stripe Connect,
+    and full post-gift operations — carrying real quality debt in logging, typing, component size and money arithmetic,
+    and missing only the social layer that would make it peer-to-peer.</p>
+  </div>
+
+  <footer class="pt-4 mt-4">
+    <p class="mb-1"><strong>Scope.</strong> This document describes the frontend repository only. Backend behaviour is
+    inferred from the endpoints this code calls and from the shapes it receives; webhook handling, settlement and
+    server-side authorisation are outside what could be verified here.</p>
+    <p class="mb-0">Counts quoted in Section 12 were measured against the working tree at the time of writing and will
+    drift as the code changes.</p>
+  </footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

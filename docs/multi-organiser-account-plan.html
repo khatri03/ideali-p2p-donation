@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Person, Many Charities — Account &amp; Schema Plan</title>
+<meta name="description" content="Why one person cannot currently fundraise for two charities on Ideali, what the database actually looks like today, and a step-by-step plan to fix it without disturbing anything that already works.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1b3e; --muted:#5b6784; --line:#e3e8f2; --bg:#f6f8fc;
+    --brand:#2b50ec; --brand-soft:#eef2ff;
+    --ok:#0f8a5f; --ok-soft:#e8f7f0;
+    --warn:#a8730a; --warn-soft:#fff8e8;
+    --stop:#b3261e; --stop-soft:#fdeceb;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg); color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       font-size:15.5px; line-height:1.62}
+  .wrap{max-width:1180px}
+  h1,h2,h3,h4{font-weight:700; letter-spacing:-.02em}
+  h2{font-size:1.6rem}
+  h3{font-size:1.15rem}
+  h4{font-size:1rem}
+  a{color:var(--brand)}
+  code,kbd{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace; font-size:.88em}
+  :not(pre) > code{background:#eef1f8; padding:.1rem .34rem; border-radius:5px; color:#1b2f6d}
+  pre{background:#0d1b3e; color:#e8ecf8; border-radius:12px; padding:1rem 1.15rem;
+      overflow-x:auto; font-size:.84rem; line-height:1.55; margin:0}
+  pre code{background:none; padding:0; color:inherit}
+  .pre-label{font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+             color:var(--muted); margin-bottom:.35rem}
+
+  .hero{background:linear-gradient(150deg,#0d1b3e 0%,#1b2f6d 55%,#2b50ec 100%); color:#fff}
+  .hero .eyebrow{letter-spacing:.16em; font-size:.7rem; color:#9fb4ff; font-weight:600}
+  .hero p{color:#cfdaff}
+  .hero .stat{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+              border-radius:12px; padding:.75rem .95rem}
+  .hero .stat b{display:block; font-size:1.35rem; line-height:1.2}
+  .hero .stat span{font-size:.78rem; color:#9fb4ff}
+
+  .panel{background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem}
+  .panel + .panel{margin-top:1rem}
+
+  .callout{border-left:4px solid var(--brand); background:var(--brand-soft);
+           border-radius:0 10px 10px 0; padding:.9rem 1.1rem}
+  .callout.warn{border-left-color:var(--warn); background:var(--warn-soft)}
+  .callout.stop{border-left-color:var(--stop); background:var(--stop-soft)}
+  .callout.ok{border-left-color:var(--ok); background:var(--ok-soft)}
+  .callout h4{margin:0 0 .35rem; font-size:.98rem}
+  .callout p:last-child, .callout ul:last-child{margin-bottom:0}
+
+  section.sec{background:#fff; border:1px solid var(--line); border-radius:16px;
+              overflow:hidden; margin-bottom:1.5rem}
+  section.sec > header{padding:1rem 1.35rem; border-bottom:1px solid var(--line);
+                  display:flex; gap:1rem; align-items:flex-start; flex-wrap:wrap}
+  section.sec > header .num{flex:0 0 auto; width:44px; height:44px; border-radius:12px;
+       background:var(--brand); color:#fff; display:grid; place-items:center;
+       font-weight:700; font-size:1.05rem}
+  section.sec > header .meta{flex:1 1 260px; min-width:0}
+  section.sec > header .meta h2{margin:0; font-size:1.22rem}
+  section.sec > header .meta .sub{color:var(--muted); font-size:.92rem}
+  section.sec .body{padding:1.1rem 1.35rem 1.35rem}
+
+  .tag{font-size:.68rem; font-weight:700; letter-spacing:.06em; padding:.16rem .5rem;
+       border-radius:999px; text-transform:uppercase; white-space:nowrap; display:inline-block}
+  .tag-fact{background:#eef2ff; color:#2b50ec}
+  .tag-prop{background:#fff2e2; color:#a8730a}
+  .tag-risk{background:#fdeceb; color:#b3261e}
+  .tag-ok{background:#e8f7f0; color:#0f8a5f}
+
+  table.tbl{width:100%; font-size:.9rem; background:#fff; margin:0}
+  table.tbl th{background:#f2f5fb; font-size:.74rem; letter-spacing:.05em; text-transform:uppercase;
+               color:var(--muted); font-weight:700}
+  table.tbl th, table.tbl td{border:1px solid var(--line); padding:.5rem .65rem; vertical-align:top}
+  table.tbl td.nowrap{white-space:nowrap}
+  .tblwrap{overflow-x:auto; border-radius:10px}
+
+  .toc a{display:block; padding:.3rem 0; color:var(--ink); text-decoration:none; font-size:.92rem}
+  .toc a:hover{color:var(--brand)}
+  .toc .n{display:inline-block; width:1.7rem; color:var(--muted); font-weight:700; font-size:.8rem}
+
+  /* schema diagram */
+  .chain{display:flex; gap:.6rem; align-items:stretch; flex-wrap:wrap}
+  .node{flex:1 1 190px; min-width:0; border:2px solid var(--line); border-radius:12px;
+        background:#fff; padding:.75rem .9rem}
+  .node.k{border-color:var(--brand)}
+  .node.new{border-color:var(--ok); background:var(--ok-soft)}
+  .node .t{font-weight:700; font-size:.95rem; margin-bottom:.3rem}
+  .node .f{font-size:.8rem; color:var(--muted); font-family:ui-monospace,Menlo,Consolas,monospace;
+           line-height:1.5}
+  .link{flex:0 0 auto; display:grid; place-items:center; color:var(--muted);
+        font-size:.72rem; font-weight:700; padding:0 .1rem; text-align:center; min-width:74px}
+  .link i{font-size:1.1rem; display:block}
+
+  .steps{counter-reset:st; list-style:none; padding-left:0; margin:0}
+  .steps > li{counter-increment:st; position:relative; padding-left:2.6rem; margin-bottom:1rem;
+              border:1px solid var(--line); border-radius:12px; padding:.85rem 1rem .85rem 2.9rem}
+  .steps > li::before{content:counter(st); position:absolute; left:.75rem; top:.8rem;
+       width:1.6rem; height:1.6rem; border-radius:50%; background:var(--brand); color:#fff;
+       display:grid; place-items:center; font-size:.82rem; font-weight:700}
+  .steps > li h4{margin:0 0 .35rem}
+  .steps > li p:last-child, .steps > li ul:last-child{margin-bottom:0}
+  .rollback{font-size:.85rem; color:var(--ok); background:var(--ok-soft);
+            border-radius:8px; padding:.4rem .65rem; margin-top:.5rem; display:inline-block}
+
+  .story{border:1px solid var(--line); border-radius:12px; padding:.9rem 1.05rem; background:#fafbfe}
+  .story h4{margin:0 0 .45rem; font-size:.98rem}
+  .story ol{margin:0; padding-left:1.15rem}
+  .story ol li{padding:.14rem 0}
+  .story .end{margin-top:.6rem; font-weight:600}
+  .story .end.bad{color:var(--stop)}
+  .story .end.good{color:var(--ok)}
+
+  .kv{display:grid; grid-template-columns:auto 1fr; gap:.35rem .9rem; font-size:.9rem}
+  .kv dt{color:var(--muted); font-weight:600; white-space:nowrap}
+  .kv dd{margin:0}
+
+  .src{font-size:.78rem; color:var(--muted); font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  footer.doc{color:var(--muted); font-size:.85rem; padding:2rem 0 3rem}
+
+  @media (max-width:767.98px){
+    body{font-size:15px}
+    .link{min-width:100%; padding:.15rem 0}
+    .link i{transform:rotate(90deg)}
+    section.sec > header{padding:.85rem 1rem}
+    section.sec .body{padding:1rem 1rem 1.15rem}
+    .panel{padding:1rem 1.05rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container wrap py-5">
+    <div class="eyebrow mb-2">IDEALI · PLATFORM ARCHITECTURE · PROPOSAL</div>
+    <h1 class="display-6 mb-3">One Person, Many Charities</h1>
+    <p class="mb-4" style="max-width:70ch">
+      Today a single human being can belong to exactly one charity on Ideali. This document explains
+      why, in plain language, shows the exact database structures that cause it, and proposes a fix
+      that adds one new table and changes nothing that already works.
+    </p>
+    <div class="row g-2" style="max-width:860px">
+      <div class="col-6 col-md-3"><div class="stat"><b>1</b><span>new table needed</span></div></div>
+      <div class="col-6 col-md-3"><div class="stat"><b>0</b><span>existing columns dropped</span></div></div>
+      <div class="col-6 col-md-3"><div class="stat"><b>0</b><span>queries rewritten</span></div></div>
+      <div class="col-6 col-md-3"><div class="stat"><b>1</b><span>new endpoint</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container wrap py-4">
+
+<!-- ─────────── how to read ─────────── -->
+<div class="panel mb-4">
+  <h3 class="mb-3">How to read this document</h3>
+  <p>Every statement in this document is labelled so there is never any doubt about what is real and
+     what is being suggested:</p>
+  <div class="tblwrap">
+  <table class="tbl">
+    <tr>
+      <td class="nowrap"><span class="tag tag-fact">Verified</span></td>
+      <td>This is how the code works <b>today</b>. A file and line number is given so anyone can open it and check.</td>
+    </tr>
+    <tr>
+      <td class="nowrap"><span class="tag tag-prop">Proposal</span></td>
+      <td>This does <b>not</b> exist yet. It is being suggested in this document and needs approval before anyone writes it.</td>
+    </tr>
+    <tr>
+      <td class="nowrap"><span class="tag tag-risk">Risk</span></td>
+      <td>A real cost or danger, stated openly rather than hidden.</td>
+    </tr>
+    <tr>
+      <td class="nowrap"><span class="tag tag-ok">Unchanged</span></td>
+      <td>Something that stays exactly as it is. Listed on purpose, because "what we are not touching" matters as much as what we are.</td>
+    </tr>
+  </table>
+  </div>
+  <p class="mb-0 mt-3">
+    File references point at the backend repository <code>D:\V4Ideas\Ideali\ideali.api</code>.
+    No code has been written for this proposal. Nothing here has been implemented.
+  </p>
+</div>
+
+<!-- ─────────── TOC ─────────── -->
+<div class="panel mb-4 toc">
+  <h3 class="mb-2">Contents</h3>
+  <div class="row">
+    <div class="col-md-6">
+      <a href="#q"><span class="n">1</span>The question, and the short answer</a>
+      <a href="#today"><span class="n">2</span>How the database works today</a>
+      <a href="#claim"><span class="n">3</span>The good news: tenancy is a claim</a>
+      <a href="#breaks"><span class="n">4</span>What breaks today — three real stories</a>
+      <a href="#options"><span class="n">5</span>Two ways to fix it, one rejected</a>
+      <a href="#newschema"><span class="n">6</span>The proposed schema, in full</a>
+    </div>
+    <div class="col-md-6">
+      <a href="#switch"><span class="n">7</span>How switching charity works</a>
+      <a href="#migration"><span class="n">8</span>Migration, step by step</a>
+      <a href="#nothing"><span class="n">9</span>Proof that nothing existing changes</a>
+      <a href="#frontend"><span class="n">10</span>Frontend changes</a>
+      <a href="#security"><span class="n">11</span>Security fix required first</a>
+      <a href="#p2p"><span class="n">12</span>Relationship to peer-to-peer fundraising</a>
+      <a href="#not"><span class="n">13</span>What this plan does <em>not</em> do</a>
+      <a href="#glossary"><span class="n">14</span>Glossary</a>
+      <a href="#decisions"><span class="n">15</span>Decisions needed</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── 1 ─────────── -->
+<section class="sec" id="q">
+  <header>
+    <div class="num">1</div>
+    <div class="meta">
+      <h2>The question, and the short answer</h2>
+      <div class="sub">Stated plainly before any technical detail.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <div class="callout mb-3">
+      <h4>The question</h4>
+      <p class="mb-0">A person raises money for Charity A. Later, Charity B also asks them to raise money.
+         Can the same person fundraise for both charities using the same Ideali login?</p>
+    </div>
+
+    <div class="callout stop mb-3">
+      <h4>The short answer: no — and not because we forgot to build it</h4>
+      <p class="mb-0">The database physically prevents it. One email address can only ever produce one
+         account, and one account is permanently tied to exactly one charity. This is enforced by a
+         uniqueness rule in the live production database, not by missing code.</p>
+    </div>
+
+    <p>Two things follow from that, and they are easy to confuse, so they are separated here:</p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel h-100">
+          <h4>It is <em>not</em> a peer-to-peer fundraising problem</h4>
+          <p class="mb-0">The fundraising feature itself would handle multiple charities fine. The
+             obstacle sits underneath it, in how accounts and charities are linked. Any feature that
+             needs one person to deal with two charities hits the same wall.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel h-100">
+          <h4>It <em>is</em> fixable without a rewrite</h4>
+          <p class="mb-0">The system already keeps "which charity am I currently working in" in a
+             separate, swappable place — the login token. That single design choice, made long ago,
+             is what makes this fix small instead of enormous. Section 3 explains it.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 2 ─────────── -->
+<section class="sec" id="today">
+  <header>
+    <div class="num">2</div>
+    <div class="meta">
+      <h2>How the database works today</h2>
+      <div class="sub">The three-link chain that ties a login to exactly one charity.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-fact">Verified</span> — it describes the code as it
+       exists right now.</p>
+
+    <h3 class="mt-4 mb-2">The chain in plain words</h3>
+    <p>Three tables sit in a straight line. Each one points at exactly one row in the next.</p>
+
+    <div class="chain my-3">
+      <div class="node k">
+        <div class="t">User</div>
+        <div class="f">Id<br>UserName (email)<br>PasswordHash<br><b>ContactId</b></div>
+      </div>
+      <div class="link"><i class="bi bi-arrow-right"></i>points to<br>one</div>
+      <div class="node k">
+        <div class="t">Contact</div>
+        <div class="f">Id<br>FirstName / LastName<br>Email / Phone<br><b>OrganizerId</b></div>
+      </div>
+      <div class="link"><i class="bi bi-arrow-right"></i>points to<br>one</div>
+      <div class="node k">
+        <div class="t">Organizer</div>
+        <div class="f">Id<br>Name<br><span style="color:#5b6784">(the charity)</span></div>
+      </div>
+    </div>
+
+    <ul>
+      <li><b>User</b> is the login. Email address and password live here.</li>
+      <li><b>Contact</b> is the person's details — name, phone, address.</li>
+      <li><b>Organizer</b> is the charity.</li>
+    </ul>
+
+    <p>A <code>User</code> holds one <code>ContactId</code>. Not a list — a single number, and it cannot be
+       left empty. A <code>Contact</code> holds one <code>OrganizerId</code>, also a single number that cannot be
+       empty. Follow the arrows and you arrive at exactly one charity, every time, with no way to
+       arrive at a second one.</p>
+
+    <div class="pre-label mt-4">Verified · src/Shared/Ideas.Shared.Domain/Entities/User.cs</div>
+<pre><code>public class User : BaseAuditEntity&lt;int&gt;, IUniqueId, IRowVersion, ISoftDelete
+{
+    public required string UserName { get; set; }   // this is the email address
+    public required string PasswordSalt { get; set; }
+    public required string PasswordHash { get; set; }
+    public int ContactId { get; set; }              // ONE contact. Not nullable. Not a list.
+
+    public Contact Contact { get; set; }
+}</code></pre>
+
+    <div class="pre-label mt-3">Verified · src/Shared/Ideas.Shared.Domain/Entities/Contact.cs</div>
+<pre><code>public class Contact : BaseAuditEntity&lt;int&gt;, IUniqueId, IOrganizerFilter, IRowVersion, ISoftDelete
+{
+    public int OrganizerId { get; set; }            // ONE charity. Not nullable.
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+
+    public Organizer Organizer { get; set; }
+    public virtual ICollection&lt;User&gt; Users { get; set; } = new List&lt;User&gt;();
+}</code></pre>
+
+    <div class="callout warn mt-3">
+      <h4>A trap worth naming</h4>
+      <p class="mb-0">Notice that <code>Contact</code> has a list of <code>Users</code>. It is tempting to read
+         that as "multi-charity support already exists". It does not. That list runs the
+         <em>wrong way</em>: many logins can share one person's details inside one charity. It never
+         allows one login to reach two charities.</p>
+    </div>
+
+    <h3 class="mt-4 mb-2">The lock: one email, one account, platform-wide</h3>
+    <p>Even if someone tried to work around the chain by creating a second account for the same person,
+       the database refuses. The email column carries a uniqueness rule that covers the entire platform —
+       it is not scoped per charity.</p>
+
+    <div class="pre-label">Verified · src/Shared/Ideas.SharedKernel/Persistence/BaseDbContext.Configuration.cs:1292</div>
+<pre><code>entity
+    .HasIndex(u =&gt; u.UserName)
+    .IsUnique();</code></pre>
+
+    <div class="pre-label mt-3">Verified · Identity migration 20260209185118_AddedIndexToLoginName.cs — already applied in production</div>
+<pre><code>migrationBuilder.CreateIndex(
+    name: "IX_User_UserName",
+    schema: "dbo",
+    table: "User",
+    column: "UserName",
+    unique: true);</code></pre>
+
+    <p class="mt-3">There is no <code>OrganizerId</code> anywhere in that index. So
+       <code>sara@example.com</code> can exist once on the whole platform, and that single row already
+       belongs to one charity. Attempting to insert a second row with the same email fails at the
+       database level, before any application code gets a say.</p>
+
+    <div class="callout stop">
+      <h4>Plain summary of section 2</h4>
+      <p class="mb-0">One email address → one login → one contact record → one charity.
+         Fixed, permanent, enforced by the database itself.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 3 ─────────── -->
+<section class="sec" id="claim">
+  <header>
+    <div class="num">3</div>
+    <div class="meta">
+      <h2>The good news: "which charity" is already a swappable value</h2>
+      <div class="sub">This is the single fact that turns a rewrite into a small change.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-fact">Verified</span>.</p>
+
+    <p>Here is the important discovery. When the system runs a query — "list this charity's campaigns",
+       "list this charity's members" — it does <b>not</b> walk the chain from Section 2 to work out which
+       charity you are in. Instead it reads a single number that was stamped into your login token when
+       you signed in.</p>
+
+    <div class="chain my-3">
+      <div class="node k">
+        <div class="t">1 · Sign in</div>
+        <div class="f">token gets stamped<br>organizerId = 7</div>
+      </div>
+      <div class="link"><i class="bi bi-arrow-right"></i></div>
+      <div class="node k">
+        <div class="t">2 · Every request</div>
+        <div class="f">middleware reads<br>the stamp into<br>ClaimStore</div>
+      </div>
+      <div class="link"><i class="bi bi-arrow-right"></i></div>
+      <div class="node k">
+        <div class="t">3 · Every query</div>
+        <div class="f">automatically adds<br>WHERE OrganizerId = 7</div>
+      </div>
+    </div>
+
+    <p>Three files, one per step. That is the whole mechanism:</p>
+
+    <div class="pre-label mt-3">Verified · Step 1 — the stamp is written · TokenService.cs:31</div>
+<pre><code>public string GenerateJwtToken(User userInfo, Organizer organizer, IJwtSettings jwtSettings,
+                               DateTime utcDate, IEnumerable&lt;string&gt; userRoles)
+{
+    var claims = new List&lt;Claim&gt;
+    {
+        new(ClaimNames.UserId, userInfo.Id.ToString()),
+        new(ClaimNames.OrganizerId, organizer.Id.ToString()),   // &lt;── the stamp
+        ...
+    };</code></pre>
+
+    <div class="pre-label mt-3">Verified · Step 2 — the stamp is read · ClaimStoreMiddleware.cs:23</div>
+<pre><code>claimStore.OrganizerId = GetClaim&lt;int&gt;(claims, ClaimNames.OrganizerId);</code></pre>
+
+    <div class="pre-label mt-3">Verified · Step 3 — every query obeys it · Repository.GlobalFilters.cs:27</div>
+<pre><code>private IQueryable&lt;TEntity&gt; ApplyOrganizerFilter(IQueryable&lt;TEntity&gt; query)
+{
+    if (typeof(IOrganizerFilter).IsAssignableFrom(typeof(TEntity)) &amp;&amp; claimStore.OrganizerId &gt; 0)
+    {
+        return ApplyFilter(query, typeof(TEntity),
+                           nameof(IOrganizerFilter.OrganizerId), claimStore.OrganizerId);
+    }
+    ...
+}</code></pre>
+
+    <p class="mt-3">Any table whose entity is marked <code>IOrganizerFilter</code> is filtered automatically —
+       campaigns, events, members, contacts, payment accounts, and roughly thirty others. Nobody writes
+       that <code>WHERE</code> clause by hand.</p>
+
+    <p>Writing works the same way in reverse. When a new row is saved, the charity number is stamped onto
+       it automatically from the same place:</p>
+
+    <div class="pre-label">Verified · BaseDbContext.cs:230</div>
+<pre><code>if (change.Entity is IOrganizerFilter addedEntity &amp;&amp; claimStore.OrganizerId &gt; 0 &amp;&amp; addedEntity.OrganizerId &lt;= 0)
+{
+    addedEntity.OrganizerId = claimStore.OrganizerId;
+}</code></pre>
+
+    <div class="callout ok mt-3">
+      <h4>Why this matters more than anything else in this document</h4>
+      <p class="mb-0">Because "which charity" lives in the token and not in the chain of tables,
+         <b>changing charity means issuing a new token</b>. It does not mean rewriting queries. All the
+         filtering and stamping described above follows the new number automatically, with no code
+         changes at all. This indirection already exists and is already trusted in production.</p>
+    </div>
+
+    <p class="mt-3">One more helpful detail. The function that builds a token set already takes the charity
+       as a plain input rather than looking it up itself:</p>
+
+    <div class="pre-label">Verified · AccountService.cs:1247</div>
+<pre><code>private async Task&lt;ServiceResponse&lt;object&gt;&gt; GenerateTokenDataAsync(User userInfo, Organizer organizer,
+                                                                   IJwtSettings jwtSettings,
+                                                                   IEnumerable&lt;string&gt; userRoles)
+{
+    var utcDate = DateTime.UtcNow;
+    string jwtToken = tokenService.GenerateJwtToken(userInfo, organizer, jwtSettings, utcDate, userRoles);
+    var refreshToken = await tokenService.GenerateRefreshTokenAsync(organizer.Id, userInfo.Id, jwtSettings, utcDate);
+    ...
+}</code></pre>
+
+    <p class="mt-3">Hand it a different <code>organizer</code> and it produces a complete, valid token set for that
+       charity. The building block a "switch charity" feature needs is already written and already in use.</p>
+
+  </div>
+</section>
+
+<!-- ─────────── 4 ─────────── -->
+<section class="sec" id="breaks">
+  <header>
+    <div class="num">4</div>
+    <div class="meta">
+      <h2>What breaks today — three real stories</h2>
+      <div class="sub">Concrete, with names, so the problem is impossible to misread.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Meet <b>Sara</b>. She already has an Ideali account because she fundraises for <b>Hope Trust</b>
+       (charity A). <b>Green Fund</b> (charity B) now wants her too.</p>
+
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="story h-100">
+          <h4><span class="tag tag-risk">Story 1</span> Sara donates to Green Fund</h4>
+          <ol>
+            <li>Sara opens Green Fund's donation page and gives £50.</li>
+            <li>The system tries to make sure she has an account.</li>
+            <li>It searches for her email — <b>across all charities, with no filter</b>.</li>
+            <li>It finds her Hope Trust account and decides she already has one.</li>
+            <li>It adds a "Donation module" permission to that Hope Trust account and stops.</li>
+          </ol>
+          <div class="end bad">Result: Green Fund's contact record for Sara has no login attached to it.
+             Sara's account still belongs to Hope Trust.</div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="story h-100">
+          <h4><span class="tag tag-risk">Story 2</span> Green Fund invites Sara to fundraise</h4>
+          <ol>
+            <li>Green Fund sends Sara an invitation email.</li>
+            <li>Sara clicks the link and signs in with her usual email and password.</li>
+            <li>Her token is stamped with <b>Hope Trust</b>, because that is the only charity her account knows.</li>
+            <li>Every screen now filters to Hope Trust.</li>
+            <li>Green Fund's campaign is invisible to her. Her fundraising page for it cannot be reached.</li>
+          </ol>
+          <div class="end bad">Result: the invitation appears to work and then quietly leads nowhere.
+             Nothing displays an error.</div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="story h-100">
+          <h4><span class="tag tag-risk">Story 3</span> The security consequence</h4>
+          <ol>
+            <li>Green Fund's donation flow triggered the email search in Story 1.</li>
+            <li>That search matched a record <b>owned by a different charity</b>.</li>
+            <li>The code then granted a module permission on that other charity's account.</li>
+            <li>No check was performed that the two charities are the same.</li>
+          </ol>
+          <div class="end bad">Result: activity under one charity silently modifies an account belonging
+             to another. See section 11.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pre-label mt-4">Verified · the line behind stories 1 and 3 · DonorAccountService.cs:36</div>
+<pre><code>var loginInfo = await uow.Repository&lt;User&gt;()
+    .Query(false)                                                  // global filters switched OFF
+    .FirstOrDefaultAsync(u =&gt; contactEmails.Contains(u.UserName));  // no organiser condition</code></pre>
+
+    <p class="mt-3">The method receives an <code>organizerId</code> argument. This particular lookup never uses
+       it. The match is on email alone, across every charity on the platform.</p>
+
+  </div>
+</section>
+
+<!-- ─────────── 5 ─────────── -->
+<section class="sec" id="options">
+  <header>
+    <div class="num">5</div>
+    <div class="meta">
+      <h2>Two ways to fix it, one rejected</h2>
+      <div class="sub">Both are written out, so the choice can be judged rather than trusted.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="panel h-100" style="border-color:#f0c9c6">
+          <div class="mb-2"><span class="tag tag-risk">Rejected</span></div>
+          <h3>Option A — let one person have several accounts</h3>
+          <p>Change the uniqueness rule from "email is unique on the platform" to "email is unique
+             within a charity". Sara then gets two separate accounts with the same email address, one
+             per charity.</p>
+          <h4 class="mt-3">Why this is rejected</h4>
+          <ul class="mb-0">
+            <li><b>Login becomes ambiguous.</b> Sara types her email and password. Which of her two
+                accounts is she signing into? The system cannot know. Every sign-in screen would have to
+                ask "which charity?" before she can even authenticate.</li>
+            <li><b>A live production index must be dropped</b> and replaced. That is a destructive change
+                to a shipped table, which is exactly what we are trying to avoid.</li>
+            <li><b>Two passwords, two profiles, two password resets</b> for one human being. Sara changes
+                her password and it only changes for one charity.</li>
+            <li>It multiplies accounts to solve a problem that is really about membership.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel h-100" style="border-color:#bfe6d4">
+          <div class="mb-2"><span class="tag tag-ok">Recommended</span></div>
+          <h3>Option B — one account, several memberships</h3>
+          <p>Keep exactly one account for Sara. Add a new table that records which charities that one
+             account belongs to. Sara stays one person with one password, and simply has two memberships.</p>
+          <h4 class="mt-3">Why this is the right shape</h4>
+          <ul class="mb-0">
+            <li><b>Login never changes.</b> Email still identifies one human. The unique index stays.</li>
+            <li><b>Only a new table is added.</b> No existing column is altered or dropped.</li>
+            <li><b>It matches reality.</b> Sara is one person who supports two causes — not two people.</li>
+            <li><b>It fits the existing design.</b> The token already carries "current charity"; this
+                simply gives that value more than one legal setting.</li>
+            <li><b>Nothing happens until a second membership exists.</b> Every current user has one, so
+                every current user behaves identically.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-3">
+      <h4>The idea in one sentence</h4>
+      <p class="mb-0">Stop treating "which charity" as a permanent property of the account, and start
+         treating it as a <b>membership</b> the account can hold more than one of — while the token
+         continues to decide which membership is active right now.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 6 ─────────── -->
+<section class="sec" id="newschema">
+  <header>
+    <div class="num">6</div>
+    <div class="meta">
+      <h2>The proposed schema, in full</h2>
+      <div class="sub">One new table. Every column explained.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-prop">Proposal</span>. None of it exists yet.</p>
+
+    <h3 class="mb-2">Before and after</h3>
+
+    <p class="mb-1"><b>Before</b> — one path, no branches:</p>
+    <div class="chain mb-3">
+      <div class="node"><div class="t">User</div><div class="f">ContactId</div></div>
+      <div class="link"><i class="bi bi-arrow-right"></i>one</div>
+      <div class="node"><div class="t">Contact</div><div class="f">OrganizerId</div></div>
+      <div class="link"><i class="bi bi-arrow-right"></i>one</div>
+      <div class="node"><div class="t">Organizer</div><div class="f">the charity</div></div>
+    </div>
+
+    <p class="mb-1"><b>After</b> — the old path is untouched, and a new one runs alongside it:</p>
+    <div class="chain mb-2">
+      <div class="node k"><div class="t">User</div><div class="f">ContactId<br><span style="color:#0f8a5f">(now the default)</span></div></div>
+      <div class="link"><i class="bi bi-arrow-right"></i>many</div>
+      <div class="node new"><div class="t">UserContact <span class="tag tag-prop">new</span></div><div class="f">UserId<br>ContactId<br>OrganizerId<br>IsDefault<br>JoinedOnUtc</div></div>
+      <div class="link"><i class="bi bi-arrow-right"></i>one each</div>
+      <div class="node k"><div class="t">Contact</div><div class="f">OrganizerId</div></div>
+    </div>
+    <p class="src mb-3">The old <code>User.ContactId</code> arrow still exists and still works. The new table sits beside it, not in place of it.</p>
+
+    <h3 class="mt-4 mb-2">The new table, column by column</h3>
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:22%">Column</th><th style="width:16%">Type</th><th>What it means, in plain words</th></tr></thead>
+      <tbody>
+        <tr><td class="nowrap"><code>Id</code></td><td class="nowrap">int, identity</td><td>The row's own number. Standard for every table here.</td></tr>
+        <tr><td class="nowrap"><code>UserId</code></td><td class="nowrap">int, required</td><td>Which login this membership belongs to.</td></tr>
+        <tr><td class="nowrap"><code>ContactId</code></td><td class="nowrap">int, required</td><td>The person's details record <em>inside that charity</em>. Each charity keeps its own contact record for the same human, which is how it already works today.</td></tr>
+        <tr><td class="nowrap"><code>OrganizerId</code></td><td class="nowrap">int, required</td><td>Which charity. Stored directly rather than read through <code>Contact</code>, so the check on the switch endpoint needs no join.</td></tr>
+        <tr><td class="nowrap"><code>IsDefault</code></td><td class="nowrap">bit, required</td><td>Which charity the person lands in when they sign in without choosing. Exactly one row per user is <code>true</code>.</td></tr>
+        <tr><td class="nowrap"><code>JoinedOnUtc</code></td><td class="nowrap">datetime2, required</td><td>When this membership was created. Needed because memberships are an audit trail, not just a lookup.</td></tr>
+        <tr><td class="nowrap"><code>IsDeleted</code></td><td class="nowrap">bit, required</td><td>Soft delete, matching the rest of the platform. Removing a membership must be reversible and traceable.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 class="mt-4 mb-2">Constraints and indexes</h3>
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:32%">Rule</th><th>Why it is there</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="nowrap"><b>Unique</b> <code>(UserId, OrganizerId)</code></td>
+          <td>A person can join a charity once, not twice. Without this, a duplicate row would double every count that walks memberships.</td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>Unique</b> <code>(ContactId)</code></td>
+          <td>One contact record belongs to one membership. Prevents two different people's logins claiming the same contact row.</td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>Index</b> <code>(UserId, IsDeleted)</code></td>
+          <td>The commonest question — "which charities does this person belong to?" — is asked on every sign-in and every switch.</td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>Foreign keys</b> to <code>User</code>, <code>Contact</code>, <code>Organizer</code></td>
+          <td>A membership pointing at a charity that does not exist is corrupt data. The database should refuse it.</td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>Delete behaviour:</b> restrict</td>
+          <td>Deleting a charity must not silently erase membership history. It should fail loudly and be handled deliberately.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout stop mt-3">
+      <h4>Critical design rule — do not mark this table <code>IOrganizerFilter</code></h4>
+      <p>Almost every table in this system carries <code>IOrganizerFilter</code>, and doing so is normally
+         correct. Here it would be a serious bug.</p>
+      <p class="mb-0">Remember from section 3 that <code>IOrganizerFilter</code> makes every query add
+         <code>WHERE OrganizerId = &lt;current charity&gt;</code> automatically. The whole point of this table is
+         to answer "which <em>other</em> charities does this person belong to?". If the table filtered
+         itself to the current charity, it would only ever return the one you are already in — the exact
+         answer that is useless. This table must be queried unfiltered, with permission checked explicitly
+         in code instead.</p>
+    </div>
+
+    <div class="pre-label mt-4">Proposal · the entity</div>
+<pre><code>public class UserContact : BaseAuditEntity&lt;int&gt;, ISoftDelete
+{
+    public int UserId { get; set; }
+    public int ContactId { get; set; }
+    public int OrganizerId { get; set; }
+    public bool IsDefault { get; set; }
+    public DateTime JoinedOnUtc { get; set; }
+    public bool IsDeleted { get; set; }
+
+    public User User { get; set; }
+    public Contact Contact { get; set; }
+    public Organizer Organizer { get; set; }
+}</code></pre>
+
+    <div class="pre-label mt-3">Proposal · the EF configuration</div>
+<pre><code>modelBuilder.Entity&lt;UserContact&gt;(entity =&gt;
+{
+    entity.ToTable("UserContact", "dbo");
+
+    entity.HasOne(uc =&gt; uc.User)
+        .WithMany(u =&gt; u.OrganizerMemberships)
+        .HasForeignKey(uc =&gt; uc.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    entity.HasOne(uc =&gt; uc.Contact)
+        .WithOne()
+        .HasForeignKey&lt;UserContact&gt;(uc =&gt; uc.ContactId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    entity.HasOne(uc =&gt; uc.Organizer)
+        .WithMany()
+        .HasForeignKey(uc =&gt; uc.OrganizerId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    entity.HasIndex(uc =&gt; new { uc.UserId, uc.OrganizerId }).IsUnique();
+    entity.HasIndex(uc =&gt; uc.ContactId).IsUnique();
+    entity.HasIndex(uc =&gt; new { uc.UserId, uc.IsDeleted });
+});</code></pre>
+
+    <div class="pre-label mt-3">Proposal · the equivalent SQL, for anyone who prefers reading it this way</div>
+<pre><code>CREATE TABLE dbo.UserContact (
+    Id           INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_UserContact PRIMARY KEY,
+    UserId       INT           NOT NULL,
+    ContactId    INT           NOT NULL,
+    OrganizerId  INT           NOT NULL,
+    IsDefault    BIT           NOT NULL CONSTRAINT DF_UserContact_IsDefault DEFAULT(0),
+    JoinedOnUtc  DATETIME2(7)  NOT NULL,
+    IsDeleted    BIT           NOT NULL CONSTRAINT DF_UserContact_IsDeleted DEFAULT(0),
+    CreatedBy    INT           NULL,
+    CreatedOn    DATETIME2(7)  NULL,
+    ModifiedBy   INT           NULL,
+    ModifiedOn   DATETIME2(7)  NULL,
+
+    CONSTRAINT FK_UserContact_User      FOREIGN KEY (UserId)      REFERENCES dbo.[User](Id),
+    CONSTRAINT FK_UserContact_Contact   FOREIGN KEY (ContactId)   REFERENCES dbo.Contact(Id),
+    CONSTRAINT FK_UserContact_Organizer FOREIGN KEY (OrganizerId) REFERENCES dbo.Organizer(Id)
+);
+
+CREATE UNIQUE INDEX UX_UserContact_UserId_OrganizerId ON dbo.UserContact (UserId, OrganizerId);
+CREATE UNIQUE INDEX UX_UserContact_ContactId          ON dbo.UserContact (ContactId);
+CREATE        INDEX IX_UserContact_UserId_IsDeleted   ON dbo.UserContact (UserId, IsDeleted);</code></pre>
+
+  </div>
+</section>
+
+<!-- ─────────── 7 ─────────── -->
+<section class="sec" id="switch">
+  <header>
+    <div class="num">7</div>
+    <div class="meta">
+      <h2>How switching charity works</h2>
+      <div class="sub">One new endpoint. No query anywhere else changes.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-prop">Proposal</span>.</p>
+
+    <p>Sara is signed in and currently working in Hope Trust. She picks Green Fund from a menu.
+       Here is exactly what happens:</p>
+
+    <ol class="steps">
+      <li>
+        <h4>The frontend calls the new endpoint</h4>
+        <p class="mb-0"><code>POST /api/identity/account/switch-organizer</code> with the target charity's
+           <code>uniqueId</code> in the body. The current access token is sent as normal.</p>
+      </li>
+      <li>
+        <h4>The server checks permission — this is the security gate</h4>
+        <p>It looks for a live <code>UserContact</code> row matching the signed-in user and the requested
+           charity. If there is no such row, the request is refused. Nothing about roles is consulted;
+           the membership row itself <em>is</em> the permission.</p>
+        <p class="mb-0"><b>Deny by default.</b> No row, no switch. The user id comes from the token, never
+           from the request body, so a caller cannot ask to switch on someone else's behalf.</p>
+      </li>
+      <li>
+        <h4>A completely new token set is issued</h4>
+        <p class="mb-0">The existing <code>GenerateTokenDataAsync</code> is called with the target charity.
+           Both the access token and the refresh token are new. The old refresh token is revoked, so the
+           previous charity's session cannot be resumed with it.</p>
+      </li>
+      <li>
+        <h4>Everything else follows automatically</h4>
+        <p class="mb-0">The middleware reads the new stamp, the repository filter uses the new number,
+           and new rows get stamped with the new charity. <b>No query, filter, or service was modified to
+           make this work</b> — that is the payoff from section 3.</p>
+      </li>
+    </ol>
+
+    <div class="pre-label mt-3">Proposal · the permission check, written out</div>
+<pre><code>var membership = await uow.Repository&lt;UserContact&gt;()
+    .Query(false)                          // deliberately unfiltered — see the design rule in section 6
+    .FirstOrDefaultAsync(uc =&gt;
+        uc.UserId == claimStore.UserId &amp;&amp;  // from the token, never from the request
+        uc.Organizer.UniqueId == request.OrganizerUniqueId &amp;&amp;
+        !uc.IsDeleted,
+        cancellationToken);
+
+if (membership is null)
+{
+    return Forbidden();                    // no membership, no switch. No detail leaked about why.
+}</code></pre>
+
+    <h3 class="mt-4 mb-2">Three things that must not be forgotten</h3>
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:28%">Thing</th><th>Why, and what to do</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="nowrap"><b>The refresh token</b></td>
+          <td><span class="tag tag-fact">Verified</span> <code>RefreshToken</code> implements <code>IOrganizerFilter</code>
+              and <code>GenerateRefreshTokenAsync</code> takes <code>organizer.Id</code>. A refresh token therefore
+              belongs to one charity. Issuing only a new access token would leave the old refresh token in
+              place, and the next silent refresh would drop the user back into the previous charity.
+              <b>Both tokens must be replaced, and the old refresh token revoked.</b></td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>The live connection</b></td>
+          <td><span class="tag tag-fact">Verified</span> <code>AlertHub.cs:53</code> reads the charity from
+              the token when the connection is established. An open connection keeps the old charity forever.
+              <b>The frontend must disconnect and reconnect after a switch.</b></td>
+        </tr>
+        <tr>
+          <td class="nowrap"><b>Anything cached in the browser</b></td>
+          <td>Charity name, logo, branding, permissions and menu items are held after sign-in. All of it is
+              wrong the moment the charity changes. <b>The simplest correct behaviour is a full page reload
+              after a successful switch</b>, which clears every cache at once and costs the user one second.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 8 ─────────── -->
+<section class="sec" id="migration">
+  <header>
+    <div class="num">8</div>
+    <div class="meta">
+      <h2>Migration, step by step</h2>
+      <div class="sub">Each step is safe on its own and can be stopped after.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-prop">Proposal</span>. The order matters, so it is
+       numbered and each step states what can be undone.</p>
+
+    <ol class="steps">
+      <li>
+        <h4>Fix the cross-charity email lookup first</h4>
+        <p>Described fully in section 11. It must come first, because building memberships on top of a
+           lookup that links accounts by accident would turn a quiet bug into permanent, legitimate-looking
+           cross-charity access.</p>
+        <div class="rollback">Undo: revert the change. It is a code fix only, no data is touched.</div>
+      </li>
+      <li>
+        <h4>Create the <code>UserContact</code> table</h4>
+        <p>A brand-new, empty table. No existing table is read, locked, or altered. This is the safest kind
+           of migration there is.</p>
+        <div class="rollback">Undo: drop the table. Nothing depends on it yet.</div>
+      </li>
+      <li>
+        <h4>Fill it from the data that already exists</h4>
+        <p>One row per existing user, built from the values already on their record. No new information is
+           invented and nothing is guessed.</p>
+        <div class="pre-label mt-2">Proposal · the backfill</div>
+<pre><code>INSERT INTO dbo.UserContact (UserId, ContactId, OrganizerId, IsDefault, JoinedOnUtc, IsDeleted)
+SELECT  u.Id,
+        u.ContactId,
+        c.OrganizerId,
+        1,                      -- every existing membership is that user's default
+        SYSUTCDATETIME(),
+        0
+FROM    dbo.[User]   u
+JOIN    dbo.Contact  c ON c.Id = u.ContactId
+WHERE   NOT EXISTS (SELECT 1 FROM dbo.UserContact x WHERE x.UserId = u.Id);</code></pre>
+        <p class="mt-2 mb-0">After this runs, every user on the platform has exactly one membership —
+           which is precisely what they effectively had before. Nothing has gained a second one.</p>
+        <div class="rollback">Undo: delete all rows. No other table was written to.</div>
+      </li>
+      <li>
+        <h4>Verify the backfill before going further</h4>
+        <p class="mb-0">Three counts must match expectations: total memberships equals total users; every
+           user has exactly one row marked default; no user has zero rows. If any count is wrong, stop —
+           do not proceed to step 5.</p>
+        <div class="rollback">Undo: nothing to undo. This step only reads.</div>
+      </li>
+      <li>
+        <h4>Add the switch endpoint and the frontend menu</h4>
+        <p class="mb-0">The endpoint from section 7, plus a charity switcher in the user menu that only
+           appears when a person has more than one membership. Since every user currently has exactly one,
+           <b>no user sees any difference at this point.</b> The feature is live but dormant.</p>
+        <div class="rollback">Undo: remove the endpoint and hide the menu. No data changes.</div>
+      </li>
+      <li>
+        <h4>Allow a second membership to be created</h4>
+        <p class="mb-0">Only now does anything actually become possible that was not possible before. The
+           first flow to use it should be a single, deliberate one — accepting an invitation from a second
+           charity — rather than every flow at once.</p>
+        <div class="rollback">Undo: stop creating new rows. Existing single memberships are unaffected.</div>
+      </li>
+    </ol>
+
+    <div class="callout ok">
+      <h4>The property that makes this safe</h4>
+      <p class="mb-0">Steps 2, 3 and 5 change <b>nobody's</b> experience. The platform behaves identically
+         after each of them. The first genuine behaviour change happens at step 6, and even then only for a
+         person who actually has a second membership. Work can pause after any step and sit there
+         indefinitely without harm.</p>
+    </div>
+
+    <div class="callout warn mt-3">
+      <h4>Before running any generated migration</h4>
+      <p class="mb-0">Open the generated migration file and read it before it touches a real database.
+         Confirm it only creates a new table, and does not alter, rebuild, or re-index <code>User</code> or
+         <code>Contact</code>. A tool that decides to rebuild a large shipped table can hold locks for a long
+         time. Reading the file takes a minute and removes the risk entirely.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 9 ─────────── -->
+<section class="sec" id="nothing">
+  <header>
+    <div class="num">9</div>
+    <div class="meta">
+      <h2>Proof that nothing existing changes</h2>
+      <div class="sub">The most important claim in this document, checked item by item.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>The whole proposal rests on one promise: existing users and existing code carry on exactly as
+       before. Here is that promise checked against every part of the system that could be affected.</p>
+
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:26%">Part of the system</th><th style="width:14%">Status</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td><code>IX_User_UserName</code> unique index</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Never dropped, never modified. One email still means one human.</td></tr>
+        <tr><td><code>User.ContactId</code> column</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Stays exactly where it is and keeps working. It simply gains a clearer meaning: the default membership.</td></tr>
+        <tr><td><code>Contact.OrganizerId</code> column</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Each contact record still belongs to one charity, as it should.</td></tr>
+        <tr><td>Sign-in flow</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Email and password, same as always. The charity stamped into the token comes from the default membership, which for every existing user is the same value it was before.</td></tr>
+        <tr><td>The repository filter</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Reads the same number from the same place. It has no idea any of this happened.</td></tr>
+        <tr><td>The ~30 tables marked <code>IOrganizerFilter</code></td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>Not touched, not migrated, not re-indexed.</td></tr>
+        <tr><td>Every existing query and service</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>No query needs a new join or condition. Charity scoping continues to happen automatically.</td></tr>
+        <tr><td>Roles and permissions</td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>No new role is introduced. Membership is not a role and is not treated as one.</td></tr>
+        <tr><td>Users with one charity <em>(that is, all of them today)</em></td><td class="nowrap"><span class="tag tag-ok">Unchanged</span></td><td>They see no switcher, no new screen, no new step. Their experience is byte-for-byte what it is now.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout warn mt-3">
+      <h4>Honest exception — one place does change</h4>
+      <p class="mb-0">The email lookup in <code>DonorAccountService</code> (section 11) is changed, on purpose,
+         because it is currently wrong. That is a defect being repaired, not a side effect of this plan.
+         It is listed here so the claim "nothing changes" is not overstated.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 10 ─────────── -->
+<section class="sec" id="frontend">
+  <header>
+    <div class="num">10</div>
+    <div class="meta">
+      <h2>Frontend changes</h2>
+      <div class="sub">Small, and invisible to anyone with a single charity.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>Everything in this section is <span class="tag tag-prop">Proposal</span>.</p>
+
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:30%">What</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>The sign-in response carries a membership list</b></td>
+          <td>The existing response gains a list of the charities this account belongs to — name, unique id,
+              and which one is currently active. For a person with one membership the list has one item.</td>
+        </tr>
+        <tr>
+          <td><b>A charity switcher in the user menu</b></td>
+          <td>Rendered only when the list has two or more items. With one item, nothing is rendered at all —
+              not a disabled control, not a single-item dropdown. A menu that cannot do anything should not
+              be on screen.</td>
+        </tr>
+        <tr>
+          <td><b>One service function</b></td>
+          <td>Added to the existing auth service, calling the switch endpoint through <code>HttpClient</code> so
+              the standard auth header and refresh behaviour apply. No direct <code>axios</code> call.</td>
+        </tr>
+        <tr>
+          <td><b>Switching shows real feedback</b></td>
+          <td>The control is disabled and shows a loading state while the request is in flight, using the
+              standard Chakra v2 <code>isDisabled</code> and <code>isLoading</code> props. On success, store the new
+              tokens and reload the page. On failure, show a plain message and leave the user where they were.</td>
+        </tr>
+        <tr>
+          <td><b>A designed screen for the collision case</b></td>
+          <td>When someone is invited by a second charity and their account cannot yet join it, they must
+              see a real explanation — not a raw error and not a silent success. This screen is worth
+              building before the rest of this plan lands, because the situation happens today. See
+              section 12.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout warn mt-3">
+      <h4>Do not store the membership list as a long-lived cache</h4>
+      <p class="mb-0">Memberships change when a charity adds or removes someone. A copy kept in the browser
+         goes stale and there is no mechanism to refresh it. Read it from the sign-in response, use it to
+         draw the menu, and let the server decide every actual permission. As with roles elsewhere in this
+         platform, <b>what the browser holds decides only what is drawn on screen — never what is allowed.</b></p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 11 ─────────── -->
+<section class="sec" id="security">
+  <header>
+    <div class="num">11</div>
+    <div class="meta">
+      <h2>Security fix required before any of this</h2>
+      <div class="sub">Written in full, without compression, because it matters.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <div class="callout stop">
+      <h4>The defect</h4>
+      <p><code>DonorAccountService.EnsureDonorUserAccountAsync</code> looks up a user by email address with the
+         repository's global filters explicitly switched off and with no organiser condition in the query.
+         When a donation is made under organiser B, and an account with that email already exists under
+         organiser A, the method matches organiser A's account and then grants it a <code>UserModule</code> row
+         for the Donation module.</p>
+      <p class="mb-0">The two organisers are never compared. Activity performed under one tenant modifies an
+         account owned by a different tenant, without any authorisation check.</p>
+    </div>
+
+    <div class="pre-label mt-3">Verified · DonorAccountService.cs:36</div>
+<pre><code>var loginInfo = await uow.Repository&lt;User&gt;()
+    .Query(false)
+    .FirstOrDefaultAsync(u =&gt; contactEmails.Contains(u.UserName));
+
+if (loginInfo != null)
+{
+    var existingModule = await uow.Repository&lt;UserModule&gt;()
+        .Query(false)
+        .FirstOrDefaultAsync(u =&gt; u.UserId == loginInfo.Id &amp;&amp; u.ModuleId == (byte)EnumModule.Donation);
+
+    if (existingModule == null)
+    {
+        await uow.Repository&lt;UserModule&gt;().AddAsync(new UserModule
+        {
+            UserId = loginInfo.Id,
+            ModuleId = (byte)EnumModule.Donation
+        });
+        await uow.SaveChangesAsync();
+    }
+
+    return;
+}</code></pre>
+
+    <p class="mt-3"><b>Why this must be fixed before the membership work, not after.</b> Right now this is a
+       quiet bug: an unintended link between two tenants. Once <code>UserContact</code> exists, cross-tenant
+       linkage becomes a legitimate, supported concept. If this lookup is still in place at that point,
+       an accidental email match could create a real membership — a permanent, authorised-looking grant of
+       access to another charity's data, produced by nothing more than two people sharing an email address
+       or one person donating twice.</p>
+
+    <p><b>The fix.</b> Resolve the account within the organiser that the donation was actually made under.
+       The method already receives <code>organizerId</code>; the lookup must use it. If an account with that email
+       exists under a different organiser, that is not a match — it is a distinct situation that must be
+       handled deliberately and explicitly, never by silently reusing the other tenant's account.</p>
+
+    <div class="callout warn mt-3">
+      <h4>Related items found in the same area</h4>
+      <p class="mb-0">These are separate from this plan and are recorded here only so they are not lost:
+         a commented-out organiser condition in the donor contact upsert path; and lockout fields on
+         <code>User</code> (<code>FailedAttempts</code>, <code>IsLocked</code>, <code>LockoutDateUtc</code>) that exist in the
+         schema but which no code ever sets, meaning account lockout is not actually enforced. Both deserve
+         their own review.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 12 ─────────── -->
+<section class="sec" id="p2p">
+  <header>
+    <div class="num">12</div>
+    <div class="meta">
+      <h2>Relationship to peer-to-peer fundraising</h2>
+      <div class="sub">What ships now, and what changes later.</div>
+    </div>
+  </header>
+  <div class="body">
+
+    <p>The peer-to-peer fundraising project does <b>not</b> wait for this plan. The two are sequenced, not
+       blocked on each other.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel h-100">
+          <h4>Peer-to-peer version one</h4>
+          <ul class="mb-0">
+            <li>Ships with one fundraiser account belonging to one charity.</li>
+            <li>This is stated openly as a known limitation, not hidden.</li>
+            <li>The limitation belongs to the platform's account model, not to the fundraising feature.</li>
+            <li>The fundraising tables themselves already allow one person to have rows under several
+                charities — they are not the obstacle.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel h-100">
+          <h4>The one thing that must be built now</h4>
+          <p>The collision must be a <b>designed screen, not an error and not a silent failure.</b></p>
+          <p class="mb-0">When someone accepts an invitation from a second charity and their email already
+             belongs to an account under a different charity, they must be shown a clear explanation of what
+             is happening and what they can do. Story 2 in section 4 is what happens without this screen:
+             the invitation appears to work and then leads nowhere.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok mt-3">
+      <h4>Nothing built now is thrown away later</h4>
+      <p class="mb-0">Once <code>UserContact</code> exists, that same collision screen stays exactly where it is.
+         Only its button changes — from an explanation that this is not currently possible, to
+         <b>"Add this charity to your account"</b>, which creates a membership row. Same screen, same route,
+         same place in the flow. One button swapped.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── 13 ─────────── -->
+<section class="sec" id="not">
+  <header>
+    <div class="num">13</div>
+    <div class="meta">
+      <h2>What this plan does <em>not</em> do</h2>
+      <div class="sub">Boundaries stated so nobody assumes more than is offered.</div>
+    </div>
+  </header>
+  <div class="body">
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:34%">Not included</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Seeing two charities at the same time on one screen</td><td>The active charity is one at a time. A combined view would mean changing the repository filter itself, which is a far larger and riskier change.</td></tr>
+        <tr><td>Merging two existing accounts into one</td><td>If a person has already ended up with two separate records under two charities, joining them is a data exercise with its own risks. Out of scope here.</td></tr>
+        <tr><td>Charity staff belonging to several charities</td><td>The mechanism would work, but staff access carries far more permission and audit weight than supporter access. It should be approved separately, on its own evidence.</td></tr>
+        <tr><td>Any change to roles or permissions</td><td>Membership answers "which charities may I enter". It says nothing about what a person may do once inside. Roles continue to handle that, unchanged.</td></tr>
+        <tr><td>Changing where tokens are stored in the browser</td><td>Existing known debt, tracked separately. This plan neither improves it nor makes it worse.</td></tr>
+        <tr><td>Any pipeline or deployment change</td><td>No new environment variable, no new build step, nothing for DevOps.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── 14 ─────────── -->
+<section class="sec" id="glossary">
+  <header>
+    <div class="num">14</div>
+    <div class="meta">
+      <h2>Glossary</h2>
+      <div class="sub">Every term used above, in ordinary words.</div>
+    </div>
+  </header>
+  <div class="body">
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:26%">Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="nowrap"><b>Organizer</b></td><td>The charity. The word is spelled this way throughout the code, so it is kept here for consistency.</td></tr>
+        <tr><td class="nowrap"><b>Contact</b></td><td>A person's details — name, email, phone — as held by one particular charity.</td></tr>
+        <tr><td class="nowrap"><b>User</b></td><td>The login: an email address and a password.</td></tr>
+        <tr><td class="nowrap"><b>Tenant / tenancy</b></td><td>"Tenant" means one charity's private space. Charities share the same database but must never see each other's data. Tenancy is the machinery that keeps them apart.</td></tr>
+        <tr><td class="nowrap"><b>Claim</b></td><td>A small piece of information stamped into a login token when someone signs in — for example their user id, or which charity they are in.</td></tr>
+        <tr><td class="nowrap"><b>Token</b></td><td>The pass issued at sign-in and sent with every request afterwards to prove who you are.</td></tr>
+        <tr><td class="nowrap"><b>Access token / refresh token</b></td><td>The access token is short-lived and proves identity on each request. The refresh token is longer-lived and is used to obtain a new access token without signing in again.</td></tr>
+        <tr><td class="nowrap"><b>Global filter</b></td><td>A condition the system adds to every query automatically, so no developer has to remember it. Here it restricts results to the current charity.</td></tr>
+        <tr><td class="nowrap"><b>Index</b></td><td>A structure that makes lookups fast. A <em>unique</em> index additionally forbids duplicate values.</td></tr>
+        <tr><td class="nowrap"><b>Foreign key</b></td><td>A rule stating that a value in one table must point at a real row in another table.</td></tr>
+        <tr><td class="nowrap"><b>Migration</b></td><td>A recorded, repeatable change to the database structure.</td></tr>
+        <tr><td class="nowrap"><b>Backfill</b></td><td>Filling a newly created column or table with correct values derived from data that already exists.</td></tr>
+        <tr><td class="nowrap"><b>Soft delete</b></td><td>Marking a row as deleted rather than removing it, so it can be recovered and audited.</td></tr>
+        <tr><td class="nowrap"><b>Deny by default</b></td><td>Refuse the action unless permission is positively proven. Never allow simply because nothing objected.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── 15 ─────────── -->
+<section class="sec" id="decisions">
+  <header>
+    <div class="num">15</div>
+    <div class="meta">
+      <h2>Decisions needed</h2>
+      <div class="sub">All answered. The last two were decided on 21&nbsp;August&nbsp;2026; the rest
+        were answered on 20&nbsp;August&nbsp;2026 and are recorded in the build plan.</div>
+    </div>
+  </header>
+  <div class="body">
+    <div class="tblwrap">
+    <table class="tbl">
+      <thead><tr><th style="width:6%">#</th><th style="width:32%">Question</th><th>Why it needs an answer</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Is one person belonging to several charities something the business actually wants?</td><td>If the answer is no, this document is closed and peer-to-peer version one ships with the limitation stated. That is a perfectly legitimate outcome.</td></tr>
+        <tr><td>2</td><td>Who may create a membership — the charity inviting, or the person accepting?</td><td>This decides whether a charity can add someone to itself, or whether the person must consent first. It is a privacy question before it is a technical one, and the answer shapes the invitation flow.</td></tr>
+        <tr><td>3</td><td>Does this proceed as its own project, separate from peer-to-peer fundraising?</td><td>It touches identity, which is used by every module. Bundling it into a feature project would make both harder to review and harder to roll back.</td></tr>
+        <tr><td>4</td><td>Is the security fix in section 11 approved to go ahead immediately?</td><td>It is a defect in live code today and is worth fixing on its own merit, whether or not the rest of this plan is ever approved.</td></tr>
+        <tr><td>5</td><td>Is the collision screen approved for peer-to-peer version one?</td><td>Without it, invitations from a second charity fail silently. It is a small piece of work and it is needed regardless of what is decided about the rest.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout ok mt-3">
+      <h4>Decided 21&nbsp;August&nbsp;2026 &mdash; where the active charity comes from</h4>
+      <p>A person who belongs to several charities has to be doing something <em>on behalf of one of
+        them</em> at any moment. That charity is read <strong>from the route</strong>, not from the
+        token, and it is named by <code>Organizer.UniqueId</code> &mdash; the existing
+        <code>Guid</code> &mdash; never by the integer <code>Organizer.Id</code>.</p>
+      <ul>
+        <li><strong>Why the route and not the token.</strong> The <code>OrganizerId</code> claim is read
+          at 199 call sites across every module and is the platform&rsquo;s tenant boundary. Making that
+          claim switchable would put a cross-charity data leak behind all 199 of them, and it would force
+          a diff inside the five locked identity files. Reading the charity from the route leaves every
+          one of those call sites, and all five files, untouched.</li>
+        <li><strong>Why the Guid and not the integer.</strong> Sequential integers in a URL let anyone
+          count the charities on the platform and walk them one by one. The <code>Guid</code> carries no
+          ordering and no count. This is also already the convention here &mdash;
+          <code>DonateController</code> routes on <code>{campaignUniqueId:guid}</code>, and every entity
+          on the platform implements <code>IUniqueId</code>.</li>
+        <li><strong>Integers stay server-side.</strong> A new endpoint resolves the route
+          <code>Guid</code> to the internal <code>int</code> once, uses it for queries, and never returns
+          it. No integer identifier appears in a new URL or a new response body.</li>
+        <li><strong>The Guid identifies; it does not authorise.</strong> Knowing a charity&rsquo;s
+          <code>Guid</code> grants nothing. After resolving it, the endpoint requires an
+          <em>accepted</em> <code>UserContact</code> row joining the signed-in user to that charity, and
+          denies by default when there is none. This check is server-side on every request.</li>
+        <li><strong>New endpoints only.</strong> Existing endpoints keep scoping by the claim exactly as
+          they do today. Nothing already shipped starts reading the route.</li>
+      </ul>
+      <p><strong>One thing this needed that did not exist yet &mdash; now built.</strong>
+        <code>Organizer.UniqueId</code> is defaulted with <code>NEWID()</code> but carries
+        <em>no unique index</em> &mdash; unlike most other tables here, which do. Looking a charity up by
+        <code>Guid</code> is a table scan today. So a filtered unique index on
+        <code>Organizer (UniqueId)</code> lands before any route uses it. That is an index creation on a
+        shipped table: it adds no column, rewrites no row, and needs a maintenance window because a
+        non-online index build takes a lock on <code>Organizer</code> while it runs.</p>
+      <p class="mb-0"><strong>Built 21&nbsp;August&nbsp;2026.</strong> The index is configured at
+        <code>BaseDbContext.Configuration.cs</code> inside <code>ConfigureOrganizer</code>, and the
+        migration <code>20260820200630_AddOrganizerUniqueIdUniqueIndex</code> lives in
+        <code>Ideas.Identity.Persistence</code> &mdash; the only migration set that owns the
+        <code>Organizer</code> table. The generated migration creates one index and nothing else, and the
+        model snapshot moved by exactly three lines, so no unrelated model drift rode along with it.
+        Two things still have to happen before it is applied to production, in this order. First, run the
+        duplicate check below; a unique index cannot be created if two rows already share a
+        <code>UniqueId</code>, and rows that predate the <code>NEWID()</code> default could hold
+        <code>00000000-0000-0000-0000-000000000000</code>. Second, apply it inside a maintenance window,
+        because a non-online build holds a lock on <code>Organizer</code> for its duration.</p>
+      <pre class="mb-0"><code>SELECT UniqueId, COUNT(*) AS Rows
+FROM dbo.Organizer
+GROUP BY UniqueId
+HAVING COUNT(*) &gt; 1;
+
+SELECT Id, Name
+FROM dbo.Organizer
+WHERE UniqueId = '00000000-0000-0000-0000-000000000000';</code></pre>
+    </div>
+
+    <div class="callout ok mt-3">
+      <h4>Decided 21&nbsp;August&nbsp;2026 &mdash; who may end a membership</h4>
+      <p><strong>Both sides may end it.</strong> A person may leave a charity, and a charity may remove
+        a person. Membership is consent-first &mdash; the charity invites and the person accepts &mdash;
+        and consent that cannot be withdrawn is not consent. A charity equally should not have to wait
+        for someone who has stopped participating.</p>
+      <ul>
+        <li><strong>The home charity cannot be left.</strong> Self-removal applies only to
+          <em>additional</em> memberships. Sign-in reads <code>u.Contact.Organizer</code> through
+          <code>User.ContactId</code>, and that is the source of the <code>OrganizerId</code> claim, so
+          leaving the home charity would break the person&rsquo;s ability to sign in at all. Moving a
+          home charity is a separate operation with its own rules, not a self-service button.</li>
+        <li><strong>Ending is a status change, never a delete.</strong> The <code>UserContact</code> row
+          moves to a revoked state. Past donations, <code>DonationCampaignInvoice</code> rows and
+          fundraiser pages stay attached to the charity, because they are financial and tax records and
+          may not be erased by someone leaving. Ending a membership removes the ability to raise money
+          for that charity from that point onward; it rewrites nothing behind it.</li>
+        <li><strong>The last administrator cannot leave.</strong> If the person is that charity&rsquo;s
+          only remaining owner or administrator, the leave is refused with a clear message until another
+          one exists. Otherwise a charity can be left with nobody able to administer it.</li>
+        <li><strong>Both directions are authorised server-side.</strong> A person may end only their own
+          membership; a charity may end only memberships to itself, and only through an account holding
+          an administrative capability there. Both are audit-logged: who ended what, when, and against
+          whom.</li>
+      </ul>
+      <p class="mb-0">Re-joining later is a fresh invitation and a fresh acceptance. A revoked row is
+        never silently reactivated.</p>
+    </div>
+
+    <div class="callout mt-3">
+      <h4>Status of this document</h4>
+      <p class="mb-0">Proposal, with one exception: the unique index on <code>Organizer (UniqueId)</code>
+         described in section&nbsp;15 is built and its migration generated, though not yet applied to
+         production. Nothing else here has been written and no dependency has been added. The verified
+         sections describe existing behaviour and can be checked against the repository line by line.
+         Everything else awaits a decision.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="doc">
+  Ideali — platform architecture proposal. Backend references: <code>D:\V4Ideas\Ideali\ideali.api</code>.
+  Companion documents: <a href="p2p-build-plan.html">Peer-to-Peer Build Plan</a> ·
+  <a href="p2p-for-leadership-v4.html">Peer-to-Peer for Leadership</a>.
+</footer>
+
+</div>
+</body>
+</html>
